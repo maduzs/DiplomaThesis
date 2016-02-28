@@ -1,0 +1,507 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BFB567F01C83625400136E52 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB567EF1C83625400136E52 /* AppDelegate.swift */; };
+		BFB567F21C83625400136E52 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB567F11C83625400136E52 /* ViewController.swift */; };
+		BFB567F51C83625400136E52 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BFB567F31C83625400136E52 /* Main.storyboard */; };
+		BFB567F71C83625400136E52 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BFB567F61C83625400136E52 /* Assets.xcassets */; };
+		BFB567FA1C83625400136E52 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BFB567F81C83625400136E52 /* LaunchScreen.storyboard */; };
+		BFB568051C83625400136E52 /* DiplNovakTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB568041C83625400136E52 /* DiplNovakTests.swift */; };
+		BFB568101C83625400136E52 /* DiplNovakUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB5680F1C83625400136E52 /* DiplNovakUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		BFB568011C83625400136E52 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFB567E41C83625400136E52 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BFB567EB1C83625400136E52;
+			remoteInfo = DiplNovak;
+		};
+		BFB5680C1C83625400136E52 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFB567E41C83625400136E52 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BFB567EB1C83625400136E52;
+			remoteInfo = DiplNovak;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		BFB567EC1C83625400136E52 /* DiplNovak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DiplNovak.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BFB567EF1C83625400136E52 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		BFB567F11C83625400136E52 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		BFB567F41C83625400136E52 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		BFB567F61C83625400136E52 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BFB567F91C83625400136E52 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		BFB567FB1C83625400136E52 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BFB568001C83625400136E52 /* DiplNovakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DiplNovakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BFB568041C83625400136E52 /* DiplNovakTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiplNovakTests.swift; sourceTree = "<group>"; };
+		BFB568061C83625400136E52 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BFB5680B1C83625400136E52 /* DiplNovakUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DiplNovakUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BFB5680F1C83625400136E52 /* DiplNovakUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiplNovakUITests.swift; sourceTree = "<group>"; };
+		BFB568111C83625400136E52 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BFB567E91C83625400136E52 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BFB567FD1C83625400136E52 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BFB568081C83625400136E52 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		BFB567E31C83625400136E52 = {
+			isa = PBXGroup;
+			children = (
+				BFB567EE1C83625400136E52 /* DiplNovak */,
+				BFB568031C83625400136E52 /* DiplNovakTests */,
+				BFB5680E1C83625400136E52 /* DiplNovakUITests */,
+				BFB567ED1C83625400136E52 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		BFB567ED1C83625400136E52 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BFB567EC1C83625400136E52 /* DiplNovak.app */,
+				BFB568001C83625400136E52 /* DiplNovakTests.xctest */,
+				BFB5680B1C83625400136E52 /* DiplNovakUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BFB567EE1C83625400136E52 /* DiplNovak */ = {
+			isa = PBXGroup;
+			children = (
+				BFB567EF1C83625400136E52 /* AppDelegate.swift */,
+				BFB567F11C83625400136E52 /* ViewController.swift */,
+				BFB567F31C83625400136E52 /* Main.storyboard */,
+				BFB567F61C83625400136E52 /* Assets.xcassets */,
+				BFB567F81C83625400136E52 /* LaunchScreen.storyboard */,
+				BFB567FB1C83625400136E52 /* Info.plist */,
+			);
+			path = DiplNovak;
+			sourceTree = "<group>";
+		};
+		BFB568031C83625400136E52 /* DiplNovakTests */ = {
+			isa = PBXGroup;
+			children = (
+				BFB568041C83625400136E52 /* DiplNovakTests.swift */,
+				BFB568061C83625400136E52 /* Info.plist */,
+			);
+			path = DiplNovakTests;
+			sourceTree = "<group>";
+		};
+		BFB5680E1C83625400136E52 /* DiplNovakUITests */ = {
+			isa = PBXGroup;
+			children = (
+				BFB5680F1C83625400136E52 /* DiplNovakUITests.swift */,
+				BFB568111C83625400136E52 /* Info.plist */,
+			);
+			path = DiplNovakUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		BFB567EB1C83625400136E52 /* DiplNovak */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BFB568141C83625400136E52 /* Build configuration list for PBXNativeTarget "DiplNovak" */;
+			buildPhases = (
+				BFB567E81C83625400136E52 /* Sources */,
+				BFB567E91C83625400136E52 /* Frameworks */,
+				BFB567EA1C83625400136E52 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DiplNovak;
+			productName = DiplNovak;
+			productReference = BFB567EC1C83625400136E52 /* DiplNovak.app */;
+			productType = "com.apple.product-type.application";
+		};
+		BFB567FF1C83625400136E52 /* DiplNovakTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BFB568171C83625400136E52 /* Build configuration list for PBXNativeTarget "DiplNovakTests" */;
+			buildPhases = (
+				BFB567FC1C83625400136E52 /* Sources */,
+				BFB567FD1C83625400136E52 /* Frameworks */,
+				BFB567FE1C83625400136E52 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BFB568021C83625400136E52 /* PBXTargetDependency */,
+			);
+			name = DiplNovakTests;
+			productName = DiplNovakTests;
+			productReference = BFB568001C83625400136E52 /* DiplNovakTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		BFB5680A1C83625400136E52 /* DiplNovakUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BFB5681A1C83625400136E52 /* Build configuration list for PBXNativeTarget "DiplNovakUITests" */;
+			buildPhases = (
+				BFB568071C83625400136E52 /* Sources */,
+				BFB568081C83625400136E52 /* Frameworks */,
+				BFB568091C83625400136E52 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BFB5680D1C83625400136E52 /* PBXTargetDependency */,
+			);
+			name = DiplNovakUITests;
+			productName = DiplNovakUITests;
+			productReference = BFB5680B1C83625400136E52 /* DiplNovakUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BFB567E41C83625400136E52 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0720;
+				LastUpgradeCheck = 0720;
+				ORGANIZATIONNAME = "Novak Second";
+				TargetAttributes = {
+					BFB567EB1C83625400136E52 = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
+					BFB567FF1C83625400136E52 = {
+						CreatedOnToolsVersion = 7.2.1;
+						TestTargetID = BFB567EB1C83625400136E52;
+					};
+					BFB5680A1C83625400136E52 = {
+						CreatedOnToolsVersion = 7.2.1;
+						TestTargetID = BFB567EB1C83625400136E52;
+					};
+				};
+			};
+			buildConfigurationList = BFB567E71C83625400136E52 /* Build configuration list for PBXProject "DiplNovak" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = BFB567E31C83625400136E52;
+			productRefGroup = BFB567ED1C83625400136E52 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				BFB567EB1C83625400136E52 /* DiplNovak */,
+				BFB567FF1C83625400136E52 /* DiplNovakTests */,
+				BFB5680A1C83625400136E52 /* DiplNovakUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		BFB567EA1C83625400136E52 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BFB567FA1C83625400136E52 /* LaunchScreen.storyboard in Resources */,
+				BFB567F71C83625400136E52 /* Assets.xcassets in Resources */,
+				BFB567F51C83625400136E52 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BFB567FE1C83625400136E52 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BFB568091C83625400136E52 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BFB567E81C83625400136E52 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BFB567F21C83625400136E52 /* ViewController.swift in Sources */,
+				BFB567F01C83625400136E52 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BFB567FC1C83625400136E52 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BFB568051C83625400136E52 /* DiplNovakTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BFB568071C83625400136E52 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BFB568101C83625400136E52 /* DiplNovakUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		BFB568021C83625400136E52 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BFB567EB1C83625400136E52 /* DiplNovak */;
+			targetProxy = BFB568011C83625400136E52 /* PBXContainerItemProxy */;
+		};
+		BFB5680D1C83625400136E52 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BFB567EB1C83625400136E52 /* DiplNovak */;
+			targetProxy = BFB5680C1C83625400136E52 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		BFB567F31C83625400136E52 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BFB567F41C83625400136E52 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		BFB567F81C83625400136E52 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BFB567F91C83625400136E52 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		BFB568121C83625400136E52 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BFB568131C83625400136E52 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		BFB568151C83625400136E52 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = DiplNovak/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = cz.fi.muni.diploma.DiplNovak;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		BFB568161C83625400136E52 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = DiplNovak/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = cz.fi.muni.diploma.DiplNovak;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		BFB568181C83625400136E52 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = DiplNovakTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = cz.fi.muni.diploma.DiplNovakTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DiplNovak.app/DiplNovak";
+			};
+			name = Debug;
+		};
+		BFB568191C83625400136E52 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = DiplNovakTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = cz.fi.muni.diploma.DiplNovakTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DiplNovak.app/DiplNovak";
+			};
+			name = Release;
+		};
+		BFB5681B1C83625400136E52 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = DiplNovakUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = cz.fi.muni.diploma.DiplNovakUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = DiplNovak;
+				USES_XCTRUNNER = YES;
+			};
+			name = Debug;
+		};
+		BFB5681C1C83625400136E52 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = DiplNovakUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = cz.fi.muni.diploma.DiplNovakUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = DiplNovak;
+				USES_XCTRUNNER = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		BFB567E71C83625400136E52 /* Build configuration list for PBXProject "DiplNovak" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BFB568121C83625400136E52 /* Debug */,
+				BFB568131C83625400136E52 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BFB568141C83625400136E52 /* Build configuration list for PBXNativeTarget "DiplNovak" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BFB568151C83625400136E52 /* Debug */,
+				BFB568161C83625400136E52 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		BFB568171C83625400136E52 /* Build configuration list for PBXNativeTarget "DiplNovakTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BFB568181C83625400136E52 /* Debug */,
+				BFB568191C83625400136E52 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		BFB5681A1C83625400136E52 /* Build configuration list for PBXNativeTarget "DiplNovakUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BFB5681B1C83625400136E52 /* Debug */,
+				BFB5681C1C83625400136E52 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BFB567E41C83625400136E52 /* Project object */;
+}
