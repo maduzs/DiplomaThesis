@@ -7,13 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BFB2D6EA1C8B398400968F19 /* ClickMeEventRegister.js in Resources */ = {isa = PBXBuildFile; fileRef = BFB2D6E91C8B398400968F19 /* ClickMeEventRegister.js */; };
+		BFB2D6EC1C8B3A1600968F19 /* TestFile.html in Resources */ = {isa = PBXBuildFile; fileRef = BFB2D6EB1C8B3A1600968F19 /* TestFile.html */; };
+		BFB2D6EE1C8B53DC00968F19 /* style.css in Resources */ = {isa = PBXBuildFile; fileRef = BFB2D6ED1C8B53DC00968F19 /* style.css */; };
 		BFB567F01C83625400136E52 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB567EF1C83625400136E52 /* AppDelegate.swift */; };
-		BFB567F21C83625400136E52 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB567F11C83625400136E52 /* ViewController.swift */; };
-		BFB567F51C83625400136E52 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BFB567F31C83625400136E52 /* Main.storyboard */; };
 		BFB567F71C83625400136E52 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BFB567F61C83625400136E52 /* Assets.xcassets */; };
-		BFB567FA1C83625400136E52 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BFB567F81C83625400136E52 /* LaunchScreen.storyboard */; };
 		BFB568051C83625400136E52 /* DiplNovakTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB568041C83625400136E52 /* DiplNovakTests.swift */; };
 		BFB568101C83625400136E52 /* DiplNovakUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB5680F1C83625400136E52 /* DiplNovakUITests.swift */; };
+		BFB5681F1C8366E400136E52 /* DiplViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB5681E1C8366E400136E52 /* DiplViewController.swift */; };
+		BFB568211C8368CC00136E52 /* JSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB568201C8368CC00136E52 /* JSView.swift */; };
+		BFB568231C836E2100136E52 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BFB568221C836E2100136E52 /* Main.storyboard */; };
+		BFB568251C8379DC00136E52 /* background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BFB568241C8379DC00136E52 /* background.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,12 +38,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		BFB2D6E91C8B398400968F19 /* ClickMeEventRegister.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ClickMeEventRegister.js; sourceTree = "<group>"; };
+		BFB2D6EB1C8B3A1600968F19 /* TestFile.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = TestFile.html; sourceTree = "<group>"; };
+		BFB2D6ED1C8B53DC00968F19 /* style.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = style.css; sourceTree = "<group>"; };
 		BFB567EC1C83625400136E52 /* DiplNovak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DiplNovak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFB567EF1C83625400136E52 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		BFB567F11C83625400136E52 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		BFB567F41C83625400136E52 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		BFB567F61C83625400136E52 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		BFB567F91C83625400136E52 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BFB567FB1C83625400136E52 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BFB568001C83625400136E52 /* DiplNovakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DiplNovakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFB568041C83625400136E52 /* DiplNovakTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiplNovakTests.swift; sourceTree = "<group>"; };
@@ -47,6 +51,10 @@
 		BFB5680B1C83625400136E52 /* DiplNovakUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DiplNovakUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFB5680F1C83625400136E52 /* DiplNovakUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiplNovakUITests.swift; sourceTree = "<group>"; };
 		BFB568111C83625400136E52 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BFB5681E1C8366E400136E52 /* DiplViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiplViewController.swift; sourceTree = "<group>"; };
+		BFB568201C8368CC00136E52 /* JSView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSView.swift; sourceTree = "<group>"; };
+		BFB568221C836E2100136E52 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		BFB568241C8379DC00136E52 /* background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = background.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,12 +105,10 @@
 		BFB567EE1C83625400136E52 /* DiplNovak */ = {
 			isa = PBXGroup;
 			children = (
-				BFB567EF1C83625400136E52 /* AppDelegate.swift */,
-				BFB567F11C83625400136E52 /* ViewController.swift */,
-				BFB567F31C83625400136E52 /* Main.storyboard */,
-				BFB567F61C83625400136E52 /* Assets.xcassets */,
-				BFB567F81C83625400136E52 /* LaunchScreen.storyboard */,
-				BFB567FB1C83625400136E52 /* Info.plist */,
+				BFB568221C836E2100136E52 /* Main.storyboard */,
+				BFB5681E1C8366E400136E52 /* DiplViewController.swift */,
+				BFB568201C8368CC00136E52 /* JSView.swift */,
+				BFB5681D1C83626600136E52 /* Supporting Files */,
 			);
 			path = DiplNovak;
 			sourceTree = "<group>";
@@ -123,6 +129,20 @@
 				BFB568111C83625400136E52 /* Info.plist */,
 			);
 			path = DiplNovakUITests;
+			sourceTree = "<group>";
+		};
+		BFB5681D1C83626600136E52 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				BFB2D6EB1C8B3A1600968F19 /* TestFile.html */,
+				BFB2D6E91C8B398400968F19 /* ClickMeEventRegister.js */,
+				BFB2D6ED1C8B53DC00968F19 /* style.css */,
+				BFB567EF1C83625400136E52 /* AppDelegate.swift */,
+				BFB568241C8379DC00136E52 /* background.jpg */,
+				BFB567F61C83625400136E52 /* Assets.xcassets */,
+				BFB567FB1C83625400136E52 /* Info.plist */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -229,9 +249,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BFB567FA1C83625400136E52 /* LaunchScreen.storyboard in Resources */,
+				BFB2D6EE1C8B53DC00968F19 /* style.css in Resources */,
+				BFB2D6EC1C8B3A1600968F19 /* TestFile.html in Resources */,
+				BFB568251C8379DC00136E52 /* background.jpg in Resources */,
+				BFB2D6EA1C8B398400968F19 /* ClickMeEventRegister.js in Resources */,
 				BFB567F71C83625400136E52 /* Assets.xcassets in Resources */,
-				BFB567F51C83625400136E52 /* Main.storyboard in Resources */,
+				BFB568231C836E2100136E52 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,8 +279,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BFB567F21C83625400136E52 /* ViewController.swift in Sources */,
 				BFB567F01C83625400136E52 /* AppDelegate.swift in Sources */,
+				BFB568211C8368CC00136E52 /* JSView.swift in Sources */,
+				BFB5681F1C8366E400136E52 /* DiplViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -291,25 +315,6 @@
 			targetProxy = BFB5680C1C83625400136E52 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		BFB567F31C83625400136E52 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				BFB567F41C83625400136E52 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		BFB567F81C83625400136E52 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				BFB567F91C83625400136E52 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		BFB568121C83625400136E52 /* Debug */ = {
@@ -398,7 +403,7 @@
 		BFB568151C83625400136E52 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
 				INFOPLIST_FILE = DiplNovak/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = cz.fi.muni.diploma.DiplNovak;
@@ -409,7 +414,7 @@
 		BFB568161C83625400136E52 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
 				INFOPLIST_FILE = DiplNovak/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = cz.fi.muni.diploma.DiplNovak;
@@ -484,6 +489,7 @@
 				BFB568161C83625400136E52 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		BFB568171C83625400136E52 /* Build configuration list for PBXNativeTarget "DiplNovakTests" */ = {
 			isa = XCConfigurationList;
@@ -492,6 +498,7 @@
 				BFB568191C83625400136E52 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		BFB5681A1C83625400136E52 /* Build configuration list for PBXNativeTarget "DiplNovakUITests" */ = {
 			isa = XCConfigurationList;
@@ -500,6 +507,7 @@
 				BFB5681C1C83625400136E52 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

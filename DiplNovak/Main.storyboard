@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9532" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="LCH-qF-hqS">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+    </dependencies>
+    <scenes>
+        <!--Dipl View Controller-->
+        <scene sceneID="fML-0V-bvQ">
+            <objects>
+                <viewController id="LCH-qF-hqS" customClass="DiplViewController" customModule="DiplNovak" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="4nC-xX-TiZ"/>
+                        <viewControllerLayoutGuide type="bottom" id="Ae1-hU-dXX"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="q2K-ML-qvT" customClass="JSView" customModule="DiplNovak" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="Cjb-dD-ZPJ">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                            </imageView>
+                            <view alpha="0.5" contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="V8h-9B-8AR" customClass="JSView" customModule="DiplNovak" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="V8h-9B-8AR" firstAttribute="bottom" secondItem="Ae1-hU-dXX" secondAttribute="top" id="4fW-l4-6Nj"/>
+                            <constraint firstItem="V8h-9B-8AR" firstAttribute="leading" secondItem="Cjb-dD-ZPJ" secondAttribute="leading" id="8yk-Fg-6fa"/>
+                            <constraint firstItem="Cjb-dD-ZPJ" firstAttribute="bottom" secondItem="Ae1-hU-dXX" secondAttribute="top" id="Eze-pD-4At"/>
+                            <constraint firstItem="V8h-9B-8AR" firstAttribute="leading" secondItem="q2K-ML-qvT" secondAttribute="leading" id="PRL-CS-uwZ"/>
+                            <constraint firstItem="V8h-9B-8AR" firstAttribute="top" secondItem="q2K-ML-qvT" secondAttribute="top" id="QXn-JH-pcn"/>
+                            <constraint firstItem="V8h-9B-8AR" firstAttribute="top" secondItem="Cjb-dD-ZPJ" secondAttribute="top" id="Txw-zC-erF"/>
+                            <constraint firstItem="V8h-9B-8AR" firstAttribute="trailing" secondItem="Cjb-dD-ZPJ" secondAttribute="trailing" id="loo-pj-79M"/>
+                            <constraint firstAttribute="trailing" secondItem="V8h-9B-8AR" secondAttribute="trailing" id="zvL-IF-8om"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="containerView" destination="q2K-ML-qvT" id="apA-pj-7ZV"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vu0-qZ-In7" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="60" y="271"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="background.jpg" width="2048" height="2048"/>
+    </resources>
+</document>

@@ -1,0 +1,15 @@
+
+h1{font-family:"Helvetia Neue;";color:000000;font-size:50;text-align:center;padding:10px; }
+p{font-family:"Helvetia Neue;";font-size:15 ;color:000000;text-align:center; text-align: justify}
+
+.div-button {
+    padding-left:-webkit-calc( 50% - 150px );
+}
+.btn {
+    font-size: 300%;
+    width:300;
+    height:100;
+    border: 1px solid black;
+    border-radius: 15px;
+    -webkit-transition: background-color 0.2s ease-in-out 0s;
+}
