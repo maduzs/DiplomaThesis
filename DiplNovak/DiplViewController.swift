@@ -13,9 +13,64 @@ class DiplViewController: UIViewController, WKScriptMessageHandler, WKNavigation
     
     @IBOutlet var containerView: JSView!
     
-    var webView: WKWebView!
+    @IBAction func button(sender: UIButton, forEvent event: UIEvent) {
+        executeA()
+    }
     
-    var colors:[String] = ["00CCCC","99FF99","CC99CC","CCFF99","#00CC99","#ccccff","#ecffb3","#b3e6cc","#0066ff","#ffb3b3"];
+    @IBAction func button2(sender: UIButton, forEvent event: UIEvent) {
+        executeB()
+    }
+    
+    
+    @IBAction func button3(sender: UIButton, forEvent event: UIEvent) {
+        executeC()
+    }
+    
+    
+    @IBAction func button4(sender: UIButton, forEvent event: UIEvent) {
+        executeD()
+    }
+    
+    
+    @IBAction func runButton(sender: UIButton, forEvent event: UIEvent) {
+        label1.text = "test";
+        executeCustom(textView1.text);
+    }
+    
+    @IBOutlet weak var textView1: UITextView!
+    @IBOutlet weak var label1: UILabel!
+    
+    var webView: WKWebView!
+    var webView2: WKWebView!
+
+    
+    func executeA(){
+        if (webView.configuration.userContentController.userScripts.count > 0){
+            webView.evaluateJavaScript(webView.configuration.userContentController.userScripts[0].source, completionHandler: nil)
+        }
+    }
+    
+    func executeB(){
+        if (webView.configuration.userContentController.userScripts.count > 1){
+            webView.evaluateJavaScript(webView.configuration.userContentController.userScripts[1].source, completionHandler: nil)
+        }
+    }
+    
+    func executeC(){
+        if (webView.configuration.userContentController.userScripts.count > 2){
+            webView.evaluateJavaScript(webView.configuration.userContentController.userScripts[2].source, completionHandler: nil)
+        }
+    }
+    
+    func executeD(){
+        if (webView2.configuration.userContentController.userScripts.count > 0){
+            webView2.evaluateJavaScript(webView2.configuration.userContentController.userScripts[0].source, completionHandler: nil)
+        }
+    }
+    
+    func executeCustom(command : String){
+        
+    }
     
     var webConfig:WKWebViewConfiguration {
         get {
@@ -27,10 +82,49 @@ class DiplViewController: UIViewController, WKScriptMessageHandler, WKNavigation
             let userController:WKUserContentController = WKUserContentController()
             
             // Add a script message handler for receiving  "buttonClicked" event notifications posted from the JS document using window.webkit.messageHandlers.buttonClicked.postMessage script message
+            // same scripts within one webview but separate messageHandlers will still be seeing each other
             userController.addScriptMessageHandler(self, name: "buttonClicked")
             
             // Get script that's to be injected into the document
-            let js:String = addButtonScript()
+            //let js:String = addButtonScript()
+            var js:String = addClickScript("Click")
+            
+            // Specify when and where and what user script needs to be injected into the web document
+            var userScript:WKUserScript =  WKUserScript(source: js, injectionTime: WKUserScriptInjectionTime.AtDocumentEnd, forMainFrameOnly: false)
+            
+            // Add the user script to the WKUserContentController instance
+            userController.addUserScript(userScript);
+            
+            js = addClickScript("Click2")
+            userScript =  WKUserScript(source: js, injectionTime: WKUserScriptInjectionTime.AtDocumentEnd, forMainFrameOnly: false)
+            userController.addUserScript(userScript)
+            
+            js = addClickScript("Click3")
+            userScript =  WKUserScript(source: js, injectionTime: WKUserScriptInjectionTime.AtDocumentEnd, forMainFrameOnly: false)
+            userController.addUserScript(userScript)
+            
+            // Configure the WKWebViewConfiguration instance with the WKUserContentController
+            webCfg.userContentController = userController;
+            
+            return webCfg;
+        }
+    }
+    
+    var webConfig2:WKWebViewConfiguration {
+        get {
+            
+            // Create WKWebViewConfiguration instance
+            let webCfg:WKWebViewConfiguration = WKWebViewConfiguration()
+            
+            // Setup WKUserContentController instance for injecting user script
+            let userController:WKUserContentController = WKUserContentController()
+            
+            // Add a script message handler for receiving  "buttonClicked" event notifications posted from the JS document using window.webkit.messageHandlers.buttonClicked.postMessage script message
+            userController.addScriptMessageHandler(self, name: "button2Clicked")
+            
+            // Get script that's to be injected into the document
+            //let js:String = addButtonScript()
+            let js:String = addClickScript("Click4")
             
             // Specify when and where and what user script needs to be injected into the web document
             let userScript:WKUserScript =  WKUserScript(source: js, injectionTime: WKUserScriptInjectionTime.AtDocumentEnd, forMainFrameOnly: false)
@@ -54,8 +148,15 @@ class DiplViewController: UIViewController, WKScriptMessageHandler, WKNavigation
         // Delegate to handle navigation of web content
         webView!.navigationDelegate = self
         
+        // Create a WKWebView instance
+        webView2 = WKWebView (frame: self.view.frame, configuration: webConfig2)
+        
+        // Delegate to handle navigation of web content
+        webView2!.navigationDelegate = self
+        
         // prekryje JSView s wkwebview
-        view.addSubview(webView!)
+        //view.addSubview(webView!)
+        
         //self.view = self.webView
     }
     
@@ -84,8 +185,20 @@ class DiplViewController: UIViewController, WKScriptMessageHandler, WKNavigation
         
     }
     
+    func addClickScript(scriptName : String) ->String{
+        
+        var script:String?
+        
+        if let filePath:String = NSBundle(forClass: DiplViewController.self).pathForResource(scriptName, ofType:"js") {
+            
+            script = try? String (contentsOfFile: filePath, encoding: NSUTF8StringEncoding)
+        }
+        return script!;
+        
+    }
+    
     func loadHtml() {
-        let mainBundle:NSBundle = NSBundle(forClass: DiplViewController.self)
+        /*let mainBundle:NSBundle = NSBundle(forClass: DiplViewController.self)
 
         if let htmlPath = mainBundle.pathForResource("TestFile", ofType: "html") {
             let requestUrl = NSURLRequest(URL: NSURL(fileURLWithPath: htmlPath))
@@ -93,31 +206,21 @@ class DiplViewController: UIViewController, WKScriptMessageHandler, WKNavigation
         }
         else {
             showAlertWithMessage("Could not load HTML File!")
-        }
+        }*/
     }
     
     // WKScriptMessageHandler Delegate
     func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
         if let messageBody:NSDictionary = message.body as? NSDictionary {
-            let idOfTappedButton:String = messageBody["ButtonId"] as! String
-            updateColorOfButtonWithId(idOfTappedButton)
+            let idOfTappedButton:String = messageBody["ID"] as! String
+            
+            let msg:String = messageBody["msg"] as! String
+            
+            print("button tapped: " + idOfTappedButton)
+            print("messsage: " + String(msg))
+            label1.text = msg;
         }
         
-    }
-    
-    // Update color of Button with specified Id
-    func updateColorOfButtonWithId(buttonId:String) {
-        let count:UInt32 = UInt32(colors.count)
-        let index:Int = Int(arc4random_uniform(count))
-        let color:String = colors [index]
-        
-        // Script that changes the color of tapped button
-        let js2:String = String(format: "var button = document.getElementById('%@'); button.style.backgroundColor='%@'; ", buttonId,color)
-        
-        webView!.evaluateJavaScript(js2, completionHandler: { (AnyObject, NSError) -> Void in
-            NSLog("button tapped: " + buttonId, __FUNCTION__)
-            
-        })
     }
     
     // Helper
