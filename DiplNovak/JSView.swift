@@ -8,7 +8,38 @@
 
 import UIKit
 
+protocol DiplViewDelegate: class {
+    func executeJS(buttonId : Int, content : String)
+}
+
 class JSView: UIView {
+    
+    @IBOutlet weak var label1: UILabel!
+    
+    @IBOutlet weak var textView1: UITextView!
+    
+    @IBAction func buttonRun(sender: UIButton, forEvent event: UIEvent) {
+        dataSource?.executeJS(4, content: textView1.text)
+    }
+    @IBAction func buttonA(sender: UIButton, forEvent event: UIEvent) {
+        dataSource?.executeJS(3, content: "")
+    }
+    @IBAction func buttonX(sender: UIButton, forEvent event: UIEvent) {
+        dataSource?.executeJS(0, content: "")
+    }
+    @IBAction func buttonY(sender: UIButton, forEvent event: UIEvent) {
+        dataSource?.executeJS(1, content: "")
+    }
+    @IBAction func buttonZ(sender: UIButton, forEvent event: UIEvent) {
+        dataSource?.executeJS(2, content: "")
+    }
+    
+    
+    @IBAction func userTappedBackground(sender: AnyObject) {
+        self.endEditing(true)
+    }
+    
+    weak var dataSource: DiplViewDelegate?
     
     var lineWidth : CGFloat = 3 {
         didSet {
@@ -40,6 +71,7 @@ class JSView: UIView {
         facePath.lineWidth = lineWidth
         color.set()
         facePath.stroke()
+    
     }
 
 
