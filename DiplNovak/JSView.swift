@@ -19,7 +19,9 @@ class JSView: UIView {
     @IBOutlet weak var textView1: UITextView!
     
     @IBAction func buttonRun(sender: UIButton, forEvent event: UIEvent) {
+        dataSource?.executeJS(4, content: "")
         dataSource?.executeJS(4, content: textView1.text)
+        sender.setTitle("Run", forState: .Normal)
     }
     @IBAction func buttonA(sender: UIButton, forEvent event: UIEvent) {
         dataSource?.executeJS(3, content: "")
@@ -34,6 +36,12 @@ class JSView: UIView {
         dataSource?.executeJS(2, content: "")
     }
     
+    @IBAction func button1(sender: UIButton, forEvent event: UIEvent) {
+        dataSource?.executeJS(5, content: textView1.text)
+    }
+    @IBAction func button2(sender: UIButton, forEvent event: UIEvent) {
+        dataSource?.executeJS(6, content: textView1.text)
+    }
     
     @IBAction func userTappedBackground(sender: AnyObject) {
         self.endEditing(true)

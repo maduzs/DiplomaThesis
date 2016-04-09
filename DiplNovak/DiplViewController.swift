@@ -17,8 +17,9 @@ class DiplViewController: UIViewController, WKScriptMessageHandler, DiplViewDele
         }
     }
     
-    var webView: WKWebView!
-    var webView2: WKWebView!
+    var webViews = [WKWebView]()
+    
+    let scriptMessageHandler = "buttonClicked";
 
     func executeJS(buttonId : Int, content : String){
         switch (buttonId){
@@ -32,6 +33,10 @@ class DiplViewController: UIViewController, WKScriptMessageHandler, DiplViewDele
             executeB(0)
         case 4 :
             executeCustom(content)
+        case 5 :
+            executeCustomA(content)
+        case 6 :
+            executeCustomB(content)
         default :
             return
         }
@@ -40,64 +45,72 @@ class DiplViewController: UIViewController, WKScriptMessageHandler, DiplViewDele
     
     //executes the script of webView on specified index
     func executeA(scriptIndex : Int){
-        if (webView.configuration.userContentController.userScripts.count > scriptIndex){
-            webView.evaluateJavaScript(webView.configuration.userContentController.userScripts[scriptIndex].source, completionHandler: nil)
+        if (webViews.count > 0 && webViews[0].configuration.userContentController.userScripts.count > scriptIndex){
+            webViews[0].evaluateJavaScript(webViews[0].configuration.userContentController.userScripts[scriptIndex].source, completionHandler: nil)
         }
     }
     
     //executes the script of webView2 on specified index
     func executeB(scriptIndex : Int){
-        if (webView2.configuration.userContentController.userScripts.count > scriptIndex){
-            webView2.evaluateJavaScript(webView2.configuration.userContentController.userScripts[scriptIndex].source, completionHandler: nil)
+        if (webViews.count > 1 && webViews[1].configuration.userContentController.userScripts.count > scriptIndex){
+            webViews[1].evaluateJavaScript(webViews[1].configuration.userContentController.userScripts[scriptIndex].source, completionHandler: nil)
         }
     }
     
     func executeCustom(content : String){
-        webView.evaluateJavaScript(content, completionHandler: customComplete)
+        // create new WKWebView if it doesnt exist
+        if !(webViews.count > 2){
+            
+            //Set up WKWebView configuration
+            let webConfiguration = getWebConfig(scriptMessageHandler, scriptNames: [])
+            
+            // Create a WKWebView instance
+            let webView = WKWebView (frame: self.view.frame, configuration: webConfiguration)
+            
+            webViews.append(webView)
+        }
+        else {
+            webViews.last!.evaluateJavaScript(content, completionHandler: customComplete)
+        }
+    }
+    
+    func executeCustomA(content : String){
+        if (webViews.count > 0){
+            webViews[0].evaluateJavaScript(content, completionHandler: customComplete)
+        }
+    }
+    
+    func executeCustomB(content : String){
+        if (webViews.count > 1){
+            webViews[1].evaluateJavaScript(content, completionHandler: customComplete)
+        }
     }
     
     func customComplete (t: AnyObject?, s: NSError?) -> Void{
-        containerView.label1.text = "cc"
-        print("cc")
+        
     }
     
-    var webConfig:WKWebViewConfiguration {
-        get {
-            
-            // Create WKWebViewConfiguration instance
-            let webCfg:WKWebViewConfiguration = WKWebViewConfiguration()
-            
-            // Setup WKUserContentController instance for injecting user script
-            let userController:WKUserContentController = WKUserContentController()
-            
-            // Add a script message handler for receiving  "buttonClicked" event notifications posted from the JS document using window.webkit.messageHandlers.buttonClicked.postMessage script message
-            // same scripts within one webview but separate messageHandlers will still be seeing each other
-            userController.addScriptMessageHandler(self, name: "buttonClicked")
-            
-            //inject the scripts
-            injectScript("Click", userController: userController);
-            injectScript("Click2", userController: userController);
-            injectScript("Click3", userController: userController);
+    func getWebConfig(messageHandlerName: String, scriptNames : [String]) -> WKWebViewConfiguration{
 
-            // Configure the WKWebViewConfiguration instance with the WKUserContentController
-            webCfg.userContentController = userController;
-            
-            return webCfg;
+        // Create WKWebViewConfiguration instance
+        let webCfg:WKWebViewConfiguration = WKWebViewConfiguration()
+        
+        // Setup WKUserContentController instance for injecting user script
+        let userController:WKUserContentController = WKUserContentController()
+                
+        // Add a script message handler for receiving  "buttonClicked" event notifications posted from the JS document using window.webkit.messageHandlers.buttonClicked.postMessage script message
+        // same scripts within one webview but separate messageHandlers will still be seeing each other
+        userController.addScriptMessageHandler(self, name: messageHandlerName)
+                
+                //inject the scripts
+        for script in scriptNames{
+            injectScript(script, userController: userController);
         }
-    }
-    
-    var webConfig2:WKWebViewConfiguration {
-        get {
-            let webCfg:WKWebViewConfiguration = WKWebViewConfiguration()
-            let userController:WKUserContentController = WKUserContentController()
-            userController.addScriptMessageHandler(self, name: "button2Clicked")
-            
-            injectScript("Click4", userController: userController);
-            
-            webCfg.userContentController = userController;
-            
-            return webCfg;
-        }
+                
+        // Configure the WKWebViewConfiguration instance with the WKUserContentController
+        webCfg.userContentController = userController;
+                
+        return webCfg;
     }
     
     func injectScript(scriptName : String, userController : WKUserContentController){
@@ -127,14 +140,26 @@ class DiplViewController: UIViewController, WKScriptMessageHandler, DiplViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //Set up WKWebView configuration
+        var scriptNames = [String]()
+        scriptNames.append("Click")
+        scriptNames.append("Click2")
+        scriptNames.append("Click3")
+        var webConfiguration = getWebConfig(scriptMessageHandler, scriptNames: scriptNames)
+        
         // Create a WKWebView instance
-        webView = WKWebView (frame: self.view.frame, configuration: webConfig)
+        let webView = WKWebView (frame: self.view.frame, configuration: webConfiguration)
         
         // Delegate to handle navigation of web content
         //webView!.navigationDelegate = self
         
+        //Set up WKWebView configuration
+        scriptNames = []
+        scriptNames.append("Click4")
+        webConfiguration = getWebConfig(scriptMessageHandler, scriptNames: scriptNames)
+        
         // Create a WKWebView instance
-        webView2 = WKWebView (frame: self.view.frame, configuration: webConfig2)
+        let webView2 = WKWebView (frame: self.view.frame, configuration: webConfiguration)
         
         // Delegate to handle navigation of web content
         //webView2!.navigationDelegate = self
@@ -142,6 +167,10 @@ class DiplViewController: UIViewController, WKScriptMessageHandler, DiplViewDele
         // prekryje JSView s wkwebview
         //view.addSubview(webView!)
         //self.view = self.webView
+        
+        //add the webViews to array of webViews
+        webViews.append(webView)
+        webViews.append(webView2)
         
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("dismissKeyboard")))
 
