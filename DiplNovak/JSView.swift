@@ -19,7 +19,6 @@ class JSView: UIView {
     @IBOutlet weak var textView1: UITextView!
     
     @IBAction func buttonRun(sender: UIButton, forEvent event: UIEvent) {
-        dataSource?.executeJS(4, content: "")
         dataSource?.executeJS(4, content: textView1.text)
         sender.setTitle("Run", forState: .Normal)
     }

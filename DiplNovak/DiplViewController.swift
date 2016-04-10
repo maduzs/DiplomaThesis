@@ -74,18 +74,21 @@ class DiplViewController: UIViewController, WKScriptMessageHandler, DiplViewDele
         }
     }
     
+    // executes the script inside webView instance
     func executeCustomA(content : String){
         if (webViews.count > 0){
             webViews[0].evaluateJavaScript(content, completionHandler: customComplete)
         }
     }
     
+    //executes the script inside webView2 instance
     func executeCustomB(content : String){
         if (webViews.count > 1){
             webViews[1].evaluateJavaScript(content, completionHandler: customComplete)
         }
     }
     
+    // after the script completes
     func customComplete (t: AnyObject?, s: NSError?) -> Void{
         
     }
@@ -142,9 +145,9 @@ class DiplViewController: UIViewController, WKScriptMessageHandler, DiplViewDele
         
         //Set up WKWebView configuration
         var scriptNames = [String]()
-        scriptNames.append("Click")
-        scriptNames.append("Click2")
-        scriptNames.append("Click3")
+        scriptNames.append("JS")
+        scriptNames.append("JS2")
+        scriptNames.append("JS3")
         var webConfiguration = getWebConfig(scriptMessageHandler, scriptNames: scriptNames)
         
         // Create a WKWebView instance
@@ -155,7 +158,7 @@ class DiplViewController: UIViewController, WKScriptMessageHandler, DiplViewDele
         
         //Set up WKWebView configuration
         scriptNames = []
-        scriptNames.append("Click4")
+        scriptNames.append("JS4")
         webConfiguration = getWebConfig(scriptMessageHandler, scriptNames: scriptNames)
         
         // Create a WKWebView instance

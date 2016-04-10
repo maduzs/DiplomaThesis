@@ -7,13 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BF069A7F1CA42A6300F37C18 /* Click.js in Resources */ = {isa = PBXBuildFile; fileRef = BF069A7E1CA42A6300F37C18 /* Click.js */; };
-		BF069A811CA42DB200F37C18 /* Click2.js in Resources */ = {isa = PBXBuildFile; fileRef = BF069A801CA42DB200F37C18 /* Click2.js */; };
-		BF069A831CA44F5400F37C18 /* Click3.js in Resources */ = {isa = PBXBuildFile; fileRef = BF069A821CA44F5400F37C18 /* Click3.js */; };
-		BF069A851CA4562E00F37C18 /* Click4.js in Resources */ = {isa = PBXBuildFile; fileRef = BF069A841CA4562E00F37C18 /* Click4.js */; };
-		BFB2D6EA1C8B398400968F19 /* ClickMeEventRegister.js in Resources */ = {isa = PBXBuildFile; fileRef = BFB2D6E91C8B398400968F19 /* ClickMeEventRegister.js */; };
-		BFB2D6EC1C8B3A1600968F19 /* TestFile.html in Resources */ = {isa = PBXBuildFile; fileRef = BFB2D6EB1C8B3A1600968F19 /* TestFile.html */; };
-		BFB2D6EE1C8B53DC00968F19 /* style.css in Resources */ = {isa = PBXBuildFile; fileRef = BFB2D6ED1C8B53DC00968F19 /* style.css */; };
+		BF069A7F1CA42A6300F37C18 /* JS.js in Resources */ = {isa = PBXBuildFile; fileRef = BF069A7E1CA42A6300F37C18 /* JS.js */; };
+		BF069A811CA42DB200F37C18 /* JS2.js in Resources */ = {isa = PBXBuildFile; fileRef = BF069A801CA42DB200F37C18 /* JS2.js */; };
+		BF069A831CA44F5400F37C18 /* JS3.js in Resources */ = {isa = PBXBuildFile; fileRef = BF069A821CA44F5400F37C18 /* JS3.js */; };
+		BF069A851CA4562E00F37C18 /* JS4.js in Resources */ = {isa = PBXBuildFile; fileRef = BF069A841CA4562E00F37C18 /* JS4.js */; };
 		BFB567F01C83625400136E52 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB567EF1C83625400136E52 /* AppDelegate.swift */; };
 		BFB567F71C83625400136E52 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BFB567F61C83625400136E52 /* Assets.xcassets */; };
 		BFB568051C83625400136E52 /* DiplNovakTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB568041C83625400136E52 /* DiplNovakTests.swift */; };
@@ -42,13 +39,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		BF069A7E1CA42A6300F37C18 /* Click.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = Click.js; sourceTree = "<group>"; };
-		BF069A801CA42DB200F37C18 /* Click2.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = Click2.js; sourceTree = "<group>"; };
-		BF069A821CA44F5400F37C18 /* Click3.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = Click3.js; sourceTree = "<group>"; };
-		BF069A841CA4562E00F37C18 /* Click4.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = Click4.js; sourceTree = "<group>"; };
-		BFB2D6E91C8B398400968F19 /* ClickMeEventRegister.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ClickMeEventRegister.js; sourceTree = "<group>"; };
-		BFB2D6EB1C8B3A1600968F19 /* TestFile.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = TestFile.html; sourceTree = "<group>"; };
-		BFB2D6ED1C8B53DC00968F19 /* style.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = style.css; sourceTree = "<group>"; };
+		BF069A7E1CA42A6300F37C18 /* JS.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JS.js; sourceTree = "<group>"; };
+		BF069A801CA42DB200F37C18 /* JS2.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JS2.js; sourceTree = "<group>"; };
+		BF069A821CA44F5400F37C18 /* JS3.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JS3.js; sourceTree = "<group>"; };
+		BF069A841CA4562E00F37C18 /* JS4.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JS4.js; sourceTree = "<group>"; };
 		BFB567EC1C83625400136E52 /* DiplNovak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DiplNovak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFB567EF1C83625400136E52 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BFB567F61C83625400136E52 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -142,13 +136,10 @@
 		BFB5681D1C83626600136E52 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				BFB2D6EB1C8B3A1600968F19 /* TestFile.html */,
-				BFB2D6E91C8B398400968F19 /* ClickMeEventRegister.js */,
-				BF069A7E1CA42A6300F37C18 /* Click.js */,
-				BF069A801CA42DB200F37C18 /* Click2.js */,
-				BF069A821CA44F5400F37C18 /* Click3.js */,
-				BF069A841CA4562E00F37C18 /* Click4.js */,
-				BFB2D6ED1C8B53DC00968F19 /* style.css */,
+				BF069A7E1CA42A6300F37C18 /* JS.js */,
+				BF069A801CA42DB200F37C18 /* JS2.js */,
+				BF069A821CA44F5400F37C18 /* JS3.js */,
+				BF069A841CA4562E00F37C18 /* JS4.js */,
 				BFB567EF1C83625400136E52 /* AppDelegate.swift */,
 				BFB568241C8379DC00136E52 /* background.jpg */,
 				BFB567F61C83625400136E52 /* Assets.xcassets */,
@@ -261,16 +252,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF069A851CA4562E00F37C18 /* Click4.js in Resources */,
-				BFB2D6EE1C8B53DC00968F19 /* style.css in Resources */,
-				BFB2D6EC1C8B3A1600968F19 /* TestFile.html in Resources */,
+				BF069A851CA4562E00F37C18 /* JS4.js in Resources */,
 				BFB568251C8379DC00136E52 /* background.jpg in Resources */,
-				BFB2D6EA1C8B398400968F19 /* ClickMeEventRegister.js in Resources */,
 				BFB567F71C83625400136E52 /* Assets.xcassets in Resources */,
 				BFB568231C836E2100136E52 /* Main.storyboard in Resources */,
-				BF069A831CA44F5400F37C18 /* Click3.js in Resources */,
-				BF069A811CA42DB200F37C18 /* Click2.js in Resources */,
-				BF069A7F1CA42A6300F37C18 /* Click.js in Resources */,
+				BF069A831CA44F5400F37C18 /* JS3.js in Resources */,
+				BF069A811CA42DB200F37C18 /* JS2.js in Resources */,
+				BF069A7F1CA42A6300F37C18 /* JS.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
