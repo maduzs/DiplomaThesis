@@ -11,6 +11,10 @@
 		BF069A811CA42DB200F37C18 /* JS2.js in Resources */ = {isa = PBXBuildFile; fileRef = BF069A801CA42DB200F37C18 /* JS2.js */; };
 		BF069A831CA44F5400F37C18 /* JS3.js in Resources */ = {isa = PBXBuildFile; fileRef = BF069A821CA44F5400F37C18 /* JS3.js */; };
 		BF069A851CA4562E00F37C18 /* JS4.js in Resources */ = {isa = PBXBuildFile; fileRef = BF069A841CA4562E00F37C18 /* JS4.js */; };
+		BF2BA7531CDF76EE00C7924F /* SandboxManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2BA7521CDF76EE00C7924F /* SandboxManager.swift */; };
+		BF2C7BCB1D15B58D0044B6BE /* UIFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2C7BCA1D15B58D0044B6BE /* UIFactory.swift */; };
+		BF3A11F41CDE31C40050C80E /* JSAPI.js in Resources */ = {isa = PBXBuildFile; fileRef = BF3A11F31CDE31C40050C80E /* JSAPI.js */; };
+		BF6AC7C01D1800630038DFBF /* UIClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6AC7BF1D1800630038DFBF /* UIClass.swift */; };
 		BFB567F01C83625400136E52 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB567EF1C83625400136E52 /* AppDelegate.swift */; };
 		BFB567F71C83625400136E52 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BFB567F61C83625400136E52 /* Assets.xcassets */; };
 		BFB568051C83625400136E52 /* DiplNovakTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB568041C83625400136E52 /* DiplNovakTests.swift */; };
@@ -19,6 +23,7 @@
 		BFB568211C8368CC00136E52 /* JSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB568201C8368CC00136E52 /* JSView.swift */; };
 		BFB568231C836E2100136E52 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BFB568221C836E2100136E52 /* Main.storyboard */; };
 		BFB568251C8379DC00136E52 /* background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BFB568241C8379DC00136E52 /* background.jpg */; };
+		BFBB84301CD500FC00A31EBB /* MyWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBB842F1CD500FC00A31EBB /* MyWebView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +48,10 @@
 		BF069A801CA42DB200F37C18 /* JS2.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JS2.js; sourceTree = "<group>"; };
 		BF069A821CA44F5400F37C18 /* JS3.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JS3.js; sourceTree = "<group>"; };
 		BF069A841CA4562E00F37C18 /* JS4.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JS4.js; sourceTree = "<group>"; };
+		BF2BA7521CDF76EE00C7924F /* SandboxManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SandboxManager.swift; sourceTree = "<group>"; };
+		BF2C7BCA1D15B58D0044B6BE /* UIFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIFactory.swift; sourceTree = "<group>"; };
+		BF3A11F31CDE31C40050C80E /* JSAPI.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JSAPI.js; sourceTree = "<group>"; };
+		BF6AC7BF1D1800630038DFBF /* UIClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIClass.swift; sourceTree = "<group>"; };
 		BFB567EC1C83625400136E52 /* DiplNovak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DiplNovak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFB567EF1C83625400136E52 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BFB567F61C83625400136E52 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -57,6 +66,7 @@
 		BFB568201C8368CC00136E52 /* JSView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSView.swift; sourceTree = "<group>"; };
 		BFB568221C836E2100136E52 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		BFB568241C8379DC00136E52 /* background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = background.jpg; sourceTree = "<group>"; };
+		BFBB842F1CD500FC00A31EBB /* MyWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyWebView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +121,10 @@
 				BFB5681E1C8366E400136E52 /* DiplViewController.swift */,
 				BFB568201C8368CC00136E52 /* JSView.swift */,
 				BFB5681D1C83626600136E52 /* Supporting Files */,
+				BFBB842F1CD500FC00A31EBB /* MyWebView.swift */,
+				BF2BA7521CDF76EE00C7924F /* SandboxManager.swift */,
+				BF2C7BCA1D15B58D0044B6BE /* UIFactory.swift */,
+				BF6AC7BF1D1800630038DFBF /* UIClass.swift */,
 			);
 			path = DiplNovak;
 			sourceTree = "<group>";
@@ -144,6 +158,7 @@
 				BFB568241C8379DC00136E52 /* background.jpg */,
 				BFB567F61C83625400136E52 /* Assets.xcassets */,
 				BFB567FB1C83625400136E52 /* Info.plist */,
+				BF3A11F31CDE31C40050C80E /* JSAPI.js */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -256,6 +271,7 @@
 				BFB568251C8379DC00136E52 /* background.jpg in Resources */,
 				BFB567F71C83625400136E52 /* Assets.xcassets in Resources */,
 				BFB568231C836E2100136E52 /* Main.storyboard in Resources */,
+				BF3A11F41CDE31C40050C80E /* JSAPI.js in Resources */,
 				BF069A831CA44F5400F37C18 /* JS3.js in Resources */,
 				BF069A811CA42DB200F37C18 /* JS2.js in Resources */,
 				BF069A7F1CA42A6300F37C18 /* JS.js in Resources */,
@@ -284,6 +300,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				BFB567F01C83625400136E52 /* AppDelegate.swift in Sources */,
+				BFBB84301CD500FC00A31EBB /* MyWebView.swift in Sources */,
+				BF2C7BCB1D15B58D0044B6BE /* UIFactory.swift in Sources */,
+				BF2BA7531CDF76EE00C7924F /* SandboxManager.swift in Sources */,
+				BF6AC7C01D1800630038DFBF /* UIClass.swift in Sources */,
 				BFB568211C8368CC00136E52 /* JSView.swift in Sources */,
 				BFB5681F1C8366E400136E52 /* DiplViewController.swift in Sources */,
 			);

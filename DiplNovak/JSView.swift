@@ -19,14 +19,25 @@ class JSView: UIView {
     @IBOutlet weak var textView1: UITextView!
     
     @IBAction func buttonRun(sender: UIButton, forEvent event: UIEvent) {
-        dataSource?.executeJS(4, content: textView1.text)
-        sender.setTitle("Run", forState: .Normal)
+        /*dataSource?.executeJS(4, content: textView1.text)
+        sender.setTitle("Run", forState: .Normal)*/
+        var i = 0;
+        while i < 1{
+            i++;
+            dataSource?.executeJS(4, content: textView1.text)
+            //dataSource?.executeJS(3, content: "")
+        }
     }
     @IBAction func buttonA(sender: UIButton, forEvent event: UIEvent) {
         dataSource?.executeJS(3, content: "")
     }
     @IBAction func buttonX(sender: UIButton, forEvent event: UIEvent) {
-        dataSource?.executeJS(0, content: "")
+        var i = 0;
+        while i < 1{
+            i++;
+            dataSource?.executeJS(1, content: "")
+            //dataSource?.executeJS(3, content: "")
+        }
     }
     @IBAction func buttonY(sender: UIButton, forEvent event: UIEvent) {
         dataSource?.executeJS(1, content: "")

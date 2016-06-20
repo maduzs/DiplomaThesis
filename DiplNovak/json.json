@@ -1,0 +1,29 @@
+{
+    "blogs": [
+        {
+            "needspassword": true,
+            "id": 73,
+            "url": "http://remote.bloxus.com/",
+            "name": "Bloxus test"
+        },
+        {
+            "needspassword": false,
+            "id": 74,
+            "url": "http://flickrtest1.userland.com/",
+            "name": "Manila Test"
+        }
+    ],
+    "stat": "ok"
+}
+
+
+
+
+{ "className" : "JS2",
+    "uiElements" : [
+        { "button": { "title" : "button1" , "method": "eval", "params": [ {"value" : "test"}, {"value" : "test2"} ] }},
+        { "button": { "title" : "button2" , "method": "eval2", "params": [ {"value" : "test3"}, {"value" : "test4"} ] }},
+        { "label": {"title" : "label1"} },
+        { "textfield": {"title" : "textField1" } }
+    ]
+}

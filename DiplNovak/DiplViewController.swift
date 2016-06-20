@@ -9,7 +9,7 @@
 import UIKit
 import WebKit
 
-class DiplViewController: UIViewController, WKScriptMessageHandler, DiplViewDelegate {
+class DiplViewController: UIViewController, DiplViewDelegate {
     
     @IBOutlet weak var containerView: JSView! {
         didSet {
@@ -17,127 +17,43 @@ class DiplViewController: UIViewController, WKScriptMessageHandler, DiplViewDele
         }
     }
     
-    var webViews = [WKWebView]()
+    private var webViews = [WKWebView]()
     
-    let scriptMessageHandler = "buttonClicked";
+    private var results = [Int: AnyObject]();
+    
+    private var buttonTag = 1;
+    
+    private var uiObjects = [Int : UIClass]();
+    
+    private let scriptMessageHandler = "callbackHandler";
+    
+    private let jsapi = "JSAPI"
+    
+    private let jsCommunicator = "JS_COMMUNICATOR";
+    
+    private let sandboxManager: SandboxManager = SandboxManager(handlerName: "callbackHandler", apiFileName: "JSAPI", scriptCommunicatorName: "JS_COMMUNICATOR");
 
     func executeJS(buttonId : Int, content : String){
         switch (buttonId){
         case 0 :
-            executeA(0)
+            sandboxManager.executeScript(0, scriptId: 0)
         case 1 :
-            executeA(1)
+            sandboxManager.executeScript(0, scriptId: 1)
         case 2 :
-            executeA(2)
+            sandboxManager.executeScript(0, scriptId: 2)
         case 3 :
-            executeB(0)
-        case 4 :
-            executeCustom(content)
+            sandboxManager.executeScript(1, scriptId: 0)
+        //case 4 :
+            //sandboxManager.executeClassContent(0, className: "test", content: content)
+            //sandboxManager.executeRender(0, className: "JS2")
         case 5 :
-            executeCustomA(content)
+            sandboxManager.executeContent(0, content: content)
         case 6 :
-            executeCustomB(content)
+            sandboxManager.executeContent(1, content: content)
         default :
             return
         }
         //containerView.setNeedsDisplay();
-    }
-    
-    //executes the script of webView on specified index
-    func executeA(scriptIndex : Int){
-        if (webViews.count > 0 && webViews[0].configuration.userContentController.userScripts.count > scriptIndex){
-            webViews[0].evaluateJavaScript(webViews[0].configuration.userContentController.userScripts[scriptIndex].source, completionHandler: nil)
-        }
-    }
-    
-    //executes the script of webView2 on specified index
-    func executeB(scriptIndex : Int){
-        if (webViews.count > 1 && webViews[1].configuration.userContentController.userScripts.count > scriptIndex){
-            webViews[1].evaluateJavaScript(webViews[1].configuration.userContentController.userScripts[scriptIndex].source, completionHandler: nil)
-        }
-    }
-    
-    func executeCustom(content : String){
-        // create new WKWebView if it doesnt exist
-        if !(webViews.count > 2){
-            
-            //Set up WKWebView configuration
-            let webConfiguration = getWebConfig(scriptMessageHandler, scriptNames: [])
-            
-            // Create a WKWebView instance
-            let webView = WKWebView (frame: self.view.frame, configuration: webConfiguration)
-            
-            webViews.append(webView)
-        }
-        else {
-            webViews.last!.evaluateJavaScript(content, completionHandler: customComplete)
-        }
-    }
-    
-    // executes the script inside webView instance
-    func executeCustomA(content : String){
-        if (webViews.count > 0){
-            webViews[0].evaluateJavaScript(content, completionHandler: customComplete)
-        }
-    }
-    
-    //executes the script inside webView2 instance
-    func executeCustomB(content : String){
-        if (webViews.count > 1){
-            webViews[1].evaluateJavaScript(content, completionHandler: customComplete)
-        }
-    }
-    
-    // after the script completes
-    func customComplete (t: AnyObject?, s: NSError?) -> Void{
-        
-    }
-    
-    func getWebConfig(messageHandlerName: String, scriptNames : [String]) -> WKWebViewConfiguration{
-
-        // Create WKWebViewConfiguration instance
-        let webCfg:WKWebViewConfiguration = WKWebViewConfiguration()
-        
-        // Setup WKUserContentController instance for injecting user script
-        let userController:WKUserContentController = WKUserContentController()
-                
-        // Add a script message handler for receiving  "buttonClicked" event notifications posted from the JS document using window.webkit.messageHandlers.buttonClicked.postMessage script message
-        // same scripts within one webview but separate messageHandlers will still be seeing each other
-        userController.addScriptMessageHandler(self, name: messageHandlerName)
-                
-                //inject the scripts
-        for script in scriptNames{
-            injectScript(script, userController: userController);
-        }
-                
-        // Configure the WKWebViewConfiguration instance with the WKUserContentController
-        webCfg.userContentController = userController;
-                
-        return webCfg;
-    }
-    
-    func injectScript(scriptName : String, userController : WKUserContentController){
-        // Get script that's to be injected into the document
-        let js:String = addClickScript(scriptName)
-        
-        // Specify when and where and what user script needs to be injected into the web document
-        let userScript:WKUserScript =  WKUserScript(source: js, injectionTime: WKUserScriptInjectionTime.AtDocumentEnd, forMainFrameOnly: false)
-        
-        // Add the user script to the WKUserContentController instance
-        userController.addUserScript(userScript);
-    }
-    
-    // Button Click Script to Add to Document
-    func addClickScript(scriptName : String) ->String{
-        
-        var script:String?
-        
-        if let filePath:String = NSBundle(forClass: DiplViewController.self).pathForResource(scriptName, ofType:"js") {
-            
-            script = try? String (contentsOfFile: filePath, encoding: NSUTF8StringEncoding)
-        }
-        return script!;
-        
     }
     
     override func viewDidLoad() {
@@ -147,36 +63,35 @@ class DiplViewController: UIViewController, WKScriptMessageHandler, DiplViewDele
         var scriptNames = [String]()
         scriptNames.append("JS")
         scriptNames.append("JS2")
-        scriptNames.append("JS3")
-        var webConfiguration = getWebConfig(scriptMessageHandler, scriptNames: scriptNames)
+        //scriptNames.append("JS3")
         
-        // Create a WKWebView instance
-        let webView = WKWebView (frame: self.view.frame, configuration: webConfiguration)
-        
-        // Delegate to handle navigation of web content
-        //webView!.navigationDelegate = self
-        
-        //Set up WKWebView configuration
-        scriptNames = []
-        scriptNames.append("JS4")
-        webConfiguration = getWebConfig(scriptMessageHandler, scriptNames: scriptNames)
-        
-        // Create a WKWebView instance
-        let webView2 = WKWebView (frame: self.view.frame, configuration: webConfiguration)
-        
-        // Delegate to handle navigation of web content
-        //webView2!.navigationDelegate = self
-        
-        // prekryje JSView s wkwebview
-        //view.addSubview(webView!)
-        //self.view = self.webView
-        
-        //add the webViews to array of webViews
-        webViews.append(webView)
-        webViews.append(webView2)
-        
-        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("dismissKeyboard")))
+        let newSandboxId: Int = sandboxManager.createSandbox(self.view, scripts: scriptNames)
+        if (newSandboxId < 0){
+            return
+        }
 
+        sandboxManager.executeRender(newSandboxId, className: "JS2") {(objects) -> Void in
+            for (object) in objects {
+                if let btn = object.uiElement as? UIButton {
+                    btn.addTarget(self, action: "buttonAction:", forControlEvents: UIControlEvents.TouchUpInside)
+                    //if let button = ButtonClass(sandboxId: 0, className: btn.cl, functionName: <#T##String#>, params: <#T##[String]#>)
+                    self.uiObjects[btn.tag] = object;
+                }
+                self.view.addSubview(object.uiElement)
+            }
+        }
+        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("dismissKeyboard")))
+    }
+    
+    func buttonAction(sender: UIButton!) {
+        print("Button tapped")
+        print(sender.tag);
+        print(sender.currentTitle);
+        //sender.setTitle("test", forState: UIControlState.Normal);
+        // sandboxId TODO
+        if let object = uiObjects[sender.tag]{
+            sandboxManager.executeClassContent(object.sandboxId, className: object.className, functionName: object.functionName, functionParams: object.params)
+        }
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -185,26 +100,14 @@ class DiplViewController: UIViewController, WKScriptMessageHandler, DiplViewDele
     
     func dismissKeyboard(){
         containerView.textView1.resignFirstResponder()
+        for case let textField as UITextField in self.view.subviews {
+            textField.resignFirstResponder()
+        }
     }
-
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-    
-    // WKScriptMessageHandler Delegate
-    func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
-        if let messageBody:NSDictionary = message.body as? NSDictionary {
-            let idOfTappedButton:String = messageBody["ID"] as! String
-            
-            let msg:String = messageBody["msg"] as! String
-            
-            print("button tapped: " + idOfTappedButton)
-            print("messsage: " + String(msg))
-            containerView.label1.text = msg;
-        }
-        
     }
     
     // Helper
@@ -223,7 +126,6 @@ class DiplViewController: UIViewController, WKScriptMessageHandler, DiplViewDele
         })
     }
     
-
     /*
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {

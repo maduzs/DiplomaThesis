@@ -1,5 +1,5 @@
 var a = 1;
-var id = 'A';
+var id = 10;
 var messageToPost = {'ID': id, 'msg' : 'a= ' + a.toString()};
 
-window.webkit.messageHandlers.buttonClicked.postMessage(messageToPost);
+window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
