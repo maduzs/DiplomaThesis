@@ -27,13 +27,6 @@ var JSAPI = function(){
         else {
             window[className][funcName]();
         }
-        
-        
-        //JSON possible?
-        //var obj = JSON.parse(msg.data);
-        /*if (obj.act == "invoke") {
-            eval(obj.target).apply(window,obj.args);
-        }*/
     }
     
     this.init = function (className) {
@@ -60,15 +53,13 @@ var JSAPI = function(){
         }
     }
     
-
-    
-    this.registerObject = function(className) {
-        window[className] = new window[className]();
-    }
-    
     this.sendResponse = function(content){
         var messageToPost = {'ID': callId, 'msg' : content};
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
+    }
+    
+    this.registerObject = function(className) {
+        window[className] = new window[className]();
     }
     
     this.destroy = function (className) {

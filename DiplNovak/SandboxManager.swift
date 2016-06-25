@@ -27,13 +27,9 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
     
     let factory = UIFactory();
     
-    let randomRange: UInt32 = 100000
+    let responseParser = ResponseParser();
     
-    static var minions:[UIView] = [] {
-        didSet {
-            
-        }
-    }
+    let randomRange: UInt32 = 100000
     
     override init(){
         renderMethod = "render"
@@ -66,6 +62,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             return -1
         }
         
+        // registers the script in sandbox and in JSAPI
         for script in scripts{
             let js = getScriptFileContent(script)
             do {
@@ -78,21 +75,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             }
             
         }
-        /*do {
-            // not executing TODO
-            //try _ = webView.evaluateJavaScript(jsCommunicator + ".init('JS2')")
-            //try _ = webView.evaluateJavaScript(jsCommunicator + ".render('testClass')")
-            //try _ = webView.evaluateJavaScript(jsCommunicator + ".destroy('testClass')")
-            //try _ = webView.evaluateJavaScript(jsCommunicator + ".init('testClass')")
-            
-        }
-        catch{
-            
-        }*/
 
-            
-
-        
         sync(webViews){
             self.webViews.append(webView)
             self.sandboxId = self.webViews.count
@@ -101,13 +84,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         return sandboxId - 1;
     }
     
-    func destroySandbox(sandboxId : Int) -> Bool{
-        sync(webViews){
-            self.webViews.removeAtIndex(sandboxId)
-        }
-        return true
-    }
-    
+    // executes the script which is saved inside webView
     func executeScript(sandboxId : Int, scriptId: Int) -> String {
         var resultString : String = "";
         if (webViews.count > sandboxId && webViews[sandboxId].configuration.userContentController.userScripts.count > scriptId){
@@ -118,6 +95,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         return resultString;
     }
     
+    // executes the script content inside sandbox
     func executeContent(sandboxId: Int, content : String) -> String{
         var resultString : String = "";
         if (webViews.count > sandboxId){
@@ -128,6 +106,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         return resultString;
     }
     
+    // executes the script of specified method of specified class with parameters
     func executeClassContent(sandboxId: Int, className: String, functionName: String, functionParams : [String]) -> NSDictionary{
         var resultString : NSDictionary = NSDictionary();
         if (webViews.count > sandboxId){
@@ -138,10 +117,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         return resultString;
     }
     
-    func test(completionHandler : ((javaScriptString: String, javaScriptString2: String, isResponse : Bool) -> Void)) {
-        
-    }
-    
+    // executes the render method of specified class
     func executeRender(sandboxId: Int, className:String, completionHandler : ((objects : [UIClass]) -> Void)) {
         var resultUI = [UIClass]()
         var renderResult : NSDictionary = NSDictionary()
@@ -150,7 +126,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         sync(results){
             self.results[diceRoll] = "init";
         }
-        print(diceRoll)
+        print("ID: " + String(diceRoll))
 
         let scriptQuery = jsCommunicator + ".evaluateClass(" + String(diceRoll) + ", '" + className + "', '" + renderMethod + "')"
         
@@ -160,8 +136,6 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             }
             
             print(self.results[diceRoll]!)
-            
-
             
             if let _ = self.results[diceRoll]! as? NSDictionary{
                 renderResult = self.results[diceRoll]! as! NSDictionary
@@ -175,14 +149,14 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                 self.results.removeValueForKey(diceRoll)
             }
             
-            resultUI = self.parseRender(sandboxId, className: className, renderResult: renderResult);
+            resultUI = self.responseParser.parseRenderResponse(sandboxId, className: className, renderResult: renderResult)
             
             completionHandler(objects: resultUI)
         }
     }
     
     private func executeClass(sandboxId: Int, className:String, functionName: String, functionParams: [String]) ->NSDictionary {
-        var parseResult : NSDictionary = NSDictionary()
+        var executeClassResult : NSDictionary = NSDictionary()
         
         let diceRoll = Int(arc4random_uniform(randomRange) + 1)
         sync(results){
@@ -197,10 +171,6 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         }
         scriptQuery += ")"
         
-        //test
-        //scriptQuery = jsCommunicator + ".evaluateClass(" + String(diceRoll) + ", 'JS2', 'render')"
-        
-        
         webViews[sandboxId].evaluateJavaScript(scriptQuery) { (result, error) in
             if error != nil {
                 print("ERROR")
@@ -209,11 +179,11 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             print(self.results[diceRoll]!)
             
             if let _ = self.results[diceRoll]! as? NSDictionary{
-                parseResult = self.results[diceRoll]! as! NSDictionary
+                executeClassResult = self.results[diceRoll]! as! NSDictionary
             }
             else{
                 if let resultString = self.results[diceRoll]! as? String{
-                    parseResult = [0: resultString]
+                    executeClassResult = [0: resultString]
                 }
                 else{
                     print("error while reading result executeClass!")
@@ -224,101 +194,14 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             self.sync(self.results){
                 self.results.removeValueForKey(diceRoll)
             }
-            // TODO netreba asi
-            //self.parseResult(parseResult);
-            
+            // TODO maybe parsing specific results
             
         }
-        return parseResult;
-        
-        // for test
-        /*JSON
-        let json = "{'act':'invoke','target':'test','args':['test']}";
-        scriptQuery = jsCommunicator + ".evaluateClass(" + json + ")"*/
-    }
-    
-    private func parseRender(sandboxId: Int, className: String, renderResult: NSDictionary) -> [UIClass]{
-        // render response
-        var result  = [UIClass]()
-        
-        if let itemsArray : NSArray = renderResult.objectForKey("uiElements") as? NSArray{
-            
-            for (item) in itemsArray {
-                if let content: NSDictionary = item.objectForKey("button") as? NSDictionary {
-                    
-                    if let title : String = content.objectForKey("title") as? String{
-                        let cgRect = CGRect(x: 100, y: 100, width: 100, height: 50)
-                        var cgRect2 = CGRect(x: 100, y: 100, width: 100, height: 50)
-                        if (title == "button2"){
-                            cgRect2 = CGRect(x: 100, y: 200, width: 100, height: 50)
-                        }
-                        
-                        if let uiButton :UIButton = factory.createButton(cgRect, cgRect2: cgRect2, color: UIColor.greenColor(), title : title, state: UIControlState.Normal){
-                            var functionName = ""
-                            var params = [String]()
-                            
-                            if let fn : String = content.objectForKey("onClick") as? String {
-                                functionName = fn;
-                                if let paramsArray : NSArray = content.objectForKey("params") as? NSArray{
-                                    for (paramOjb) in paramsArray{
-                                        if let paramDictionary : String = paramOjb.objectForKey("value") as? String{
-                                            params.append(paramDictionary)
-                                        }
-                                    }
-                                }
-                            }
-                            
-                            if let uiClass : UIClass = UIClass(sandboxId: sandboxId, className: className, functionName: functionName, params: params, uiElement: uiButton){
-                                
-                                result.append(uiClass)
-                            }
-                        }
-                        
-                        
-                        
-                        
-                        continue
-                    }
-                    
-                }
-                if let content: NSDictionary = item.objectForKey("label") as? NSDictionary {
-                    if let text : String = content.objectForKey("text") as? String{
-                        
-                        let cgRectLabel = CGRect(x: 50, y: 50, width: 200, height: 21)
-                        let uiLabel = factory.createLabel(cgRectLabel, textColor : UIColor.blackColor(), backgroundColor : UIColor.whiteColor(), textAlignment: NSTextAlignment.Center, text: text)
-                        
-                        if let uiClass : UIClass = UIClass(sandboxId: sandboxId, className: className, functionName: "", params: [], uiElement: uiLabel) {
-                            result.append(uiClass)
-                        }
-                        
-                        continue
-                    }
-                }
-                if let content: NSDictionary = item.objectForKey("textfield") as? NSDictionary {
-                    if let text : String = content.objectForKey("text") as? String{
-                        
-                        let cgRectTextField = CGRect(x: 50, y: 70, width: 200, height: 30)
-                        let uiTextField = factory.createTextField(cgRectTextField, text: text, backgroundColor : UIColor.blackColor())
-                        
-                        if let uiClass : UIClass = UIClass(sandboxId: sandboxId, className: className, functionName: "", params: [], uiElement: uiTextField){
-                            result.append(uiClass)
-                        }
-                        
-                        continue
-                    }
-                }
-            }
-        }
-        
-        return result
-    }
-    
-    private func parseResult(executeResult : NSDictionary){
-
+        return executeClassResult;
     }
     
     private func execute(sandboxId: Int, functionName: String, functionParams: [String]) -> String{
-        let executeResult : String = "";
+        var executeResult : String = "";
         
         let diceRoll = Int(arc4random_uniform(randomRange) + 1)
         sync(results){
@@ -334,7 +217,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         scriptQuery += ")"
         
         // for test
-        scriptQuery = jsCommunicator + ".evaluate(" + String(diceRoll) + ",'test','ppp','qqq')"
+        //scriptQuery = jsCommunicator + ".evaluate(" + String(diceRoll) + ",'test','ppp','qqq')"
         
         webViews[sandboxId].evaluateJavaScript(scriptQuery) { (result, error) in
             if error != nil {
@@ -344,7 +227,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             print(self.results[diceRoll]!)
 
             if let _ :String = self.results[diceRoll]! as? String{
-                
+                executeResult = self.results[diceRoll]! as! String
             }
             else{
                 print("error while reading result execute!")
@@ -394,7 +277,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         userController.addUserScript(userScript);
     }
     
-    // Button Click Script to Add to Document
+    // gets the content from file
     func getScriptFileContent(scriptName : String) ->String{
         
         var script:String?
@@ -415,7 +298,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             if (message.name != scriptMessageHandler){
                 return;
             }
-            let idOfTappedButton:Int = messageBody["ID"] as! Int
+            let actionID:Int = messageBody["ID"] as! Int
             
             let msg:AnyObject;
             
@@ -431,12 +314,10 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                 }
             }
             
-            
-            //print("button tapped: " + String(idOfTappedButton))
-            //print("messsage: " + String(msg))
+            print("action ID: " + String(actionID) + " message: " + String(msg))
             
             sync(results){
-                self.results[idOfTappedButton] = msg;
+                self.results[actionID] = msg;
             }
         }
         
@@ -447,6 +328,13 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         objc_sync_enter(lock)
         closure()
         objc_sync_exit(lock)
+    }
+    
+    func destroySandbox(sandboxId : Int) -> Bool{
+        sync(webViews){
+            self.webViews.removeAtIndex(sandboxId)
+        }
+        return true
     }
     
     deinit {

@@ -14,18 +14,17 @@ protocol DiplViewDelegate: class {
 
 class JSView: UIView {
     
+    weak var dataSource: DiplViewDelegate?
+    
     @IBOutlet weak var label1: UILabel!
     
     @IBOutlet weak var textView1: UITextView!
     
     @IBAction func buttonRun(sender: UIButton, forEvent event: UIEvent) {
-        /*dataSource?.executeJS(4, content: textView1.text)
-        sender.setTitle("Run", forState: .Normal)*/
         var i = 0;
         while i < 1{
             i++;
             dataSource?.executeJS(4, content: textView1.text)
-            //dataSource?.executeJS(3, content: "")
         }
     }
     @IBAction func buttonA(sender: UIButton, forEvent event: UIEvent) {
@@ -36,7 +35,6 @@ class JSView: UIView {
         while i < 1{
             i++;
             dataSource?.executeJS(1, content: "")
-            //dataSource?.executeJS(3, content: "")
         }
     }
     @IBAction func buttonY(sender: UIButton, forEvent event: UIEvent) {
@@ -56,8 +54,6 @@ class JSView: UIView {
     @IBAction func userTappedBackground(sender: AnyObject) {
         self.endEditing(true)
     }
-    
-    weak var dataSource: DiplViewDelegate?
     
     var lineWidth : CGFloat = 3 {
         didSet {
@@ -84,12 +80,12 @@ class JSView: UIView {
         return min(bounds.size.width, bounds.size.height) / 2 * scale
     }
 
-   override func drawRect(rect: CGRect) {
-        let facePath = UIBezierPath(arcCenter: faceCenter, radius: faceRadius, startAngle: 0, endAngle: CGFloat(2*M_PI), clockwise: true)
+    // test for drawing
+    override func drawRect(rect: CGRect) {
+        /*let facePath = UIBezierPath(arcCenter: faceCenter, radius: faceRadius, startAngle: 0, endAngle: CGFloat(2*M_PI), clockwise: true)
         facePath.lineWidth = lineWidth
         color.set()
-        facePath.stroke()
-    
+        facePath.stroke()*/
     }
 
 

@@ -30,10 +30,56 @@ var JS2 = function() {
         var text =
         { 
             "uiElements" : [
-                { "button": { "title" : "button1" , "onClick": "eval", "params": [ {"value" : "test"}, {"value" : "test2"} ] }},
-                { "button": { "title" : "button2" , "onClick": "eval2", "params": [ {"value" : "test3"}, {"value" : "test4"} ] }},
-                { "label": {"text" : "label1"} },
-                { "textfield": {"text" : "textField1" } }
+                {"button": {
+                            "title" : "button1",
+                            "frame": {
+                                "x" : 50,
+                                "y" : 360,
+                                "width" : 100,
+                                "height" : 50
+                            },
+                            "onClick": "eval",
+                            "params": [
+                                       {"value" : "test"},
+                                       {"value" : "test2"}
+                                       ]
+                            }
+                },
+                { "button": {
+                            "title" : "button2" ,
+                            "frame" : {
+                                "x" : 170,
+                                "y" : 360,
+                                "width" : 100,
+                                "height" : 50
+                            },
+                            "onClick": "eval2",
+                            "params": [
+                                       {"value" : "test3"},
+                                       {"value" : "test4"}
+                                       ]
+                            }
+                },
+                { "label": {
+                            "text" : "label1",
+                            "frame" : {
+                                "x" : 50,
+                                "y" : 260,
+                                "width" : 220,
+                                "height" : 21
+                            }
+                            }
+                },
+                { "textfield": {
+                            "text" : "textField1",
+                            "frame" : {
+                                "x" : 50,
+                                "y" : 280,
+                                "width" : 220,
+                                "height" : 30
+                            }
+                            }
+                }
             ]
         };
         

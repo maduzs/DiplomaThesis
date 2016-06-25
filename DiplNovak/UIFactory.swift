@@ -13,16 +13,19 @@ class UIFactory : NSObject {
     
     var buttonTag = 1;
     
+    var alpha : CGFloat = 0.8
+    
     override init(){
         
     }
     
-    func createButton(cgRect : CGRect, cgRect2 : CGRect, color : UIColor, title:String, state: UIControlState) ->UIButton{
-        let button = UIButton(frame: cgRect)
-        button.frame = cgRect2
+    func createButton(cgRect : CGRect, color : UIColor, title:String, state: UIControlState) ->UIButton{
+        let button = UIButton(type: UIButtonType.Custom) as UIButton
+        button.frame = cgRect
         button.backgroundColor = color
         button.setTitle(title, forState: state)
         button.tag = self.buttonTag;
+        button.alpha = self.alpha
         self.buttonTag++
         return button
     }
@@ -34,6 +37,7 @@ class UIFactory : NSObject {
         label.backgroundColor = backgroundColor
         label.textAlignment = textAlignment
         label.text = text
+        label.alpha = self.alpha
         return label
     }
     
@@ -42,6 +46,7 @@ class UIFactory : NSObject {
         txtField.frame = cgRect
         txtField.text = text;
         txtField.backgroundColor = backgroundColor
+        txtField.alpha = self.alpha
         return txtField
     }
     

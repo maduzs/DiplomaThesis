@@ -31,8 +31,13 @@ class DiplViewController: UIViewController, DiplViewDelegate {
     
     private let jsCommunicator = "JS_COMMUNICATOR";
     
+    private let buttonAction = "buttonAction:"
+    
+    private let dismissKeyboardMethodName = "dismissKeyboard"
+    
     private let sandboxManager: SandboxManager = SandboxManager(handlerName: "callbackHandler", apiFileName: "JSAPI", scriptCommunicatorName: "JS_COMMUNICATOR");
 
+    // system buttons in view, not from JS
     func executeJS(buttonId : Int, content : String){
         switch (buttonId){
         case 0 :
@@ -43,9 +48,8 @@ class DiplViewController: UIViewController, DiplViewDelegate {
             sandboxManager.executeScript(0, scriptId: 2)
         case 3 :
             sandboxManager.executeScript(1, scriptId: 0)
-        //case 4 :
-            //sandboxManager.executeClassContent(0, className: "test", content: content)
-            //sandboxManager.executeRender(0, className: "JS2")
+        case 4 :
+            sandboxManager.executeClassContent(0, className: "test", functionName: content, functionParams: [])
         case 5 :
             sandboxManager.executeContent(0, content: content)
         case 6 :
@@ -70,25 +74,21 @@ class DiplViewController: UIViewController, DiplViewDelegate {
             return
         }
 
-        sandboxManager.executeRender(newSandboxId, className: "JS2") {(objects) -> Void in
+        sandboxManager.executeRender(newSandboxId, className: scriptNames[1]) {(objects) -> Void in
             for (object) in objects {
                 if let btn = object.uiElement as? UIButton {
-                    btn.addTarget(self, action: "buttonAction:", forControlEvents: UIControlEvents.TouchUpInside)
-                    //if let button = ButtonClass(sandboxId: 0, className: btn.cl, functionName: <#T##String#>, params: <#T##[String]#>)
+                    btn.addTarget(self, action: Selector(self.buttonAction), forControlEvents: UIControlEvents.TouchUpInside)
                     self.uiObjects[btn.tag] = object;
                 }
                 self.view.addSubview(object.uiElement)
             }
         }
-        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("dismissKeyboard")))
+        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector(self.dismissKeyboardMethodName)))
     }
     
     func buttonAction(sender: UIButton!) {
-        print("Button tapped")
-        print(sender.tag);
-        print(sender.currentTitle);
-        //sender.setTitle("test", forState: UIControlState.Normal);
-        // sandboxId TODO
+        print("Button tapped! " + "id: " + String(sender.tag) + " title: " + sender.currentTitle! )
+        
         if let object = uiObjects[sender.tag]{
             sandboxManager.executeClassContent(object.sandboxId, className: object.className, functionName: object.functionName, functionParams: object.params)
         }
