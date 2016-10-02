@@ -6,10 +6,11 @@
 //  Copyright © 2016 Novak Second. All rights reserved.
 //
 
+import Foundation
 import UIKit
 import WebKit
 
-class DiplViewController: UIViewController, DiplViewDelegate {
+class DiplViewController: UIViewController, DiplViewDelegate, WKUIDelegate, WKNavigationDelegate {
     
     @IBOutlet weak var containerView: JSView! {
         didSet {
@@ -17,11 +18,7 @@ class DiplViewController: UIViewController, DiplViewDelegate {
         }
     }
     
-    private var webViews = [WKWebView]()
-    
-    private var results = [Int: AnyObject]();
-    
-    private var buttonTag = 1;
+     var webView: WKWebView!
     
     private var uiObjects = [Int : UIClass]();
     
@@ -41,7 +38,10 @@ class DiplViewController: UIViewController, DiplViewDelegate {
     func executeJS(buttonId : Int, content : String){
         switch (buttonId){
         case 0 :
-            sandboxManager.executeScript(0, scriptId: 0)
+            webView.evaluateJavaScript("document.documentElement.outerHTML.toString()",
+                                       completionHandler: { (html: AnyObject?, error: NSError?) in
+                                        print(html)
+            })
         case 1 :
             sandboxManager.executeScript(0, scriptId: 1)
         case 2 :
@@ -63,18 +63,33 @@ class DiplViewController: UIViewController, DiplViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let url = NSURL(string: "http://www.mocky.io/v2/57f1531a0f00003226013576")
+        var dataString:String = ""
+        let task = NSURLSession.sharedSession().dataTaskWithURL(url!) {(data, response, error) in
+            //I want to replace this line below with something to save it to a string.
+            dataString = String(NSString(data: data!, encoding: NSUTF8StringEncoding)!)
+            dispatch_async(dispatch_get_main_queue()) {
+                // Update the UI on the main thread.
+                print(dataString)
+            };
+            
+        }
+        
+        
+        task.resume()
+        
+        // TODO in for loop
+        
+        
         //Set up WKWebView configuration
         var scriptNames = [String]()
-        scriptNames.append("JS")
-        scriptNames.append("JS2")
-        //scriptNames.append("JS3")
+        scriptNames.append("JSHTTP")
         
-        let newSandboxId: Int = sandboxManager.createSandbox(self.view, scripts: scriptNames)
+        var newSandboxId: Int = sandboxManager.createSandbox(self.view, scripts: scriptNames)
         if (newSandboxId < 0){
             return
         }
-
-        sandboxManager.executeRender(newSandboxId, className: scriptNames[1]) {(objects) -> Void in
+        sandboxManager.executeRender(newSandboxId, className: scriptNames[0]) {(objects) -> Void in
             for (object) in objects {
                 if let btn = object.uiElement as? UIButton {
                     btn.addTarget(self, action: Selector(self.buttonAction), forControlEvents: UIControlEvents.TouchUpInside)
@@ -83,7 +98,27 @@ class DiplViewController: UIViewController, DiplViewDelegate {
                 self.view.addSubview(object.uiElement)
             }
         }
-        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector(self.dismissKeyboardMethodName)))
+        
+        //Set up WKWebView configuration
+        scriptNames = [String]()
+        scriptNames.append("JS2")
+        
+        newSandboxId = sandboxManager.createSandbox(self.view, scripts: scriptNames)
+        if (newSandboxId < 0){
+            return
+        }
+        
+        sandboxManager.executeRender(newSandboxId, className: scriptNames[0]) {(objects) -> Void in
+            for (object) in objects {
+                if let btn = object.uiElement as? UIButton {
+                    btn.addTarget(self, action: Selector(self.buttonAction), forControlEvents: UIControlEvents.TouchUpInside)
+                    self.uiObjects[btn.tag] = object;
+                }
+                self.view.addSubview(object.uiElement)
+            }
+        }
+        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector(self.dismissKeyboardMethodName))) 
+        
     }
     
     func buttonAction(sender: UIButton!) {

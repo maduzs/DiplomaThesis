@@ -23,7 +23,7 @@ class JSView: UIView {
     @IBAction func buttonRun(sender: UIButton, forEvent event: UIEvent) {
         var i = 0;
         while i < 1{
-            i++;
+            i += 1;
             dataSource?.executeJS(4, content: textView1.text)
         }
     }
@@ -33,7 +33,7 @@ class JSView: UIView {
     @IBAction func buttonX(sender: UIButton, forEvent event: UIEvent) {
         var i = 0;
         while i < 1{
-            i++;
+            i += 1;
             dataSource?.executeJS(1, content: "")
         }
     }

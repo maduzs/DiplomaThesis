@@ -28,27 +28,27 @@ class ResponseParser: NSObject{
             
             for (item) in itemsArray {
                 if let content: NSDictionary = item.objectForKey("button") as? NSDictionary {
-                    
-                    if let uiClass : UIClass = parseButton(content, sandboxId: sandboxId, className: className){
-                        result.append(uiClass)
+                    if let objectId : Int = content.objectForKey("objectId") as? Int{
+                        if let uiClass : UIClass = parseButton(content, sandboxId: sandboxId, objectId: objectId, className: className){
+                            result.append(uiClass)
+                        }
                     }
-                    
                     continue;
                 }
                 if let content: NSDictionary = item.objectForKey("label") as? NSDictionary {
-                    
-                    if let uiClass : UIClass = parseLabel(content, sandboxId: sandboxId){
-                        result.append(uiClass)
+                    if let objectId : Int = content.objectForKey("objectId") as? Int{
+                        if let uiClass : UIClass = parseLabel(content, sandboxId: sandboxId, objectId: objectId){
+                            result.append(uiClass)
+                        }
                     }
-                    
                     continue
                 }
                 if let content: NSDictionary = item.objectForKey("textfield") as? NSDictionary {
-                    
-                    if let uiClass : UIClass = parseTextField(content, sandboxId: sandboxId){
-                        result.append(uiClass)
+                    if let objectId : Int = content.objectForKey("objectId") as? Int{
+                        if let uiClass : UIClass = parseTextField(content, sandboxId: sandboxId, objectId: objectId){
+                            result.append(uiClass)
+                        }
                     }
-                    
                     continue
                 }
             }
@@ -57,29 +57,28 @@ class ResponseParser: NSObject{
         return result
     }
     
-    private func parseButton(content : NSDictionary, sandboxId: Int, className: String) -> UIClass?{
+    private func parseButton(content : NSDictionary, sandboxId: Int, objectId: Int, className: String) -> UIClass?{
         if let title : String = content.objectForKey("title") as? String{
-            
             if let cgRect : CGRect = parseObjectFrame(content){
-
+                
                 if let uiButton :UIButton = factory.createButton(cgRect, color: UIColor.blackColor(), title : title, state: UIControlState.Normal){
                     
-                    if let uiClass : UIClass = parseButtonAction(content, sandboxId: sandboxId, className: className, uiButton: uiButton){
+                    if let uiClass : UIClass = parseButtonAction(content, sandboxId: sandboxId, objectId: objectId, className: className, uiButton: uiButton){
                         return uiClass;
                     }
                 }
-            
+                
             }
         }
         return nil
     }
     
-    private func parseLabel(content: NSDictionary, sandboxId : Int) -> UIClass?{
+    private func parseLabel(content: NSDictionary, sandboxId : Int, objectId: Int) -> UIClass?{
         if let text : String = content.objectForKey("text") as? String{
             if let cgRect : CGRect = parseObjectFrame(content){
                 let uiLabel = factory.createLabel(cgRect, textColor : UIColor.blackColor(), backgroundColor : UIColor.whiteColor(), textAlignment: NSTextAlignment.Center, text: text)
                 
-                if let uiClass : UIClass = UIClass(sandboxId: sandboxId, className: "", functionName: "", params: [], uiElement: uiLabel) {
+                if let uiClass : UIClass = UIClass(sandboxId: sandboxId, objectId: objectId, className: "", functionName: "", params: [], uiElement: uiLabel) {
                     return uiClass
                 }
             }
@@ -87,12 +86,12 @@ class ResponseParser: NSObject{
         return nil
     }
     
-    private func parseTextField(content: NSDictionary, sandboxId : Int) -> UIClass?{
+    private func parseTextField(content: NSDictionary, sandboxId : Int, objectId: Int) -> UIClass?{
         if let text : String = content.objectForKey("text") as? String{
             if let cgRect : CGRect = parseObjectFrame(content){
                 let uiTextField = factory.createTextField(cgRect, text: text, backgroundColor : UIColor.blackColor())
                 
-                if let uiClass : UIClass = UIClass(sandboxId: sandboxId, className: "", functionName: "", params: [], uiElement: uiTextField){
+                if let uiClass : UIClass = UIClass(sandboxId: sandboxId, objectId: objectId, className: "", functionName: "", params: [], uiElement: uiTextField){
                     return uiClass
                 }
             }
@@ -114,7 +113,7 @@ class ResponseParser: NSObject{
         return nil
     }
     
-    private func parseButtonAction(content : NSDictionary, sandboxId : Int, className : String, uiButton : UIButton) -> UIClass?{
+    private func parseButtonAction(content : NSDictionary, sandboxId : Int, objectId:Int, className : String, uiButton : UIButton) -> UIClass?{
         var functionName = ""
         var params = [String]()
         
@@ -129,7 +128,7 @@ class ResponseParser: NSObject{
             }
         }
         
-        if let uiClass : UIClass = UIClass(sandboxId: sandboxId, className: className, functionName: functionName, params: params, uiElement: uiButton){
+        if let uiClass : UIClass = UIClass(sandboxId: sandboxId, objectId: objectId, className: className, functionName: functionName, params: params, uiElement: uiButton){
             return uiClass;
         }
         return nil

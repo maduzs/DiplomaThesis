@@ -26,7 +26,7 @@ class UIFactory : NSObject {
         button.setTitle(title, forState: state)
         button.tag = self.buttonTag;
         button.alpha = self.alpha
-        self.buttonTag++
+        self.buttonTag += 1
         return button
     }
     

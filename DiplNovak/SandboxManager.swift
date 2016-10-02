@@ -122,11 +122,11 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         var resultUI = [UIClass]()
         var renderResult : NSDictionary = NSDictionary()
         
-        let diceRoll = Int(arc4random_uniform(randomRange) + 1)
+        let diceRoll = 0; //Int(arc4random_uniform(randomRange) + 1) TODO
         sync(results){
             self.results[diceRoll] = "init";
         }
-        print("ID: " + String(diceRoll))
+        //print("ID: " + String(diceRoll))
 
         let scriptQuery = jsCommunicator + ".evaluateClass(" + String(diceRoll) + ", '" + className + "', '" + renderMethod + "')"
         
@@ -135,7 +135,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                 print("ERROR")
             }
             
-            print(self.results[diceRoll]!)
+            //print(self.results[diceRoll]!)
             
             if let _ = self.results[diceRoll]! as? NSDictionary{
                 renderResult = self.results[diceRoll]! as! NSDictionary
@@ -162,7 +162,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         sync(results){
             self.results[diceRoll] = "init";
         }
-        print(diceRoll)
+        //print(diceRoll)
         
         
         var scriptQuery = jsCommunicator + ".evaluateClass(" + String(diceRoll) + ", '" + className + "', '" + functionName + "'";
@@ -176,7 +176,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                 print("ERROR")
             }
             
-            print(self.results[diceRoll]!)
+            //print(self.results[diceRoll]!)
             
             if let _ = self.results[diceRoll]! as? NSDictionary{
                 executeClassResult = self.results[diceRoll]! as! NSDictionary
@@ -207,7 +207,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         sync(results){
             self.results[diceRoll] = "init";
         }
-        print(diceRoll)
+        //print(diceRoll)
         
         
         var scriptQuery = jsCommunicator + ".evaluate(" + String(diceRoll) + ", '" + functionName + "'";
@@ -224,7 +224,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                 print("ERROR")
             }
             
-            print(self.results[diceRoll]!)
+            //print(self.results[diceRoll]!)
 
             if let _ :String = self.results[diceRoll]! as? String{
                 executeResult = self.results[diceRoll]! as! String

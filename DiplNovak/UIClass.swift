@@ -12,13 +12,15 @@ import UIKit
 class UIClass: NSObject{
     
     var sandboxId : Int
+    var objectId : Int
     var className : String
     var functionName  : String
     var params : [String]
     var uiElement : UIView
     
-    init(sandboxId: Int, className: String, functionName : String, params: [String], uiElement: UIView){
+    init(sandboxId: Int, objectId: Int, className: String, functionName : String, params: [String], uiElement: UIView){
         self.sandboxId = sandboxId
+        self.objectId = objectId
         self.className = className
         self.functionName = functionName
         self.params = params
