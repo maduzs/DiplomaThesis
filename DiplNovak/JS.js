@@ -21,7 +21,7 @@ var JS = function() {
     }
 
     this.eval = function(param, param2) {
-        JS_COMMUNICATOR.sendResponse("js.eval: " + param + param2);
+        JS_COMMUNICATOR.sendAsyncResponse("js.eval: " + param + param2);
     }
 
     this.render = function(){

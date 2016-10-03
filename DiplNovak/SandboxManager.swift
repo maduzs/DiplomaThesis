@@ -10,7 +10,11 @@ import Foundation
 import WebKit
 
 protocol DiplSandboxDelegate: class {
-    func executeAS(buttonId : Int, content : String)
+    func executeAS(sandboxId : Int, uiElementId: Int, content : String)
+    
+    func addUI(sandboxId : Int, uiElementId: Int, content : String)
+    func updateUI(sandboxId : Int, uiElementId: Int, content : String)
+    func deleteUI(sandboxId : Int, uiElementId: Int, content : String)
 }
 
 class SandboxManager : NSObject, WKScriptMessageHandler{
@@ -53,12 +57,10 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         renderMethod = "render"
     }
    
-    func createSandbox(view: UIView, scripts: [String]) -> Int{
-        
-        viewCtrl?.executeAS(0 , content: "test")
+    func createSandbox(view: UIView, scriptNames: [String], content: String) -> Int{
         
         //Set up WKWebView configuration
-        let webConfiguration = getWebConfig(scriptMessageHandler, scriptNames: scripts)
+        let webConfiguration = getWebConfig(scriptMessageHandler, scriptNames: scriptNames)
         
         // Create a WKWebView instance
         let webView = WKWebView (frame: view.frame, configuration: webConfiguration)
@@ -66,6 +68,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         let jsApiInit:String = getScriptFileContent(jsapi)
         
         let apiId = randomStringWithLength(32)
+        
         do {
             try _ = webView.evaluateJavaScript(jsApiInit)
             try _ = webView.evaluateJavaScript("var " + jsCommunicator + "= new JSAPI('" + String(apiId) + "');")
@@ -74,19 +77,18 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             return -1
         }
         
-        // registers the script in sandbox and in JSAPI
-        for script in scripts{
-            let js = getScriptFileContent(script)
-            do {
-                try _ = webView.evaluateJavaScript(js)
-                
+        // registers the script content in sandbox and class names in JSAPI
+        do {
+            try _ = webView.evaluateJavaScript(content)
+            
+            for script in scriptNames{
                 try _ = webView.evaluateJavaScript(jsCommunicator + ".registerObject('" + script + "')")
             }
-            catch {
-                print("registerObject failed! probably not an object")
-            }
-            
         }
+        catch {
+            print("registerObject failed! probably not an object")
+        }
+        
 
         sync(webViews){
             self.webViews.append(webView)
@@ -326,22 +328,31 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             
             let msg:AnyObject;
             
-            if let _ = messageBody["msg"] as? String {
-                msg = messageBody["msg"] as! String
+            //async call
+            if (actionID < 0){
+                // parser TODO
+                
+                viewCtrl?.executeAS(self.apiConnector[apiId]! , uiElementId: 1, content: "test")
             }
-            else {
-                if let _ = messageBody["msg"] as? NSDictionary {
-                    msg = messageBody["msg"] as! NSDictionary
+            // normal call
+            else{
+                if let _ = messageBody["msg"] as? String {
+                    msg = messageBody["msg"] as! String
                 }
-                else{
-                    return
+                else {
+                    if let _ = messageBody["msg"] as? NSDictionary {
+                        msg = messageBody["msg"] as! NSDictionary
+                    }
+                    else{
+                        return
+                    }
                 }
-            }
-            
-            print("action ID: " + String(actionID) + " message: " + String(msg))
-            
-            sync(results){
-                self.results[self.apiConnector[apiId]!][actionID] = msg;
+                
+                print("action ID: " + String(actionID) + " message: " + String(msg))
+                
+                sync(results){
+                    self.results[self.apiConnector[apiId]!][actionID] = msg;
+                }
             }
         }
     }

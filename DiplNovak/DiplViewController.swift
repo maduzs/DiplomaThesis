@@ -38,8 +38,10 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
     
     private let sandboxManager: SandboxManager = SandboxManager(handlerName: "callbackHandler", apiFileName: "JSAPI", scriptCommunicatorName: "JS_COMMUNICATOR");
     
-    func executeAS(buttonId: Int, content: String) {
-        print("ide to more" + content + String(buttonId));
+    func executeAS(sandboxId: Int, uiElementId: Int, content: String) {
+        print("ide to more " + String(sandboxId));
+        print("elId: " + String(uiElementId) + "content: " + content);
+        uiObjects[sandboxId][uiElementId].uiElement.backgroundColor = UIColor.blueColor();
     }
     
     // system buttons in view, not from JS
@@ -66,7 +68,7 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
                 dataString = String(NSString(data: data!, encoding: NSUTF8StringEncoding)!)
                 dispatch_async(dispatch_get_main_queue()) {
                     // Update the UI on the main thread.
-                    print(dataString)
+                    self.didReceiveUrlContent(["JS", "JS2"], urlContent: dataString)
                     
                     self.dismissViewControllerAnimated(false, completion: nil)
                     
@@ -81,8 +83,31 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         //containerView.setNeedsDisplay();
     }
     
-    private func initRender() {
+    private func didReceiveUrlContent(scriptNames: [String], urlContent: String) {
         
+        let newSandboxId = sandboxManager.createSandbox(self.view, scriptNames: scriptNames, content: urlContent)
+        if (newSandboxId < 0){
+            return
+        }
+        self.uiObjects.append([UIClass]());
+        
+        for (script) in scriptNames {
+            sandboxManager.executeRender(newSandboxId, className: script) {(objects) -> Void in
+                for (object) in objects {
+                    if let btn = object.uiElement as? UIButton {
+                        btn.addTarget(self, action: Selector(self.buttonAction), forControlEvents: UIControlEvents.TouchUpInside)
+                        self.uiButtonObjects[btn.tag] = object;
+                    }
+                    if (self.checkIds(newSandboxId, id: object.objectId)){
+                        self.uiObjects[newSandboxId].append(object)
+                        self.view.addSubview(object.uiElement)
+                    }
+                    else {
+                        self.showAlertWithMessage("Error! Non unique Id in objects!")
+                    }
+                }
+            }
+        }
     }
     
     override func viewDidLoad() {
@@ -90,62 +115,6 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         
         sandboxManager.viewCtrl = self;
         
-        // TODO in for loop
-        
-        
-        var scriptNames = [String]()
-        
-        scriptNames.append("JS")
-        
-        scriptNames.append("JS2")
-        
-        var newSandboxId = sandboxManager.createSandbox(self.view, scripts: scriptNames)
-        if (newSandboxId < 0){
-            return
-        }
-        self.uiObjects.append([UIClass]());
-        
-        sandboxManager.executeRender(newSandboxId, className: scriptNames[0]) {(objects) -> Void in
-            for (object) in objects {
-                if let btn = object.uiElement as? UIButton {
-                    btn.addTarget(self, action: Selector(self.buttonAction), forControlEvents: UIControlEvents.TouchUpInside)
-                    self.uiButtonObjects[btn.tag] = object;
-                }
-                if (self.checkIds(newSandboxId, id: object.objectId)){
-                    self.uiObjects[newSandboxId].append(object)
-                    self.view.addSubview(object.uiElement)
-                }
-                else {
-                    self.showAlertWithMessage("Error! Non unique Id in objects!")
-                }
-            }
-        }
-        
-        //Set up WKWebView configuration
-        /*scriptNames = [String]()
-        
-        
-        newSandboxId = sandboxManager.createSandbox(self.view, scripts: scriptNames)
-        if (newSandboxId < 0){
-            return
-        }
-        self.uiObjects.append([UIClass]());*/
-        
-        sandboxManager.executeRender(newSandboxId, className: scriptNames[1]) {(objects) -> Void in
-            for (object) in objects {
-                if let btn = object.uiElement as? UIButton {
-                    btn.addTarget(self, action: Selector(self.buttonAction), forControlEvents: UIControlEvents.TouchUpInside)
-                    self.uiButtonObjects[btn.tag] = object;
-                }
-                if (self.checkIds(newSandboxId, id: object.objectId)){
-                    self.uiObjects[newSandboxId].append(object)
-                    self.view.addSubview(object.uiElement)
-                }
-                else {
-                    // errorMsg TODO
-                }
-            }
-        }
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector(self.dismissKeyboardMethodName))) 
  
     }
@@ -162,7 +131,7 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         return true;
     }
     
-    private func buttonAction(sender: UIButton!) {
+    func buttonAction(sender: UIButton!) {
         print("Button tapped! " + "id: " + String(sender.tag) + " title: " + sender.currentTitle! )
         
         if let object = uiButtonObjects[sender.tag]{

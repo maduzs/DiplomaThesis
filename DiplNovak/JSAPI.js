@@ -58,6 +58,11 @@ var JSAPI = function(aid){
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }
     
+    this.sendAsyncResponse = function(content){
+        var messageToPost = {'ID': -1, 'apiId' : apiId, 'msg' : content};
+        window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
+    }
+    
     this.registerObject = function(className) {
         window[className] = new window[className]();
     }
