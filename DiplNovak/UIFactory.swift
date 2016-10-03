@@ -45,6 +45,7 @@ class UIFactory : NSObject {
         let txtField: UITextField = UITextField()
         txtField.frame = cgRect
         txtField.text = text;
+        txtField.textColor = UIColor.whiteColor();
         txtField.backgroundColor = backgroundColor
         txtField.alpha = self.alpha
         return txtField

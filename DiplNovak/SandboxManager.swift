@@ -9,11 +9,19 @@
 import Foundation
 import WebKit
 
+protocol DiplSandboxDelegate: class {
+    func executeAS(buttonId : Int, content : String)
+}
+
 class SandboxManager : NSObject, WKScriptMessageHandler{
     
+    weak var viewCtrl: DiplSandboxDelegate?
+ 
     var webViews = [WKWebView]()
     
-    var results = [Int: AnyObject]();
+    var results = [[Int: AnyObject]()];
+    
+    var apiConnector = [String: Int]();
     
     var sandboxId: Int = 0
     
@@ -46,6 +54,9 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
     }
    
     func createSandbox(view: UIView, scripts: [String]) -> Int{
+        
+        viewCtrl?.executeAS(0 , content: "test")
+        
         //Set up WKWebView configuration
         let webConfiguration = getWebConfig(scriptMessageHandler, scriptNames: scripts)
         
@@ -54,9 +65,10 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         
         let jsApiInit:String = getScriptFileContent(jsapi)
         
+        let apiId = randomStringWithLength(32)
         do {
             try _ = webView.evaluateJavaScript(jsApiInit)
-            try _ = webView.evaluateJavaScript("var " + jsCommunicator + "= new JSAPI();")
+            try _ = webView.evaluateJavaScript("var " + jsCommunicator + "= new JSAPI('" + String(apiId) + "');")
         } catch {
             print("JS API init error!")
             return -1
@@ -79,9 +91,25 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         sync(webViews){
             self.webViews.append(webView)
             self.sandboxId = self.webViews.count
+            self.apiConnector[apiId as String] = self.sandboxId - 1;
+        }
+        self.results.append([Int: AnyObject]());
+        return sandboxId - 1;
+    }
+    
+    func randomStringWithLength (len : Int) -> NSString {
+        
+        let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        
+        let randomString : NSMutableString = NSMutableString(capacity: len)
+        
+        for (var i=0; i < len; i += 1){
+            let length = UInt32 (letters.length)
+            let rand = arc4random_uniform(length)
+            randomString.appendFormat("%C", letters.characterAtIndex(Int(rand)))
         }
         
-        return sandboxId - 1;
+        return randomString
     }
     
     // executes the script which is saved inside webView
@@ -96,25 +124,19 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
     }
     
     // executes the script content inside sandbox
-    func executeContent(sandboxId: Int, content : String) -> String{
-        var resultString : String = "";
+    func executeContent(sandboxId: Int, content : String){
         if (webViews.count > sandboxId){
 
-            resultString = execute(sandboxId, functionName: content, functionParams: [])
-            
+            execute(sandboxId, functionName: content, functionParams: [])
         }
-        return resultString;
     }
     
     // executes the script of specified method of specified class with parameters
-    func executeClassContent(sandboxId: Int, className: String, functionName: String, functionParams : [String]) -> NSDictionary{
-        var resultString : NSDictionary = NSDictionary();
+    func executeClassContent(sandboxId: Int, className: String, functionName: String, functionParams : [String]){
         if (webViews.count > sandboxId){
             
-            resultString = executeClass(sandboxId, className: className, functionName: functionName, functionParams: functionParams)
-            
+            executeClass(sandboxId, className: className, functionName: functionName, functionParams: functionParams)
         }
-        return resultString;
     }
     
     // executes the render method of specified class
@@ -122,9 +144,9 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         var resultUI = [UIClass]()
         var renderResult : NSDictionary = NSDictionary()
         
-        let diceRoll = 0; //Int(arc4random_uniform(randomRange) + 1) TODO
+        let diceRoll = Int(arc4random_uniform(randomRange) + 1)
         sync(results){
-            self.results[diceRoll] = "init";
+            self.results[sandboxId][diceRoll] = "init";
         }
         //print("ID: " + String(diceRoll))
 
@@ -135,10 +157,10 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                 print("ERROR")
             }
             
-            //print(self.results[diceRoll]!)
+            //print(self.results[sandboxId][diceRoll]!)
             
-            if let _ = self.results[diceRoll]! as? NSDictionary{
-                renderResult = self.results[diceRoll]! as! NSDictionary
+            if let _ = self.results[sandboxId][diceRoll]! as? NSDictionary{
+                renderResult = self.results[sandboxId][diceRoll]! as! NSDictionary
             }
             else{
                 print("error while reading result render!")
@@ -146,11 +168,11 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             
             // remove after using
             self.sync(self.results){
-                self.results.removeValueForKey(diceRoll)
+                self.results[sandboxId].removeValueForKey(diceRoll)
             }
             
             resultUI = self.responseParser.parseRenderResponse(sandboxId, className: className, renderResult: renderResult)
-            
+ 
             completionHandler(objects: resultUI)
         }
     }
@@ -160,7 +182,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         
         let diceRoll = Int(arc4random_uniform(randomRange) + 1)
         sync(results){
-            self.results[diceRoll] = "init";
+            self.results[sandboxId][diceRoll] = "init";
         }
         //print(diceRoll)
         
@@ -176,13 +198,13 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                 print("ERROR")
             }
             
-            //print(self.results[diceRoll]!)
+            //print(self.results[sandboxId][diceRoll]!)
             
-            if let _ = self.results[diceRoll]! as? NSDictionary{
-                executeClassResult = self.results[diceRoll]! as! NSDictionary
+            if let _ = self.results[sandboxId][diceRoll]! as? NSDictionary{
+                executeClassResult = self.results[sandboxId][diceRoll]! as! NSDictionary
             }
             else{
-                if let resultString = self.results[diceRoll]! as? String{
+                if let resultString = self.results[sandboxId][diceRoll]! as? String{
                     executeClassResult = [0: resultString]
                 }
                 else{
@@ -192,7 +214,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             
             // remove after using
             self.sync(self.results){
-                self.results.removeValueForKey(diceRoll)
+                self.results[sandboxId].removeValueForKey(diceRoll)
             }
             // TODO maybe parsing specific results
             
@@ -205,7 +227,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         
         let diceRoll = Int(arc4random_uniform(randomRange) + 1)
         sync(results){
-            self.results[diceRoll] = "init";
+            self.results[sandboxId][diceRoll] = "init";
         }
         //print(diceRoll)
         
@@ -226,8 +248,8 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             
             //print(self.results[diceRoll]!)
 
-            if let _ :String = self.results[diceRoll]! as? String{
-                executeResult = self.results[diceRoll]! as! String
+            if let _ :String = self.results[sandboxId][diceRoll]! as? String{
+                executeResult = self.results[sandboxId][diceRoll]! as! String
             }
             else{
                 print("error while reading result execute!")
@@ -235,7 +257,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             
             // remove after using
             self.sync(self.results){
-                self.results.removeValueForKey(diceRoll)
+                self.results[sandboxId].removeValueForKey(diceRoll)
             }
             
             
@@ -300,6 +322,8 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             }
             let actionID:Int = messageBody["ID"] as! Int
             
+            let apiId:String = messageBody["apiId"] as! String
+            
             let msg:AnyObject;
             
             if let _ = messageBody["msg"] as? String {
@@ -317,10 +341,9 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             print("action ID: " + String(actionID) + " message: " + String(msg))
             
             sync(results){
-                self.results[actionID] = msg;
+                self.results[self.apiConnector[apiId]!][actionID] = msg;
             }
         }
-        
     }
     
     // function for thread-safe object synchronizing

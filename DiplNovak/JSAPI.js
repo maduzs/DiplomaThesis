@@ -1,7 +1,7 @@
-var JSAPI = function(){
+var JSAPI = function(aid){
     
     var callId = 0;
-    var objects = [];
+    var apiId = aid;
     
     this.evaluate = function (id, funcName) {
         
@@ -54,7 +54,7 @@ var JSAPI = function(){
     }
     
     this.sendResponse = function(content){
-        var messageToPost = {'ID': callId, 'msg' : content};
+        var messageToPost = {'ID': callId, 'apiId' : apiId, 'msg' : content};
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }
     

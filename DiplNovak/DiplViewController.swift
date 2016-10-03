@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import WebKit
 
-class DiplViewController: UIViewController, DiplViewDelegate, WKUIDelegate, WKNavigationDelegate {
+class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, DiplViewDelegate, DiplSandboxDelegate {
     
     @IBOutlet weak var containerView: JSView! {
         didSet {
@@ -18,9 +18,13 @@ class DiplViewController: UIViewController, DiplViewDelegate, WKUIDelegate, WKNa
         }
     }
     
-     var webView: WKWebView!
+    var webView: WKWebView!
     
-    private var uiObjects = [Int : UIClass]();
+    // al UI elements, 2D
+    private var uiObjects = [[UIClass]()];
+    
+    //only buttons (because of tag) 1D
+    private var uiButtonObjects = [Int : UIClass]();
     
     private let scriptMessageHandler = "callbackHandler";
     
@@ -33,98 +37,135 @@ class DiplViewController: UIViewController, DiplViewDelegate, WKUIDelegate, WKNa
     private let dismissKeyboardMethodName = "dismissKeyboard"
     
     private let sandboxManager: SandboxManager = SandboxManager(handlerName: "callbackHandler", apiFileName: "JSAPI", scriptCommunicatorName: "JS_COMMUNICATOR");
-
+    
+    func executeAS(buttonId: Int, content: String) {
+        print("ide to more" + content + String(buttonId));
+    }
+    
     // system buttons in view, not from JS
     func executeJS(buttonId : Int, content : String){
         switch (buttonId){
         case 0 :
-            webView.evaluateJavaScript("document.documentElement.outerHTML.toString()",
-                                       completionHandler: { (html: AnyObject?, error: NSError?) in
-                                        print(html)
-            })
-        case 1 :
-            sandboxManager.executeScript(0, scriptId: 1)
-        case 2 :
-            sandboxManager.executeScript(0, scriptId: 2)
-        case 3 :
-            sandboxManager.executeScript(1, scriptId: 0)
-        case 4 :
-            sandboxManager.executeClassContent(0, className: "test", functionName: content, functionParams: [])
-        case 5 :
-            sandboxManager.executeContent(0, content: content)
-        case 6 :
-            sandboxManager.executeContent(1, content: content)
+            print("load")
+            
+            let alert = UIAlertController(title: nil, message: "Please wait...", preferredStyle: .Alert)
+            
+            alert.view.tintColor = UIColor.blackColor()
+            let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(frame: CGRectMake(10, 5, 50, 50)) as UIActivityIndicatorView
+            loadingIndicator.hidesWhenStopped = true
+            loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
+            loadingIndicator.startAnimating();
+            
+            alert.view.addSubview(loadingIndicator)
+            presentViewController(alert, animated: true, completion: nil)
+            
+            let url = NSURL(string: content)
+            var dataString:String = ""
+            let task = NSURLSession.sharedSession().dataTaskWithURL(url!) {(data, response, error) in
+                //I want to replace this line below with something to save it to a string.
+                dataString = String(NSString(data: data!, encoding: NSUTF8StringEncoding)!)
+                dispatch_async(dispatch_get_main_queue()) {
+                    // Update the UI on the main thread.
+                    print(dataString)
+                    
+                    self.dismissViewControllerAnimated(false, completion: nil)
+                    
+                };
+                
+            }
+            task.resume()
+            
         default :
             return
         }
         //containerView.setNeedsDisplay();
     }
     
+    private func initRender() {
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let url = NSURL(string: "http://www.mocky.io/v2/57f1531a0f00003226013576")
-        var dataString:String = ""
-        let task = NSURLSession.sharedSession().dataTaskWithURL(url!) {(data, response, error) in
-            //I want to replace this line below with something to save it to a string.
-            dataString = String(NSString(data: data!, encoding: NSUTF8StringEncoding)!)
-            dispatch_async(dispatch_get_main_queue()) {
-                // Update the UI on the main thread.
-                print(dataString)
-            };
-            
-        }
-        
-        
-        task.resume()
+        sandboxManager.viewCtrl = self;
         
         // TODO in for loop
         
         
-        //Set up WKWebView configuration
         var scriptNames = [String]()
-        scriptNames.append("JSHTTP")
         
-        var newSandboxId: Int = sandboxManager.createSandbox(self.view, scripts: scriptNames)
+        scriptNames.append("JS")
+        
+        scriptNames.append("JS2")
+        
+        var newSandboxId = sandboxManager.createSandbox(self.view, scripts: scriptNames)
         if (newSandboxId < 0){
             return
         }
+        self.uiObjects.append([UIClass]());
+        
         sandboxManager.executeRender(newSandboxId, className: scriptNames[0]) {(objects) -> Void in
             for (object) in objects {
                 if let btn = object.uiElement as? UIButton {
                     btn.addTarget(self, action: Selector(self.buttonAction), forControlEvents: UIControlEvents.TouchUpInside)
-                    self.uiObjects[btn.tag] = object;
+                    self.uiButtonObjects[btn.tag] = object;
                 }
-                self.view.addSubview(object.uiElement)
+                if (self.checkIds(newSandboxId, id: object.objectId)){
+                    self.uiObjects[newSandboxId].append(object)
+                    self.view.addSubview(object.uiElement)
+                }
+                else {
+                    self.showAlertWithMessage("Error! Non unique Id in objects!")
+                }
             }
         }
         
         //Set up WKWebView configuration
-        scriptNames = [String]()
-        scriptNames.append("JS2")
+        /*scriptNames = [String]()
+        
         
         newSandboxId = sandboxManager.createSandbox(self.view, scripts: scriptNames)
         if (newSandboxId < 0){
             return
         }
+        self.uiObjects.append([UIClass]());*/
         
-        sandboxManager.executeRender(newSandboxId, className: scriptNames[0]) {(objects) -> Void in
+        sandboxManager.executeRender(newSandboxId, className: scriptNames[1]) {(objects) -> Void in
             for (object) in objects {
                 if let btn = object.uiElement as? UIButton {
                     btn.addTarget(self, action: Selector(self.buttonAction), forControlEvents: UIControlEvents.TouchUpInside)
-                    self.uiObjects[btn.tag] = object;
+                    self.uiButtonObjects[btn.tag] = object;
                 }
-                self.view.addSubview(object.uiElement)
+                if (self.checkIds(newSandboxId, id: object.objectId)){
+                    self.uiObjects[newSandboxId].append(object)
+                    self.view.addSubview(object.uiElement)
+                }
+                else {
+                    // errorMsg TODO
+                }
             }
         }
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector(self.dismissKeyboardMethodName))) 
-        
+ 
     }
     
-    func buttonAction(sender: UIButton!) {
+    private func checkIds(sandboxId: Int, id : Int) -> BooleanType{
+        for ui in self.uiObjects[sandboxId] {
+            if (ui.objectId == id){
+                return false;
+            }
+            else{
+                continue;
+            }
+        }
+        return true;
+    }
+    
+    private func buttonAction(sender: UIButton!) {
         print("Button tapped! " + "id: " + String(sender.tag) + " title: " + sender.currentTitle! )
         
-        if let object = uiObjects[sender.tag]{
+        if let object = uiButtonObjects[sender.tag]{
             sandboxManager.executeClassContent(object.sandboxId, className: object.className, functionName: object.functionName, functionParams: object.params)
         }
     }
@@ -143,6 +184,17 @@ class DiplViewController: UIViewController, DiplViewDelegate, WKUIDelegate, WKNa
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    //autoclose message
+    func showMessageAutoclose(del: Double, title: String, message: String){
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+        self.presentViewController(alertController, animated: true, completion: nil)
+        let delay = del * Double(NSEC_PER_SEC)
+        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
+        dispatch_after(time, dispatch_get_main_queue(), {
+            alertController.dismissViewControllerAnimated(true, completion: nil)
+        })
     }
     
     // Helper
