@@ -85,29 +85,35 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
     
     private func didReceiveUrlContent(scriptNames: [String], urlContent: String) {
         
-        let newSandboxId = sandboxManager.createSandbox(self.view, scriptNames: scriptNames, content: urlContent)
-        if (newSandboxId < 0){
-            return
-        }
-        self.uiObjects.append([UIClass]());
-        
-        for (script) in scriptNames {
-            sandboxManager.executeRender(newSandboxId, className: script) {(objects) -> Void in
-                for (object) in objects {
-                    if let btn = object.uiElement as? UIButton {
-                        btn.addTarget(self, action: Selector(self.buttonAction), forControlEvents: UIControlEvents.TouchUpInside)
-                        self.uiButtonObjects[btn.tag] = object;
-                    }
-                    if (self.checkIds(newSandboxId, id: object.objectId)){
-                        self.uiObjects[newSandboxId].append(object)
-                        self.view.addSubview(object.uiElement)
-                    }
-                    else {
-                        self.showAlertWithMessage("Error! Non unique Id in objects!")
+        var newSandboxId = -1;
+        sandboxManager.createSandbox(self.view, scriptNames: scriptNames, content: urlContent) {(newId) -> Void in
+            
+            newSandboxId = newId
+            
+            if (newSandboxId < 0){
+                return
+            }
+            self.uiObjects.append([UIClass]());
+            
+            for (script) in scriptNames {
+                self.sandboxManager.executeRender(newSandboxId, className: script) {(objects) -> Void in
+                    for (object) in objects {
+                        if let btn = object.uiElement as? UIButton {
+                            btn.addTarget(self, action: Selector(self.buttonAction), forControlEvents: UIControlEvents.TouchUpInside)
+                            self.uiButtonObjects[btn.tag] = object;
+                        }
+                        if (self.checkIds(newSandboxId, id: object.objectId)){
+                            self.uiObjects[newSandboxId].append(object)
+                            self.view.addSubview(object.uiElement)
+                        }
+                        else {
+                            self.showAlertWithMessage("Error! Non unique Id in objects!")
+                        }
                     }
                 }
             }
         }
+        
     }
     
     override func viewDidLoad() {

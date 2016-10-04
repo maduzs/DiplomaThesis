@@ -58,8 +58,19 @@ extension WKWebView {
         if !done {
             print("!Timeout to evaluate script: \(script)")
         }
-        print(result)
         return result
     }
-
+    
+    // Wrapper method of synchronized evaluateJavaScript for Objective-C
+    public func evaluateJavaScript(script: String, error: NSErrorPointer) -> AnyObject? {
+        var result: AnyObject?
+        var err: NSError?
+        do {
+            result = try evaluateJavaScript(script)
+        } catch let e as NSError {
+            err = e
+        }
+        if error != nil { error.memory = err }
+        return result
+    }
 }

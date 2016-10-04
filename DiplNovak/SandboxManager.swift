@@ -12,9 +12,9 @@ import WebKit
 protocol DiplSandboxDelegate: class {
     func executeAS(sandboxId : Int, uiElementId: Int, content : String)
     
-    func addUI(sandboxId : Int, uiElementId: Int, content : String)
-    func updateUI(sandboxId : Int, uiElementId: Int, content : String)
-    func deleteUI(sandboxId : Int, uiElementId: Int, content : String)
+    //func addUI(sandboxId : Int, uiElementId: Int, content : String)
+    //func updateUI(sandboxId : Int, uiElementId: Int, content : String)
+    //func deleteUI(sandboxId : Int, uiElementId: Int, content : String)
 }
 
 class SandboxManager : NSObject, WKScriptMessageHandler{
@@ -57,7 +57,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         renderMethod = "render"
     }
    
-    func createSandbox(view: UIView, scriptNames: [String], content: String) -> Int{
+    func createSandbox(view: UIView, scriptNames: [String], content: String, completionHandler : (Int) -> Void){
         
         //Set up WKWebView configuration
         let webConfiguration = getWebConfig(scriptMessageHandler, scriptNames: scriptNames)
@@ -68,35 +68,60 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         let jsApiInit:String = getScriptFileContent(jsapi)
         
         let apiId = randomStringWithLength(32)
-        
+
+        let init1 = jsApiInit;
+        let init2 = "var " + jsCommunicator + "= new JSAPI('" + String(apiId) + "');";
+        let init3 = content;
+        var init4 = "";
+        for script in scriptNames{
+            init4 += jsCommunicator + ".registerObject('" + script + "');";
+        }
         do {
-            try _ = webView.evaluateJavaScript(jsApiInit)
-            try _ = webView.evaluateJavaScript("var " + jsCommunicator + "= new JSAPI('" + String(apiId) + "');")
+            try _ = webView.evaluateJavaScript(init1 + ";" + init2 + ";" + init3 + ";" + init4 ){ (result, error) in
+                print("ok");
+
+                self.sync(self.webViews){
+                    self.webViews.append(webView)
+                    self.sandboxId = self.webViews.count
+                    self.apiConnector[apiId as String] = self.sandboxId - 1;
+                }
+                self.results.append([Int: AnyObject]());
+                completionHandler(self.sandboxId - 1);
+                
+            }
+            /*try _ = webView.evaluateJavaScript(jsApiInit){ (result, error) in
+                print("ok");
+                
+            }
+            try _ = webView.evaluateJavaScript("var " + jsCommunicator + "= new JSAPI('" + String(apiId) + "');"){ (result, error) in
+                print("ok");
+                
+            }*/
         } catch {
             print("JS API init error!")
-            return -1
+            completionHandler(-1);
         }
         
         // registers the script content in sandbox and class names in JSAPI
         do {
-            try _ = webView.evaluateJavaScript(content)
+            /*try _ = webView.evaluateJavaScript(content){ (result, error) in
+                print("ok");
+                
+            }
             
             for script in scriptNames{
-                try _ = webView.evaluateJavaScript(jsCommunicator + ".registerObject('" + script + "')")
-            }
+                try _ = webView.evaluateJavaScript(jsCommunicator + ".registerObject('" + script + "')"){ (result, error) in
+                    print("ok");
+                    
+                }
+            }*/
         }
         catch {
             print("registerObject failed! probably not an object")
         }
         
 
-        sync(webViews){
-            self.webViews.append(webView)
-            self.sandboxId = self.webViews.count
-            self.apiConnector[apiId as String] = self.sandboxId - 1;
-        }
-        self.results.append([Int: AnyObject]());
-        return sandboxId - 1;
+
     }
     
     func randomStringWithLength (len : Int) -> NSString {
@@ -142,7 +167,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
     }
     
     // executes the render method of specified class
-    func executeRender(sandboxId: Int, className:String, completionHandler : ((objects : [UIClass]) -> Void)) {
+    func executeRender(sandboxId: Int, className:String, completionHandler : (( [UIClass])) -> Void) {
         var resultUI = [UIClass]()
         var renderResult : NSDictionary = NSDictionary()
         
@@ -175,7 +200,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             
             resultUI = self.responseParser.parseRenderResponse(sandboxId, className: className, renderResult: renderResult)
  
-            completionHandler(objects: resultUI)
+            completionHandler(resultUI)
         }
     }
     
