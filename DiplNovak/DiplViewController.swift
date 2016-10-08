@@ -68,7 +68,7 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
                 dataString = String(NSString(data: data!, encoding: NSUTF8StringEncoding)!)
                 dispatch_async(dispatch_get_main_queue()) {
                     // Update the UI on the main thread.
-                    self.didReceiveUrlContent(["JS", "JS2"], urlContent: dataString)
+                    self.didReceiveUrlContent(dataString)
                     
                     self.dismissViewControllerAnimated(false, completion: nil)
                     
@@ -83,10 +83,10 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         //containerView.setNeedsDisplay();
     }
     
-    private func didReceiveUrlContent(scriptNames: [String], urlContent: String) {
+    private func didReceiveUrlContent(urlContent: String) {
         
         var newSandboxId = -1;
-        sandboxManager.createSandbox(self.view, scriptNames: scriptNames, content: urlContent) {(newId) -> Void in
+        sandboxManager.createSandbox(self.view, scriptNames: [], content: urlContent) {(newId) -> Void in
             
             newSandboxId = newId
             
@@ -95,23 +95,37 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
             }
             self.uiObjects.append([UIClass]());
             
-            for (script) in scriptNames {
-                self.sandboxManager.executeRender(newSandboxId, className: script) {(objects) -> Void in
-                    for (object) in objects {
-                        if let btn = object.uiElement as? UIButton {
-                            btn.addTarget(self, action: Selector(self.buttonAction), forControlEvents: UIControlEvents.TouchUpInside)
-                            self.uiButtonObjects[btn.tag] = object;
-                        }
-                        if (self.checkIds(newSandboxId, id: object.objectId)){
-                            self.uiObjects[newSandboxId].append(object)
-                            self.view.addSubview(object.uiElement)
-                        }
-                        else {
-                            self.showAlertWithMessage("Error! Non unique Id in objects!")
+            self.sandboxManager.initFromUrl(newSandboxId, urlContent: urlContent) {(scriptNames) -> Void in
+                
+                    print("ok");
+                    
+                    for (script) in scriptNames {
+                        self.sandboxManager.executeRender(newSandboxId, className: script) {(objects) -> Void in
+                            for (object) in objects {
+                                if let btn = object.uiElement as? UIButton {
+                                    btn.addTarget(self, action: Selector(self.buttonAction), forControlEvents: UIControlEvents.TouchUpInside)
+                                    self.uiButtonObjects[btn.tag] = object;
+                                }
+                                if (self.checkIds(newSandboxId, id: object.objectId)){
+                                    self.uiObjects[newSandboxId].append(object)
+                                    self.view.addSubview(object.uiElement)
+                                }
+                                else {
+                                    self.showAlertWithMessage("Error! Non unique Id in objects!")
+                                }
+                            }
                         }
                     }
+                    
                 }
-            }
+                /*try _ = webView.evaluateJavaScript(jsApiInit){ (result, error) in
+                 print("ok");
+                 
+                 }
+                 try _ = webView.evaluateJavaScript("var " + jsCommunicator + "= new JSAPI('" + String(apiId) + "');"){ (result, error) in
+                 print("ok");
+                 
+                 }*/
         }
         
     }

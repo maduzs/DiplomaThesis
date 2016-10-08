@@ -43,6 +43,8 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
     
     let randomRange: UInt32 = 100000
     
+    let initActionCode = -4648;
+    
     override init(){
         renderMethod = "render"
         scriptMessageHandler = "callbackHandler"
@@ -70,57 +72,58 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         let apiId = randomStringWithLength(32)
 
         let init1 = jsApiInit;
-        let init2 = "var " + jsCommunicator + "= new JSAPI('" + String(apiId) + "');";
-        let init3 = content;
-        var init4 = "";
-        for script in scriptNames{
-            init4 += jsCommunicator + ".registerObject('" + script + "');";
-        }
-        do {
-            try _ = webView.evaluateJavaScript(init1 + ";" + init2 + ";" + init3 + ";" + init4 ){ (result, error) in
-                print("ok");
+        let init2 = "var " + jsCommunicator + " = new JSAPI('" + String(apiId) + "' ," + String(self.initActionCode) + ");";
 
-                self.sync(self.webViews){
-                    self.webViews.append(webView)
-                    self.sandboxId = self.webViews.count
-                    self.apiConnector[apiId as String] = self.sandboxId - 1;
-                }
-                self.results.append([Int: AnyObject]());
-                completionHandler(self.sandboxId - 1);
-                
+        webView.evaluateJavaScript(init1 + ";" + init2 +  ";"  ){ (result, error) in
+            print("ok");
+            
+            self.sync(self.webViews){
+                self.webViews.append(webView)
+                self.sandboxId = self.webViews.count
+                self.apiConnector[apiId as String] = self.sandboxId - 1;
             }
-            /*try _ = webView.evaluateJavaScript(jsApiInit){ (result, error) in
-                print("ok");
-                
-            }
-            try _ = webView.evaluateJavaScript("var " + jsCommunicator + "= new JSAPI('" + String(apiId) + "');"){ (result, error) in
-                print("ok");
-                
-            }*/
-        } catch {
-            print("JS API init error!")
-            completionHandler(-1);
+            self.results.append([Int: AnyObject]());
+            completionHandler(self.sandboxId - 1);
+            
+        }
+        /*try _ = webView.evaluateJavaScript(jsApiInit){ (result, error) in
+         print("ok");
+         
+         }
+         */
+
+    }
+    
+    func initFromUrl (sandboxId: Int, urlContent : String, completionHandler : ([String]) -> Void){
+        var urlResult = [];
+        
+        sync(results){
+            self.results[sandboxId][self.initActionCode] = "init";
         }
         
-        // registers the script content in sandbox and class names in JSAPI
-        do {
-            /*try _ = webView.evaluateJavaScript(content){ (result, error) in
-                print("ok");
-                
+        // TODO delete
+        var contentFile = getScriptFileContent("JS");
+        contentFile += getScriptFileContent("JS2");
+        
+        webViews[sandboxId].evaluateJavaScript(contentFile) { (result, error) in
+            if error != nil {
+                print("ERROR")
             }
             
-            for script in scriptNames{
-                try _ = webView.evaluateJavaScript(jsCommunicator + ".registerObject('" + script + "')"){ (result, error) in
-                    print("ok");
-                    
-                }
-            }*/
-        }
-        catch {
-            print("registerObject failed! probably not an object")
-        }
-        
+            if let _ = self.results[sandboxId][self.initActionCode]! as? [String]{
+                urlResult = self.results[sandboxId][self.initActionCode]! as! [String]
+            }
+            else{
+                print("error while reading result render!")
+            }
+ 
+            // remove after using
+            self.sync(self.results){
+                self.results[sandboxId].removeValueForKey(self.initActionCode)
+            }
 
+            completionHandler(urlResult as! [String])
+        }
 
     }
     
@@ -175,8 +178,6 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         sync(results){
             self.results[sandboxId][diceRoll] = "init";
         }
-        //print("ID: " + String(diceRoll))
-
         let scriptQuery = jsCommunicator + ".evaluateClass(" + String(diceRoll) + ", '" + className + "', '" + renderMethod + "')"
         
         webViews[sandboxId].evaluateJavaScript(scriptQuery) { (result, error) in
@@ -211,8 +212,6 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         sync(results){
             self.results[sandboxId][diceRoll] = "init";
         }
-        //print(diceRoll)
-        
         
         var scriptQuery = jsCommunicator + ".evaluateClass(" + String(diceRoll) + ", '" + className + "', '" + functionName + "'";
         for param in functionParams{
@@ -224,8 +223,6 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             if error != nil {
                 print("ERROR")
             }
-            
-            //print(self.results[sandboxId][diceRoll]!)
             
             if let _ = self.results[sandboxId][diceRoll]! as? NSDictionary{
                 executeClassResult = self.results[sandboxId][diceRoll]! as! NSDictionary
@@ -286,7 +283,6 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             self.sync(self.results){
                 self.results[sandboxId].removeValueForKey(diceRoll)
             }
-            
             
         }
         return executeResult;
@@ -355,9 +351,44 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             
             //async call
             if (actionID < 0){
-                // parser TODO
                 
-                viewCtrl?.executeAS(self.apiConnector[apiId]! , uiElementId: 1, content: "test")
+                switch(actionID){
+                case -1 :
+                    // parser TODO
+                    if let _ = messageBody["msg"] as? String {
+                        msg = messageBody["msg"] as! String
+                        print(msg);
+                        viewCtrl?.executeAS(self.apiConnector[apiId]! , uiElementId: 0, content: String(msg));
+                    }
+                    else{
+                        viewCtrl?.executeAS(self.apiConnector[apiId]! , uiElementId: 0, content: "failed");
+                    }
+                case initActionCode :
+                    if let _ = messageBody["msg"] as? String {
+                        msg = messageBody["msg"] as! String
+                        
+                        let fullNameArr = msg.componentsSeparatedByString(",")
+                        
+                        var nameResult = [String]();
+                        for (name) in fullNameArr {
+                            nameResult.append(name);
+                        }
+                        
+                        sync(results){
+                            self.results[self.apiConnector[apiId]!][self.initActionCode] = nameResult;
+                        }
+                    }
+                    else {
+                        if let _ = messageBody["msg"] as? NSDictionary {
+                            msg = messageBody["msg"] as! NSDictionary
+                        }
+                        else{
+                            return
+                        }
+                    }
+                default: return
+                }
+
             }
             // normal call
             else{

@@ -1,11 +1,13 @@
-var JSAPI = function(aid){
+class JSAPI {
     
-    var callId = 0;
-    var apiId = aid;
+    constructor(aid, iCode){
+        this.apiId = aid;
+        this.initCode = iCode;
+    }
     
-    this.evaluate = function (id, funcName) {
+    evaluate(id, funcName) {
         
-        callId = id;
+        this.callId = id;
         
         // convert arguments to array
         var args = Array.prototype.slice.call(arguments);
@@ -16,58 +18,50 @@ var JSAPI = function(aid){
         }
     }
     
-    this.evaluateClass = function (id, className, funcName){
-        callId = id;
+    evaluateClass(id, className, funcName){
+        
+        this.callId = id;
 
         var args = Array.prototype.slice.call(arguments);
         if (arguments.length > 3){
             args.splice(0, 3);
-            window[className][funcName].apply(this, args);
+            window[className][funcName](...args);
         }
         else {
             window[className][funcName]();
         }
     }
     
-    this.init = function (className) {
-        var args = Array.prototype.slice.call(arguments);
-        var init = 'init';
-        if (arguments.length > 1){
-            args.splice(0, 1);
-            window[className]['init'].apply(this, args);
-        }
-        else{
-            window[className][init]();
-        }
-        
-    }
-    
-    this.render = function (className) {
+    /*this.render = function (className) {
         var args = Array.prototype.slice.call(arguments);
         if (arguments.length > 1){
             args.splice(0, 1);
-            window[className]['render'].apply(this, args);
+            className['render'].apply(this, args);
         }
         else {
-            window[className]['render']();
+            className['render']();
         }
-    }
+    }*/
     
-    this.sendResponse = function(content){
-        var messageToPost = {'ID': callId, 'apiId' : apiId, 'msg' : content};
+    sendResponse(content){
+        const messageToPost = {'ID': this.callId, 'apiId' : this.apiId, 'msg' : content};
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }
     
-    this.sendAsyncResponse = function(content){
-        var messageToPost = {'ID': -1, 'apiId' : apiId, 'msg' : content};
+    sendAsyncResponse(content){
+        const messageToPost = {'ID': -1, 'apiId' : this.apiId, 'msg' : content};
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }
     
-    this.registerObject = function(className) {
-        window[className] = new window[className]();
+    registerObject() {
+        
+        var args = Array.prototype.slice.call(arguments);
+        
+        const messageToPost = {'ID': this.initCode, 'apiId' : this.apiId, 'msg' : args.toString()};
+        window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }
     
-    this.destroy = function (className) {
+    destroy(className) {
         window[className] = null;
         delete window[className]
     }
