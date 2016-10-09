@@ -9,7 +9,7 @@
 import UIKit
 
 protocol DiplViewDelegate: class {
-    func executeJS(buttonId : Int, content : String)
+    func execute(buttonId : Int,content : String)
 }
 
 class JSView: UIView {
@@ -18,11 +18,15 @@ class JSView: UIView {
  
     @IBOutlet weak var textView1: UITextView!
     
+    @IBOutlet weak var debugTextView: UITextView!
+    
     @IBAction func userTappedBackground(sender: AnyObject) {
         self.endEditing(true)
     }
     @IBAction func submitButton(sender: UIButton, forEvent event: UIEvent) {
-        dataSource?.executeJS(0, content: textView1.text)
+        dataSource?.execute(0, content: textView1.text)
     }
-
+    @IBAction func clearButton(sender: UIButton, forEvent event: UIEvent) {
+        dataSource?.execute(1, content: "");
+    }
 }

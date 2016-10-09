@@ -12,18 +12,16 @@ class JS {
             },
             onClick: "eval",
             params: [
-                 {value : "testX"},
-                 {value : "testY"}
+                 {value : "eval"},
+                 {value : 0.2},
+                 {value : 10},
+                 {value : true}
             ]
         }
     }
 
-    init() {
-        //JS_COMMUNICATOR.sendResponse("js: init");
-    }
-
-    eval(param, param2) {
-        JS_COMMUNICATOR.sendAsyncResponse(param + param2);
+    eval(param, param2, param3, param4) {
+        JS_COMMUNICATOR.sendAsyncResponse(param + param2 + param3 + param4);
     }
 
     render(){

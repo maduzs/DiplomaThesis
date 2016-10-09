@@ -32,17 +32,6 @@ class JSAPI {
         }
     }
     
-    /*this.render = function (className) {
-        var args = Array.prototype.slice.call(arguments);
-        if (arguments.length > 1){
-            args.splice(0, 1);
-            className['render'].apply(this, args);
-        }
-        else {
-            className['render']();
-        }
-    }*/
-    
     sendResponse(content){
         const messageToPost = {'ID': this.callId, 'apiId' : this.apiId, 'msg' : content};
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
@@ -54,7 +43,6 @@ class JSAPI {
     }
     
     registerObject() {
-        
         var args = Array.prototype.slice.call(arguments);
         
         const messageToPost = {'ID': this.initCode, 'apiId' : this.apiId, 'msg' : args.toString()};

@@ -15,10 +15,10 @@ class UIClass: NSObject{
     var objectId : Int
     var className : String
     var functionName  : String
-    var params : [String]
+    var params : [AnyObject]
     var uiElement : UIView
     
-    init(sandboxId: Int, objectId: Int, className: String, functionName : String, params: [String], uiElement: UIView){
+    init(sandboxId: Int, objectId: Int, className: String, functionName : String, params: [AnyObject], uiElement: UIView){
         self.sandboxId = sandboxId
         self.objectId = objectId
         self.className = className

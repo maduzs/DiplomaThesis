@@ -115,13 +115,13 @@ class ResponseParser: NSObject{
     
     private func parseButtonAction(content : NSDictionary, sandboxId : Int, objectId:Int, className : String, uiButton : UIButton) -> UIClass?{
         var functionName = ""
-        var params = [String]()
+        var params = [AnyObject]()
         
         if let fn : String = content.objectForKey("onClick") as? String {
             functionName = fn;
             if let paramsArray : NSArray = content.objectForKey("params") as? NSArray{
                 for (paramOjb) in paramsArray{
-                    if let paramDictionary : String = paramOjb.objectForKey("value") as? String{
+                    if let paramDictionary : AnyObject = paramOjb.objectForKey("value"){
                         params.append(paramDictionary)
                     }
                 }

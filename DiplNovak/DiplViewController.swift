@@ -38,17 +38,36 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
     
     private let sandboxManager: SandboxManager = SandboxManager(handlerName: "callbackHandler", apiFileName: "JSAPI", scriptCommunicatorName: "JS_COMMUNICATOR");
     
+    private var debugContent = "";
+    
+    private var myGroup = dispatch_group_create()
+    
+    struct defaultsKeys {
+        static let keyOne = "inputKey"
+    }
+    
     func executeAS(sandboxId: Int, uiElementId: Int, content: String) {
         print("ide to more " + String(sandboxId));
         print("elId: " + String(uiElementId) + "content: " + content);
         uiObjects[sandboxId][uiElementId].uiElement.backgroundColor = UIColor.blueColor();
     }
     
+    func debugInfo(sandboxId: Int, content: String) {
+        debugContent = content;
+        print("sandboxId: " + String(sandboxId) + " content: " + content);
+        
+        containerView.debugTextView.text = containerView.debugTextView.text + content + "\r\n";
+        containerView.debugTextView.hidden = false;
+
+    }
+    
     // system buttons in view, not from JS
-    func executeJS(buttonId : Int, content : String){
+    func execute(buttonId : Int, content: String){
         switch (buttonId){
         case 0 :
-            print("load")
+            
+            containerView.debugTextView.text = "";
+            containerView.debugTextView.hidden = true;
             
             let alert = UIAlertController(title: nil, message: "Please wait...", preferredStyle: .Alert)
             
@@ -61,73 +80,75 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
             alert.view.addSubview(loadingIndicator)
             presentViewController(alert, animated: true, completion: nil)
             
-            let url = NSURL(string: content)
-            var dataString:String = ""
-            let task = NSURLSession.sharedSession().dataTaskWithURL(url!) {(data, response, error) in
-                //I want to replace this line below with something to save it to a string.
-                dataString = String(NSString(data: data!, encoding: NSUTF8StringEncoding)!)
-                dispatch_async(dispatch_get_main_queue()) {
-                    // Update the UI on the main thread.
-                    self.didReceiveUrlContent(dataString)
+            var err = false;
+            
+            // multiple URLs
+            if let multiUrl : [String] = checkInputMultiple(content){
+                for (i) in 0..<multiUrl.count{
                     
-                    self.dismissViewControllerAnimated(false, completion: nil)
+                    dispatch_group_enter(myGroup)
                     
-                };
+                    let urlGet = NSURL(string: multiUrl[i])
+                    var dataString:String = ""
+                    
+                    let task = NSURLSession.sharedSession().dataTaskWithURL(urlGet!) {(data, response, error) in
+                        // URL content response
+                        if (error == nil && data != nil){
+                            dataString = String(NSString(data: data!, encoding: NSUTF8StringEncoding)!)
+                            
+                            dispatch_async(dispatch_get_main_queue()) {
+                                // Update the UI on the main thread.
+                                self.didReceiveUrlContent(dataString)
+                                dispatch_group_leave(self.myGroup)
+                            };
+                        }
+                        else{
+                            err = true;
+                            self.showAlertWithMessage("Content of the URL is not valid!")
+                            dispatch_group_leave(self.myGroup)
+                        }
+                    }
+                    
+                    task.resume()
+                }
+                
+                dispatch_group_notify(myGroup, dispatch_get_main_queue(), {
+                    print("Finished all requests.")
+                    if !err {
+                        self.dismissViewControllerAnimated(false, completion: nil)
+                    }
+                })
                 
             }
-            task.resume()
+            // content is a script
+            else{
+                dispatch_async(dispatch_get_main_queue()) {
+                    
+                    self.didReceiveUrlContent(content)
+                    
+                    self.dismissViewControllerAnimated(false, completion: nil)
+                };
+            }
             
+            
+            let defaults = NSUserDefaults.standardUserDefaults()
+            
+            defaults.setValue(content, forKey: defaultsKeys.keyOne)
+            
+            defaults.synchronize()
+            
+            
+            // TODO stuff with subviews
+            
+            //self.view.insertSubview(self.containerView.debugTextView, aboveSubview: object.uiElement)
+            //self.view.bringSubviewToFront(self.containerView.debugTextView)
+
+        case 1 :
+            containerView.textView1.text = "";
         default :
             return
         }
         //containerView.setNeedsDisplay();
-    }
-    
-    private func didReceiveUrlContent(urlContent: String) {
-        
-        var newSandboxId = -1;
-        sandboxManager.createSandbox(self.view, scriptNames: [], content: urlContent) {(newId) -> Void in
-            
-            newSandboxId = newId
-            
-            if (newSandboxId < 0){
-                return
-            }
-            self.uiObjects.append([UIClass]());
-            
-            self.sandboxManager.initFromUrl(newSandboxId, urlContent: urlContent) {(scriptNames) -> Void in
-                
-                    print("ok");
-                    
-                    for (script) in scriptNames {
-                        self.sandboxManager.executeRender(newSandboxId, className: script) {(objects) -> Void in
-                            for (object) in objects {
-                                if let btn = object.uiElement as? UIButton {
-                                    btn.addTarget(self, action: Selector(self.buttonAction), forControlEvents: UIControlEvents.TouchUpInside)
-                                    self.uiButtonObjects[btn.tag] = object;
-                                }
-                                if (self.checkIds(newSandboxId, id: object.objectId)){
-                                    self.uiObjects[newSandboxId].append(object)
-                                    self.view.addSubview(object.uiElement)
-                                }
-                                else {
-                                    self.showAlertWithMessage("Error! Non unique Id in objects!")
-                                }
-                            }
-                        }
-                    }
-                    
-                }
-                /*try _ = webView.evaluateJavaScript(jsApiInit){ (result, error) in
-                 print("ok");
-                 
-                 }
-                 try _ = webView.evaluateJavaScript("var " + jsCommunicator + "= new JSAPI('" + String(apiId) + "');"){ (result, error) in
-                 print("ok");
-                 
-                 }*/
-        }
-        
     }
     
     override func viewDidLoad() {
@@ -135,8 +156,123 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         
         sandboxManager.viewCtrl = self;
         
-        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector(self.dismissKeyboardMethodName))) 
- 
+        loadState();
+
+        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector(self.dismissKeyboardMethodName)))
+        
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
+    private func checkInputMultiple(input: String) -> [String]? {
+        var multiUrl = [String]();
+        if input.rangeOfString(",") != nil{
+            multiUrl = input.componentsSeparatedByString(",");
+            for (i) in 0..<multiUrl.count{
+                let trimmedString = multiUrl[i].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                if (!verifyUrl(trimmedString)){
+                    return nil;
+                }
+                multiUrl[i] = trimmedString;
+            }
+        }
+        else {
+            if input.rangeOfString("+") != nil{
+                multiUrl = input.componentsSeparatedByString("+");
+                for (i) in 0..<multiUrl.count{
+                    let trimmedString = multiUrl[i].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                    if (!verifyUrl(trimmedString)){
+                        return nil;
+                    }
+                    multiUrl[i] = trimmedString;
+                }
+            }
+            // single URL
+            else {
+                if verifyUrl(input){
+                    multiUrl.append(input);
+                }
+            }
+        }
+        return multiUrl;
+    }
+    
+    // load saved state
+    private func loadState(){
+        let defaults = NSUserDefaults.standardUserDefaults()
+        
+        if let stringOne = defaults.stringForKey(defaultsKeys.keyOne){
+            if (stringOne.characters.count > 0){
+                containerView.textView1.text = stringOne
+            }
+        }
+    }
+
+    private func didReceiveUrlContent(urlContent: String) {
+        
+        var newSandboxId = -1;
+        
+        sandboxManager.createSandbox(self.view, scriptNames: [], content: urlContent) {(newId) -> Void in
+            
+            newSandboxId = newId
+            
+            if (newSandboxId < 0){
+                self.containerView.debugTextView.text = self.containerView.debugTextView.text + "Sandbox creation error!" + "\r\n";
+                self.containerView.debugTextView.hidden = false;
+                return;
+            }
+            self.uiObjects.append([UIClass]());
+            
+            self.sandboxManager.initFromUrl(newSandboxId, urlContent: urlContent) {(scriptNames) -> Void in
+                
+                if (scriptNames.count <= 0){
+                    self.containerView.debugTextView.text = self.containerView.debugTextView.text + "Scripts initialization error!" + "\r\n";
+                    self.containerView.debugTextView.hidden = false;
+                    return;
+                }
+                    
+                for (script) in scriptNames {
+                    self.sandboxManager.executeRender(newSandboxId, className: script) {(objects) -> Void in
+                        
+                        if (objects.count <= 0){
+                            self.containerView.debugTextView.text = self.containerView.debugTextView.text + "Objects initialization error!" + "\r\n";
+                            self.containerView.debugTextView.hidden = false;
+                            return;
+                        }
+                        
+                        for (object) in objects {
+                            if let btn = object.uiElement as? UIButton {
+                                btn.addTarget(self, action: Selector(self.buttonAction), forControlEvents: UIControlEvents.TouchUpInside)
+                                self.uiButtonObjects[btn.tag] = object;
+                            }
+                            if (self.checkIds(newSandboxId, id: object.objectId)){
+                                self.uiObjects[newSandboxId].append(object)
+                                self.view.addSubview(object.uiElement)
+                            }
+                            else {
+                                self.containerView.debugTextView.text = self.containerView.debugTextView.text + "Error! Non unique Id in objects!" + " objectId: "
+                                    + String(object.objectId) + "\r\n";
+                                self.containerView.debugTextView.hidden = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private func verifyUrl (urlString: String?) -> Bool {
+        //Check for nil
+        if let urlString = urlString {
+            // create NSURL instance
+            if let url = NSURL(string: urlString) {
+                // check if your application can open the NSURL instance
+                return UIApplication.sharedApplication().canOpenURL(url)
+            }
+        }
+        return false
     }
     
     private func checkIds(sandboxId: Int, id : Int) -> BooleanType{
@@ -150,17 +286,25 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         }
         return true;
     }
-    
+
     func buttonAction(sender: UIButton!) {
         print("Button tapped! " + "id: " + String(sender.tag) + " title: " + sender.currentTitle! )
         
         if let object = uiButtonObjects[sender.tag]{
-            sandboxManager.executeClassContent(object.sandboxId, className: object.className, functionName: object.functionName, functionParams: object.params)
+            
+            let multiClassCall = object.functionName.componentsSeparatedByString(".");
+            if (multiClassCall.count == 2){
+                sandboxManager.executeClassContent(object.sandboxId, className: multiClassCall[0], functionName: multiClassCall[1], functionParams: object.params)
+            }
+            else{
+                if (multiClassCall.count == 1){
+                    sandboxManager.executeClassContent(object.sandboxId, className: object.className, functionName: object.functionName, functionParams: object.params)
+                }
+                else {
+                    showAlertWithMessage("Wrong button action registered!");
+                }
+            }
         }
-    }
-    
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
     }
     
     func dismissKeyboard(){
@@ -188,18 +332,21 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
     
     // Helper
     func showAlertWithMessage(message:String) {
-        let alertAction:UIAlertAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel) { (UIAlertAction) -> Void in
-            self.dismissViewControllerAnimated(true, completion: { () -> Void in
+        // first, dismiss any animated stuff in background
+        self.dismissViewControllerAnimated(false){ (data) in
+            let alertAction:UIAlertAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel) { (UIAlertAction) -> Void in
+                self.dismissViewControllerAnimated(true, completion: { () -> Void in
+                    
+                })
+            }
+            
+            let alertView:UIAlertController = UIAlertController(title: nil, message: message, preferredStyle: UIAlertControllerStyle.Alert)
+            alertView.addAction(alertAction)
+            
+            self.presentViewController(alertView, animated: true, completion: { () -> Void in
                 
             })
         }
-        
-        let alertView:UIAlertController = UIAlertController(title: nil, message: message, preferredStyle: UIAlertControllerStyle.Alert)
-        alertView.addAction(alertAction)
-        
-        self.presentViewController(alertView, animated: true, completion: { () -> Void in
-            
-        })
     }
     
     /*

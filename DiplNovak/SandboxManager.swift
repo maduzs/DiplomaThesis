@@ -11,7 +11,7 @@ import WebKit
 
 protocol DiplSandboxDelegate: class {
     func executeAS(sandboxId : Int, uiElementId: Int, content : String)
-    
+    func debugInfo(sandboxId: Int, content: String)
     //func addUI(sandboxId : Int, uiElementId: Int, content : String)
     //func updateUI(sandboxId : Int, uiElementId: Int, content : String)
     //func deleteUI(sandboxId : Int, uiElementId: Int, content : String)
@@ -35,6 +35,8 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
     
     let jsCommunicator: String
     
+    let evaluateClassMethod : String
+    
     let renderMethod : String
     
     let factory = UIFactory();
@@ -46,16 +48,18 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
     let initActionCode = -4648;
     
     override init(){
-        renderMethod = "render"
         scriptMessageHandler = "callbackHandler"
         jsapi = "JSAPI"
         jsCommunicator = "JS_COMMUNICATOR"
+        evaluateClassMethod = "evaluateClass"
+        renderMethod = "render"
     }
     
     init(handlerName: String, apiFileName: String, scriptCommunicatorName:String){
         scriptMessageHandler = handlerName
         jsapi = apiFileName
         jsCommunicator = scriptCommunicatorName
+        evaluateClassMethod = "evaluateClass"
         renderMethod = "render"
     }
    
@@ -75,7 +79,13 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         let init2 = "var " + jsCommunicator + " = new JSAPI('" + String(apiId) + "' ," + String(self.initActionCode) + ");";
 
         webView.evaluateJavaScript(init1 + ";" + init2 +  ";"  ){ (result, error) in
-            print("ok");
+            
+            if (error != nil){
+                let errorMsg = error!.localizedDescription
+                if (errorMsg != "JavaScript execution returned a result of an unsupported type"){
+                    self.handleError(-1, error: error!)
+                }
+            }
             
             self.sync(self.webViews){
                 self.webViews.append(webView)
@@ -102,12 +112,16 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         }
         
         // TODO delete
-        var contentFile = getScriptFileContent("JS");
-        contentFile += getScriptFileContent("JS2");
+        //var contentFile = getScriptFileContent("JS");
+        //contentFile += getScriptFileContent("JS2");
         
-        webViews[sandboxId].evaluateJavaScript(contentFile) { (result, error) in
+        webViews[sandboxId].evaluateJavaScript(urlContent) { (result, error) in
             if error != nil {
-                print("ERROR")
+                let errorMsg = error!.localizedDescription
+                if (errorMsg != "JavaScript execution returned a result of an unsupported type"){
+                    self.handleError(sandboxId, error: error!)
+                    return;
+                }
             }
             
             if let _ = self.results[sandboxId][self.initActionCode]! as? [String]{
@@ -127,13 +141,35 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
 
     }
     
-    func randomStringWithLength (len : Int) -> NSString {
+    private func handleError(sandboxId : Int, error : NSError){
+        var errorReport = "ERROR: "
+        if let exceptionMsg = error.userInfo["NSLocalizedDescription"]! as? String{
+            errorReport += exceptionMsg + "\r\n"
+        }
+        if let exceptionMsg = error.userInfo["WKJavaScriptExceptionMessage"]! as? String{
+            errorReport += exceptionMsg + "\r\n"
+        }
+        if let exceptionMsg = error.userInfo["WKJavaScriptExceptionLineNumber"]! as? Int{
+            errorReport += "At line: " + String(exceptionMsg)
+        }
+        if let exceptionMsg = error.userInfo["WKJavaScriptExceptionColumnNumber"]! as? Int{
+            errorReport += " , Column: " + String(exceptionMsg) + "\r\n"
+        }
+        if let exceptionMsg = error.userInfo["WKJavaScriptExceptionSourceURL"]! as? NSURL{
+            if (exceptionMsg.debugDescription != "about:blank"){
+                errorReport += "At location: " + exceptionMsg.debugDescription
+            }
+        }
+        self.viewCtrl!.debugInfo(sandboxId, content: errorReport);
+    }
+    
+    private func randomStringWithLength (len : Int) -> NSString {
         
         let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         
         let randomString : NSMutableString = NSMutableString(capacity: len)
         
-        for (var i=0; i < len; i += 1){
+        for (_) in 0 ..< len{
             let length = UInt32 (letters.length)
             let rand = arc4random_uniform(length)
             randomString.appendFormat("%C", letters.characterAtIndex(Int(rand)))
@@ -143,14 +179,12 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
     }
     
     // executes the script which is saved inside webView
-    func executeScript(sandboxId : Int, scriptId: Int) -> String {
-        var resultString : String = "";
+    func executeScript(sandboxId : Int, scriptId: Int) {
         if (webViews.count > sandboxId && webViews[sandboxId].configuration.userContentController.userScripts.count > scriptId){
 
-            resultString = execute(sandboxId, functionName: webViews[sandboxId].configuration.userContentController.userScripts[scriptId].source, functionParams: [])
+            execute(sandboxId, functionName: webViews[sandboxId].configuration.userContentController.userScripts[scriptId].source, functionParams: [])
             
         }
-        return resultString;
     }
     
     // executes the script content inside sandbox
@@ -161,8 +195,8 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         }
     }
     
-    // executes the script of specified method of specified class with parameters
-    func executeClassContent(sandboxId: Int, className: String, functionName: String, functionParams : [String]){
+    // executes the script of specified function of specified class with parameters
+    func executeClassContent(sandboxId: Int, className: String, functionName: String, functionParams : [AnyObject]){
         if (webViews.count > sandboxId){
             
             executeClass(sandboxId, className: className, functionName: functionName, functionParams: functionParams)
@@ -178,11 +212,15 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         sync(results){
             self.results[sandboxId][diceRoll] = "init";
         }
-        let scriptQuery = jsCommunicator + ".evaluateClass(" + String(diceRoll) + ", '" + className + "', '" + renderMethod + "')"
+        let scriptQuery = jsCommunicator + "." + evaluateClassMethod + "(" + String(diceRoll) + ", '" + className + "', '" + renderMethod + "')"
         
         webViews[sandboxId].evaluateJavaScript(scriptQuery) { (result, error) in
             if error != nil {
-                print("ERROR")
+                let errorMsg = error!.localizedDescription
+                if (errorMsg != "JavaScript execution returned a result of an unsupported type"){
+                    self.handleError(sandboxId, error: error!)
+                    return;
+                }
             }
             
             //print(self.results[sandboxId][diceRoll]!)
@@ -205,15 +243,30 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         }
     }
     
-    private func executeClass(sandboxId: Int, className:String, functionName: String, functionParams: [String]) ->NSDictionary {
-        var executeClassResult : NSDictionary = NSDictionary()
+    // execute the function of specified class with parameters
+    private func executeClass(sandboxId: Int, className:String, functionName: String, functionParams: [AnyObject]) {
         
-        let diceRoll = Int(arc4random_uniform(randomRange) + 1)
-        sync(results){
-            self.results[sandboxId][diceRoll] = "init";
+        var scriptQuery = jsCommunicator + "." + evaluateClassMethod + "(" + String(-1) + ", '" + className + "', '" + functionName + "'";
+        for param in functionParams{
+            scriptQuery += ", '" + String(param) + "'";
         }
+        scriptQuery += ")"
         
-        var scriptQuery = jsCommunicator + ".evaluateClass(" + String(diceRoll) + ", '" + className + "', '" + functionName + "'";
+        webViews[sandboxId].evaluateJavaScript(scriptQuery) { (result, error) in
+            if error != nil {
+                let errorMsg = error!.localizedDescription
+                if (errorMsg != "JavaScript execution returned a result of an unsupported type"){
+                    self.handleError(sandboxId, error: error!)
+                    return;
+                }
+            }
+        }
+    }
+    
+    // execute the function
+    private func execute(sandboxId: Int, functionName: String, functionParams: [String]) {
+        
+        var scriptQuery = jsCommunicator + ".evaluate(" + String(-1) + ", '" + functionName + "'";
         for param in functionParams{
             scriptQuery += ", '" + param + "'";
         }
@@ -221,74 +274,17 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         
         webViews[sandboxId].evaluateJavaScript(scriptQuery) { (result, error) in
             if error != nil {
-                print("ERROR")
-            }
-            
-            if let _ = self.results[sandboxId][diceRoll]! as? NSDictionary{
-                executeClassResult = self.results[sandboxId][diceRoll]! as! NSDictionary
-            }
-            else{
-                if let resultString = self.results[sandboxId][diceRoll]! as? String{
-                    executeClassResult = [0: resultString]
-                }
-                else{
-                    print("error while reading result executeClass!")
+                let errorMsg = error!.localizedDescription
+                if (errorMsg != "JavaScript execution returned a result of an unsupported type"){
+                    self.handleError(sandboxId, error: error!)
+                    return;
                 }
             }
             
-            // remove after using
-            self.sync(self.results){
-                self.results[sandboxId].removeValueForKey(diceRoll)
-            }
-            // TODO maybe parsing specific results
-            
         }
-        return executeClassResult;
     }
     
-    private func execute(sandboxId: Int, functionName: String, functionParams: [String]) -> String{
-        var executeResult : String = "";
-        
-        let diceRoll = Int(arc4random_uniform(randomRange) + 1)
-        sync(results){
-            self.results[sandboxId][diceRoll] = "init";
-        }
-        //print(diceRoll)
-        
-        
-        var scriptQuery = jsCommunicator + ".evaluate(" + String(diceRoll) + ", '" + functionName + "'";
-        for param in functionParams{
-            scriptQuery += ", '" + param + "'";
-        }
-        scriptQuery += ")"
-        
-        // for test
-        //scriptQuery = jsCommunicator + ".evaluate(" + String(diceRoll) + ",'test','ppp','qqq')"
-        
-        webViews[sandboxId].evaluateJavaScript(scriptQuery) { (result, error) in
-            if error != nil {
-                print("ERROR")
-            }
-            
-            //print(self.results[diceRoll]!)
-
-            if let _ :String = self.results[sandboxId][diceRoll]! as? String{
-                executeResult = self.results[sandboxId][diceRoll]! as! String
-            }
-            else{
-                print("error while reading result execute!")
-            }
-            
-            // remove after using
-            self.sync(self.results){
-                self.results[sandboxId].removeValueForKey(diceRoll)
-            }
-            
-        }
-        return executeResult;
-    }
-    
-    func getWebConfig(messageHandlerName: String, scriptNames : [String]) -> WKWebViewConfiguration{
+    private func getWebConfig(messageHandlerName: String, scriptNames : [String]) -> WKWebViewConfiguration{
         
         // Create WKWebViewConfiguration instance
         let webCfg:WKWebViewConfiguration = WKWebViewConfiguration()
@@ -311,7 +307,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         return webCfg;
     }
     
-    func injectScript(scriptName : String, userController : WKUserContentController){
+    private func injectScript(scriptName : String, userController : WKUserContentController){
         // Get script that's to be injected into the document
         let js:String = getScriptFileContent(scriptName)
         
@@ -323,7 +319,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
     }
     
     // gets the content from file
-    func getScriptFileContent(scriptName : String) ->String{
+    private func getScriptFileContent(scriptName : String) ->String{
         
         var script:String?
         
@@ -414,7 +410,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
     }
     
     // function for thread-safe object synchronizing
-    func sync(lock: AnyObject, closure: () -> Void) {
+    private func sync(lock: AnyObject, closure: () -> Void) {
         objc_sync_enter(lock)
         closure()
         objc_sync_exit(lock)
@@ -430,6 +426,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
     deinit {
         webViews.removeAll(keepCapacity: false)
         results.removeAll(keepCapacity: false)
+        apiConnector.removeAll(keepCapacity: false)
     }
 
 }
