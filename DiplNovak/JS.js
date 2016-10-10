@@ -10,18 +10,57 @@ class JS {
                 width : 100,
                 height : 50
             },
-            onClick: "eval",
-            params: [
-                 {value : "eval"},
-                 {value : 0.2},
-                 {value : 10},
-                 {value : true}
-            ]
+            onClick: "eval"
+        }
+        this.button2 = {
+            objectId : 20,
+            title : "add",
+            frame: {
+                x : 50,
+                y : 330,
+                width : 50,
+                height : 25
+            },
+            onClick: "addElement"
+        }
+        this.button3 = {
+            objectId : 30,
+            title : "updateElement",
+            frame: {
+                x : 50,
+                y : 300,
+                width : 50,
+                height : 25
+            },
+            onClick: "updateElement"
+        }
+        this.button4 = {
+            objectId : 40,
+            title : "delete",
+            frame: {
+                x : 50,
+                y : 270,
+                width : 50,
+                height : 25
+            },
+            onClick: "deleteElement"
         }
     }
 
     eval(param, param2, param3, param4) {
-        JS_COMMUNICATOR.sendAsyncResponse(param + param2 + param3 + param4);
+        JS_COMMUNICATOR.sendAsyncResponse("test" + param2 + param3 + param4);
+    }
+    
+    addElement(){
+        JS_COMMUNICATOR.addUIElement();
+    }
+    
+    updateElement(){
+        JS_COMMUNICATOR.updateUIElement();
+    }
+    
+    deleteElement(){
+        JS_COMMUNICATOR.deleteElement();
     }
 
     render(){

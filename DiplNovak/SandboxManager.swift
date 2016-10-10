@@ -12,9 +12,9 @@ import WebKit
 protocol DiplSandboxDelegate: class {
     func executeAS(sandboxId : Int, uiElementId: Int, content : String)
     func debugInfo(sandboxId: Int, content: String)
-    //func addUI(sandboxId : Int, uiElementId: Int, content : String)
-    //func updateUI(sandboxId : Int, uiElementId: Int, content : String)
-    //func deleteUI(sandboxId : Int, uiElementId: Int, content : String)
+    func addUIElement(sandboxId : Int, content : [UIClass])
+    func updateUIElement(sandboxId : Int, uiElementId: [Int], content : NSDictionary)
+    func deleteUIElement(sandboxId : Int, uiElementId: Int)
 }
 
 class SandboxManager : NSObject, WKScriptMessageHandler{
@@ -46,6 +46,12 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
     let randomRange: UInt32 = 100000
     
     let initActionCode = -4648;
+    let asyncCode = -1;
+    let addActionCode = -11;
+    let updateActionCode = -22;
+    let deleteActionCode = -99;
+    
+    let jsApiCallNames = ["ID", "apiId", "msg"];
     
     override init(){
         scriptMessageHandler = "callbackHandler"
@@ -75,8 +81,9 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         
         let apiId = randomStringWithLength(32)
 
+        let jsCodes = [self.initActionCode, self.asyncCode, self.addActionCode, self.updateActionCode, self.deleteActionCode];
         let init1 = jsApiInit;
-        let init2 = "var " + jsCommunicator + " = new JSAPI('" + String(apiId) + "' ," + String(self.initActionCode) + ");";
+        let init2 = "var " + jsCommunicator + " = new JSAPI('" + String(apiId) + "' ," + jsApiCallNames.description + "," + jsCodes.description + ");";
 
         webView.evaluateJavaScript(init1 + ";" + init2 +  ";"  ){ (result, error) in
             
@@ -112,10 +119,10 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         }
         
         // TODO delete
-        //var contentFile = getScriptFileContent("JS");
-        //contentFile += getScriptFileContent("JS2");
+        var contentFile = getScriptFileContent("JS");
+        contentFile += getScriptFileContent("JS2");
         
-        webViews[sandboxId].evaluateJavaScript(urlContent) { (result, error) in
+        webViews[sandboxId].evaluateJavaScript(contentFile) { (result, error) in
             if error != nil {
                 let errorMsg = error!.localizedDescription
                 if (errorMsg != "JavaScript execution returned a result of an unsupported type"){
@@ -339,9 +346,11 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             if (message.name != scriptMessageHandler){
                 return;
             }
-            let actionID:Int = messageBody["ID"] as! Int
             
-            let apiId:String = messageBody["apiId"] as! String
+            // TODO error handle
+            let actionID:Int = messageBody[jsApiCallNames[0]] as! Int
+            
+            let apiId:String = messageBody[jsApiCallNames[1]] as! String
             
             let msg:AnyObject;
             
@@ -349,19 +358,16 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             if (actionID < 0){
                 
                 switch(actionID){
-                case -1 :
-                    // parser TODO
-                    if let _ = messageBody["msg"] as? String {
-                        msg = messageBody["msg"] as! String
+                case asyncCode :
+                    if let msg : String = messageBody[jsApiCallNames[2]] as? String {
                         print(msg);
                         viewCtrl?.executeAS(self.apiConnector[apiId]! , uiElementId: 0, content: String(msg));
                     }
                     else{
-                        viewCtrl?.executeAS(self.apiConnector[apiId]! , uiElementId: 0, content: "failed");
+                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "asyncCodeFailed")
                     }
                 case initActionCode :
-                    if let _ = messageBody["msg"] as? String {
-                        msg = messageBody["msg"] as! String
+                    if let msg : String = messageBody[jsApiCallNames[2]] as? String {
                         
                         let fullNameArr = msg.componentsSeparatedByString(",")
                         
@@ -374,21 +380,36 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                             self.results[self.apiConnector[apiId]!][self.initActionCode] = nameResult;
                         }
                     }
-                    else {
-                        if let _ = messageBody["msg"] as? NSDictionary {
-                            msg = messageBody["msg"] as! NSDictionary
-                        }
-                        else{
-                            return
-                        }
+                    else{
+                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "initActionCodeFailed")
                     }
+                case addActionCode :
+                    if let msg : NSDictionary = messageBody[jsApiCallNames[2]] as? NSDictionary {
+                        print(msg);
+                        // TODO parse msg
+                        viewCtrl?.addUIElement(self.apiConnector[apiId]!, content: [UIClass]())
+                    }
+                    else{
+                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "addActionCodeFailed")
+                    }
+                case updateActionCode :
+                    if let msg : NSDictionary = messageBody[jsApiCallNames[2]] as? NSDictionary {
+                        print(msg);
+                        viewCtrl?.updateUIElement(self.apiConnector[apiId]!, uiElementId: [0], content: msg)
+                    }
+                    else{
+                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "updateActionCodeFailed")
+                    }
+                case deleteActionCode :
+                    viewCtrl?.deleteUIElement(self.apiConnector[apiId]!, uiElementId: 0)
+
                 default: return
                 }
 
             }
             // normal call
             else{
-                if let _ = messageBody["msg"] as? String {
+                if let _ = messageBody[jsApiCallNames[2]] as? String {
                     msg = messageBody["msg"] as! String
                 }
                 else {
@@ -399,9 +420,6 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                         return
                     }
                 }
-                
-                print("action ID: " + String(actionID) + " message: " + String(msg))
-                
                 sync(results){
                     self.results[self.apiConnector[apiId]!][actionID] = msg;
                 }

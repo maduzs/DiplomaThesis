@@ -61,6 +61,21 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
 
     }
     
+    func addUIElement(sandboxId : Int, content : [UIClass]){
+        
+        
+    }
+    
+    func updateUIElement(sandboxId : Int, uiElementId: [Int], content : NSDictionary){
+        
+        
+    }
+    
+    func deleteUIElement(sandboxId : Int, uiElementId: Int){
+        
+        
+    }
+    
     // system buttons in view, not from JS
     func execute(buttonId : Int, content: String){
         switch (buttonId){
