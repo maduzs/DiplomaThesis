@@ -21,10 +21,7 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
     var webView: WKWebView!
     
     // al UI elements, 2D
-    private var uiObjects = [[UIClass]()];
-    
-    //only buttons (because of tag) 1D
-    private var uiButtonObjects = [Int : UIClass]();
+    private var uiObjects = [[Int : UIClass]()];
     
     private let scriptMessageHandler = "callbackHandler";
     
@@ -49,7 +46,7 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
     func executeAS(sandboxId: Int, uiElementId: Int, content: String) {
         print("ide to more " + String(sandboxId));
         print("elId: " + String(uiElementId) + "content: " + content);
-        uiObjects[sandboxId][uiElementId].uiElement.backgroundColor = UIColor.blueColor();
+        uiObjects[sandboxId][uiElementId]!.uiElement.backgroundColor = UIColor.blueColor();
     }
     
     func debugInfo(sandboxId: Int, content: String) {
@@ -62,25 +59,28 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
     }
     
     func addUIElement(sandboxId : Int, content : [UIClass]){
-        
-        
+        for uielem in content{
+            view.addSubview(uielem.uiElement)
+            uiObjects[sandboxId][uielem.objectId] = uielem
+        }
     }
     
     func updateUIElement(sandboxId : Int, uiElementId: [Int], content : NSDictionary){
-        
-        
+
     }
     
-    func deleteUIElement(sandboxId : Int, uiElementId: Int){
-        
-        
+    func deleteUIElement(sandboxId : Int, uiElementId: [Int]){
+        for id in uiElementId {
+            uiObjects[sandboxId][id]!.uiElement.removeFromSuperview();
+            uiObjects[sandboxId].removeValueForKey(id)
+        }
     }
     
     // system buttons in view, not from JS
     func execute(buttonId : Int, content: String){
         switch (buttonId){
         case 0 :
-            
+
             containerView.debugTextView.text = "";
             containerView.debugTextView.hidden = true;
             
@@ -238,7 +238,7 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
                 self.containerView.debugTextView.hidden = false;
                 return;
             }
-            self.uiObjects.append([UIClass]());
+            self.uiObjects.append([Int : UIClass]());
             
             self.sandboxManager.initFromUrl(newSandboxId, urlContent: urlContent) {(scriptNames) -> Void in
                 
@@ -260,10 +260,9 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
                         for (object) in objects {
                             if let btn = object.uiElement as? UIButton {
                                 btn.addTarget(self, action: Selector(self.buttonAction), forControlEvents: UIControlEvents.TouchUpInside)
-                                self.uiButtonObjects[btn.tag] = object;
                             }
                             if (self.checkIds(newSandboxId, id: object.objectId)){
-                                self.uiObjects[newSandboxId].append(object)
+                                self.uiObjects[newSandboxId][object.objectId] = (object)
                                 self.view.addSubview(object.uiElement)
                             }
                             else {
@@ -291,8 +290,8 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
     }
     
     private func checkIds(sandboxId: Int, id : Int) -> BooleanType{
-        for ui in self.uiObjects[sandboxId] {
-            if (ui.objectId == id){
+        for (_, value) in self.uiObjects[sandboxId] {
+            if (value.objectId == id){
                 return false;
             }
             else{
@@ -305,18 +304,25 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
     func buttonAction(sender: UIButton!) {
         print("Button tapped! " + "id: " + String(sender.tag) + " title: " + sender.currentTitle! )
         
-        if let object = uiButtonObjects[sender.tag]{
-            
-            let multiClassCall = object.functionName.componentsSeparatedByString(".");
-            if (multiClassCall.count == 2){
-                sandboxManager.executeClassContent(object.sandboxId, className: multiClassCall[0], functionName: multiClassCall[1], functionParams: object.params)
-            }
-            else{
-                if (multiClassCall.count == 1){
-                    sandboxManager.executeClassContent(object.sandboxId, className: object.className, functionName: object.functionName, functionParams: object.params)
-                }
-                else {
-                    showAlertWithMessage("Wrong button action registered!");
+        /// iterate over sandboxes, select one with desired tag in it
+        for (i) in 0..<uiObjects.count {
+            for (key, value) in uiObjects[i]{
+                if (value.uiElement.tag == sender.tag){
+                    if let object = uiObjects[i][key]{
+                        
+                        let multiClassCall = object.functionName.componentsSeparatedByString(".");
+                        if (multiClassCall.count == 2){
+                            sandboxManager.executeClassContent(object.sandboxId, className: multiClassCall[0], functionName: multiClassCall[1], functionParams: object.params)
+                        }
+                        else{
+                            if (multiClassCall.count == 1){
+                                sandboxManager.executeClassContent(object.sandboxId, className: object.className, functionName: object.functionName, functionParams: object.params)
+                            }
+                            else {
+                                showAlertWithMessage("Wrong button action registered!");
+                            }
+                        }
+                    }
                 }
             }
         }

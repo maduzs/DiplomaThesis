@@ -14,7 +14,7 @@ protocol DiplSandboxDelegate: class {
     func debugInfo(sandboxId: Int, content: String)
     func addUIElement(sandboxId : Int, content : [UIClass])
     func updateUIElement(sandboxId : Int, uiElementId: [Int], content : NSDictionary)
-    func deleteUIElement(sandboxId : Int, uiElementId: Int)
+    func deleteUIElement(sandboxId : Int, uiElementId: [Int])
 }
 
 class SandboxManager : NSObject, WKScriptMessageHandler{
@@ -205,7 +205,6 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
     // executes the script of specified function of specified class with parameters
     func executeClassContent(sandboxId: Int, className: String, functionName: String, functionParams : [AnyObject]){
         if (webViews.count > sandboxId){
-            
             executeClass(sandboxId, className: className, functionName: functionName, functionParams: functionParams)
         }
     }
@@ -255,10 +254,10 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         
         var scriptQuery = jsCommunicator + "." + evaluateClassMethod + "(" + String(-1) + ", '" + className + "', '" + functionName + "'";
         for param in functionParams{
-            scriptQuery += ", '" + String(param) + "'";
+            scriptQuery += ", " + param.description + "";
         }
         scriptQuery += ")"
-        
+    
         webViews[sandboxId].evaluateJavaScript(scriptQuery) { (result, error) in
             if error != nil {
                 let errorMsg = error!.localizedDescription
@@ -386,7 +385,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                 case addActionCode :
                     if let msg : NSDictionary = messageBody[jsApiCallNames[2]] as? NSDictionary {
                         print(msg);
-                        // TODO parse msg
+                        
                         viewCtrl?.addUIElement(self.apiConnector[apiId]!, content: [UIClass]())
                     }
                     else{
@@ -401,7 +400,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                         viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "updateActionCodeFailed")
                     }
                 case deleteActionCode :
-                    viewCtrl?.deleteUIElement(self.apiConnector[apiId]!, uiElementId: 0)
+                    viewCtrl?.deleteUIElement(self.apiConnector[apiId]!, uiElementId: [0])
 
                 default: return
                 }
@@ -410,11 +409,11 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             // normal call
             else{
                 if let _ = messageBody[jsApiCallNames[2]] as? String {
-                    msg = messageBody["msg"] as! String
+                    msg = messageBody[jsApiCallNames[2]] as! String
                 }
                 else {
-                    if let _ = messageBody["msg"] as? NSDictionary {
-                        msg = messageBody["msg"] as! NSDictionary
+                    if let _ = messageBody[jsApiCallNames[2]] as? NSDictionary {
+                        msg = messageBody[jsApiCallNames[2]] as! NSDictionary
                     }
                     else{
                         return

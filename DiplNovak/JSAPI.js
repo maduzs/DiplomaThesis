@@ -53,22 +53,26 @@ class JSAPI {
     
     registerObject() {
         var args = Array.prototype.slice.call(arguments);
-        
+
         const messageToPost = {[this.call1] : this.initCode, [this.call2] : this.apiId, [this.call3] : args.toString()};
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }
     
-    addUIElement(){
-        const messageToPost = {[this.call1] : this.addCode, [this.call2] : this.apiId, [this.call3] : args.toString()};
+    addUIElement(elements){
+        const messageToPost = {[this.call1] : this.addCode, [this.call2] : this.apiId, [this.call3] : elements};
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }
     
     updateUIElement(){
+        var args = Array.prototype.slice.call(arguments);
+        
         const messageToPost = {[this.call1] : this.updateCode, [this.call2] : this.apiId, [this.call3] : args.toString()};
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }
     
     deleteUIElement(){
+        var args = Array.prototype.slice.call(arguments);
+        
         const messageToPost = {[this.call1] : this.deleteCode, [this.call2] : this.apiId, [this.call3] : args.toString()};
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }

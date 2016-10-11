@@ -3,6 +3,7 @@ class JS {
     constructor(){
         this.button1 = {
             objectId : 0,
+            alpha:  0.5,
             title : "button1",
             frame: {
                 x : 50,
@@ -11,18 +12,8 @@ class JS {
                 height : 50
             },
             onClick: "eval"
-        }
-        this.button2 = {
-            objectId : 20,
-            title : "add",
-            frame: {
-                x : 50,
-                y : 330,
-                width : 50,
-                height : 25
-            },
-            onClick: "addElement"
-        }
+        };
+
         this.button3 = {
             objectId : 30,
             title : "updateElement",
@@ -33,7 +24,7 @@ class JS {
                 height : 25
             },
             onClick: "updateElement"
-        }
+        };
         this.button4 = {
             objectId : 40,
             title : "delete",
@@ -43,16 +34,34 @@ class JS {
                 width : 50,
                 height : 25
             },
-            onClick: "deleteElement"
-        }
+            onClick: "deleteElement",
+            /*params: [
+                {value: 0}
+            ]*/
+        };
+        this.button2 = {
+            objectId : 20,
+            title : "add",
+            frame: {
+                x : 50,
+                y : 330,
+                width : 50,
+                height : 25
+            },
+            onClick: "addElement",
+            params: [
+                 {value: this.button4}
+            ]
+        };
     }
 
     eval(param, param2, param3, param4) {
         JS_COMMUNICATOR.sendAsyncResponse("test" + param2 + param3 + param4);
     }
     
-    addElement(){
-        JS_COMMUNICATOR.addUIElement();
+    addElement(arg){
+        var msg = { uiElements : [ { button : arg } ] }
+        JS_COMMUNICATOR.addUIElement(msg);
     }
     
     updateElement(){
@@ -60,14 +69,15 @@ class JS {
     }
     
     deleteElement(){
-        JS_COMMUNICATOR.deleteElement();
+        JS_COMMUNICATOR.deleteElement(this.button1);
     }
 
     render(){
         var text =
         {
             uiElements : [
-                { button: this.button1 }
+                { button: this.button1 },
+                { button: this.button2 }
             ]
         };
 
