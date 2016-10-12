@@ -11,21 +11,7 @@ class JS2 {
                 height : 50
             },
             onClick: "eval2",
-            params: [
-                    { value : "test3"},
-                    { value : "test4"}
-            ]
-        }
-        
-        this.label1 = {
-            objectId : 2,
-            text : "label1",
-            frame : {
-                x : 50,
-                y : 260,
-                width : 220,
-                height : 21
-            }
+            params: [ "test3", "test4" ]
         }
         
         this.textField1 = {
@@ -49,7 +35,7 @@ class JS2 {
         }
         */
 
-        JS_COMMUNICATOR.sendResponse("js2.eval2: " + param + param2);
+        JS_COMMUNICATOR.sendAsyncResponse("js2.eval2: " + param + param2);
     }
 
     render() {
@@ -57,7 +43,6 @@ class JS2 {
         {
             uiElements : [
                 { button: this.button2 },
-                { label: this.label1 },
                 { textfield: this.textField1 }
             ]
         };

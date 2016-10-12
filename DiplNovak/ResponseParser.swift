@@ -26,6 +26,13 @@ class ResponseParser: NSObject{
         
         var alpha : CGFloat = 1.0
         
+        var objClass = className;
+        if (className.characters.count <= 0){
+            if let name : String = renderResult.objectForKey("className") as? String{
+                objClass = name;
+            }
+        }
+        
         if let itemsArray : NSArray = renderResult.objectForKey("uiElements") as? NSArray{
             
             for (item) in itemsArray {
@@ -34,7 +41,7 @@ class ResponseParser: NSObject{
                         if let parseAlpha : CGFloat = content.objectForKey("alpha") as? CGFloat{
                             alpha = parseAlpha
                         }
-                        if let uiClass : UIClass = parseButton(content, sandboxId: sandboxId, objectId: objectId, className: className, alpha: alpha){
+                        if let uiClass : UIClass = parseButton(content, sandboxId: sandboxId, objectId: objectId, className: objClass, alpha: alpha){
                             result.append(uiClass)
                         }
                     }
@@ -132,19 +139,19 @@ class ResponseParser: NSObject{
             functionName = fn;
             if let paramsArray : NSArray = content.objectForKey("params") as? NSArray{
                 for (paramOjb) in paramsArray{
-                    if let paramDictionary : NSDictionary = paramOjb.objectForKey("value") as? NSDictionary{
+                    print(paramOjb)
+                    print(paramOjb.description);
+                    if (paramOjb is NSDictionary){
                         
                         // encode dictionary to JSON
-                        let jsonData = try! NSJSONSerialization.dataWithJSONObject(paramDictionary, options: NSJSONWritingOptions.PrettyPrinted)
+                        let jsonData = try! NSJSONSerialization.dataWithJSONObject(paramOjb, options: NSJSONWritingOptions.PrettyPrinted)
                         let jsonString = NSString(data: jsonData, encoding: NSUTF8StringEncoding)! as String
                         
                         params.append(jsonString)
                         
                     }
                     else{
-                        if let paramPrimitive : AnyObject = paramOjb.objectForKey("value"){
-                            params.append(paramPrimitive)
-                        }
+                        params.append(paramOjb)
                     }
                 }
             }
@@ -154,6 +161,24 @@ class ResponseParser: NSObject{
             return uiClass;
         }
         return nil
+    }
+    
+    func parseDeleteResponse(content: [AnyObject]) -> [Int]{
+        var ids = [Int]();
+        for (i) in 0..<content.count{
+            if let obj : NSDictionary = content[i] as? NSDictionary{
+                if let objId = obj.objectForKey("objectId") as? Int{
+                    ids.append(objId);
+                }
+            }
+            else {
+                if let objId = content[i] as? Int {
+                    ids.append(objId)
+                }
+            }
+        }
+        
+        return ids;
     }
     
 }

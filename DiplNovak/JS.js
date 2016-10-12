@@ -1,6 +1,7 @@
 class JS {
     
     constructor(){
+
         this.button1 = {
             objectId : 0,
             alpha:  0.5,
@@ -11,9 +12,9 @@ class JS {
                 width : 100,
                 height : 50
             },
-            onClick: "eval"
-        };
-
+            onClick: "updateElement",
+            params : [ "test" ]
+            };
         this.button3 = {
             objectId : 30,
             title : "updateElement",
@@ -23,7 +24,8 @@ class JS {
                 width : 50,
                 height : 25
             },
-            onClick: "updateElement"
+            onClick: "eval",
+            params : [ 10.10 , "jsss", 10 ]
         };
         this.button4 = {
             objectId : 40,
@@ -35,10 +37,18 @@ class JS {
                 height : 25
             },
             onClick: "deleteElement",
-            /*params: [
-                {value: 0}
-            ]*/
+            params: [ this.button1, 30 ]
         };
+        this.label1 = {
+            objectId : 2,
+            text : "label1",
+            frame : {
+                x : 50,
+                y : 260,
+                width : 220,
+                height : 21
+            }
+        }
         this.button2 = {
             objectId : 20,
             title : "add",
@@ -49,27 +59,26 @@ class JS {
                 height : 25
             },
             onClick: "addElement",
-            params: [
-                 {value: this.button4}
-            ]
+            params: [ this.button4, this.button3, this.label1 ]
         };
     }
 
-    eval(param, param2, param3, param4) {
-        JS_COMMUNICATOR.sendAsyncResponse("test" + param2 + param3 + param4);
+    eval(param, param2, param3) {
+        // apply args??
+        JS_COMMUNICATOR.sendAsyncResponse(param, param2, param3);
     }
     
-    addElement(arg){
-        var msg = { uiElements : [ { button : arg } ] }
+    addElement(arg, arg2, arg3){
+        var msg = { uiElements : [ { button : arg }, { button : arg2 }, { label: arg3} ] }
         JS_COMMUNICATOR.addUIElement(msg);
     }
     
-    updateElement(){
-        JS_COMMUNICATOR.updateUIElement();
+    updateElement(param){
+        JS_COMMUNICATOR.updateUIElement(param);
     }
     
-    deleteElement(){
-        JS_COMMUNICATOR.deleteElement(this.button1);
+    deleteElement(arg, arg2){
+        JS_COMMUNICATOR.deleteUIElement(arg, arg2);
     }
 
     render(){

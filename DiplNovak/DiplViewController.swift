@@ -35,9 +35,9 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
     
     private let sandboxManager: SandboxManager = SandboxManager(handlerName: "callbackHandler", apiFileName: "JSAPI", scriptCommunicatorName: "JS_COMMUNICATOR");
     
-    private var debugContent = "";
-    
     private var myGroup = dispatch_group_create()
+    
+    private var consoleShow = false;
     
     struct defaultsKeys {
         static let keyOne = "inputKey"
@@ -49,30 +49,43 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         uiObjects[sandboxId][uiElementId]!.uiElement.backgroundColor = UIColor.blueColor();
     }
     
-    func debugInfo(sandboxId: Int, content: String) {
-        debugContent = content;
+    // severity - 0 : trace, 1 : warning, 2 : error
+    func debugInfo(sandboxId: Int, content: String, severity: Int) {
+        
         print("sandboxId: " + String(sandboxId) + " content: " + content);
         
         containerView.debugTextView.text = containerView.debugTextView.text + content + "\r\n";
-        containerView.debugTextView.hidden = false;
-
-    }
+        
+        switch(severity){
+            
+        case 0 : break
+        case 1 :
+            // TODO nech sa stale nenastavuje
+            if (containerView.debugTextView.hidden) {
+                let image : UIImage = (UIImage(named: "console-Importance_50") as UIImage?)!
+                containerView.consoleButton.setBackgroundImage(image, forState: .Normal)
+            }
     
-    func addUIElement(sandboxId : Int, content : [UIClass]){
-        for uielem in content{
-            view.addSubview(uielem.uiElement)
-            uiObjects[sandboxId][uielem.objectId] = uielem
+        case 2 :
+            hideAllSubview(true);
+            consoleShow = true;
+            containerView.debugTextView.hidden = false;
+            setConsoleIcon();
+        default: break;
         }
     }
     
+    func addUIElement(sandboxId : Int, content : [UIClass]){
+        addSubview(sandboxId, objects: content);
+    }
+
     func updateUIElement(sandboxId : Int, uiElementId: [Int], content : NSDictionary){
 
     }
-    
-    func deleteUIElement(sandboxId : Int, uiElementId: [Int]){
+
+    func removeUIElement(sandboxId : Int, uiElementId: [Int]){
         for id in uiElementId {
-            uiObjects[sandboxId][id]!.uiElement.removeFromSuperview();
-            uiObjects[sandboxId].removeValueForKey(id)
+            removeSubview(sandboxId, id: id);
         }
     }
     
@@ -84,16 +97,8 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
             containerView.debugTextView.text = "";
             containerView.debugTextView.hidden = true;
             
-            let alert = UIAlertController(title: nil, message: "Please wait...", preferredStyle: .Alert)
-            
-            alert.view.tintColor = UIColor.blackColor()
-            let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(frame: CGRectMake(10, 5, 50, 50)) as UIActivityIndicatorView
-            loadingIndicator.hidesWhenStopped = true
-            loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
-            loadingIndicator.startAnimating();
-            
-            alert.view.addSubview(loadingIndicator)
-            presentViewController(alert, animated: true, completion: nil)
+            startLoadingSpinner();
+
             
             var err = false;
             
@@ -141,6 +146,7 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
                     
                     self.didReceiveUrlContent(content)
                     
+                    // TODO just after did..
                     self.dismissViewControllerAnimated(false, completion: nil)
                 };
             }
@@ -151,15 +157,24 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
             defaults.setValue(content, forKey: defaultsKeys.keyOne)
             
             defaults.synchronize()
-            
-            
+
             // TODO stuff with subviews
             
             //self.view.insertSubview(self.containerView.debugTextView, aboveSubview: object.uiElement)
             //self.view.bringSubviewToFront(self.containerView.debugTextView)
+            //self.containerView.bringSubviewToFront(self.containerView.debugTextView)
 
         case 1 :
             containerView.textView1.text = "";
+        case 2 :
+            hideAllSubview(!consoleShow);
+            
+            setConsoleIcon();
+            
+            containerView.debugTextView.hidden = consoleShow;
+            
+            consoleShow = !consoleShow;
+            
         default :
             return
         }
@@ -179,6 +194,32 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+    }
+    
+    private func startLoadingSpinner(){
+        let alert = UIAlertController(title: nil, message: "Please wait...", preferredStyle: .Alert)
+        
+        alert.view.tintColor = UIColor.blackColor()
+        let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(frame: CGRectMake(10, 5, 50, 50)) as UIActivityIndicatorView
+        loadingIndicator.hidesWhenStopped = true
+        loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
+        loadingIndicator.startAnimating();
+        
+        alert.view.addSubview(loadingIndicator)
+        presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    private func setConsoleIcon(){
+        var image : UIImage;
+        if (consoleShow){
+            image = (UIImage(named: "console-100") as UIImage?)!
+            containerView.consoleButton.alpha = 1
+        }
+        else{
+            image = (UIImage(named: "console_filled-100") as UIImage?)!
+            containerView.consoleButton.alpha = 0.6
+        }
+        containerView.consoleButton.setBackgroundImage(image, forState: .Normal)
     }
     
     private func checkInputMultiple(input: String) -> [String]? {
@@ -257,23 +298,59 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
                             return;
                         }
                         
-                        for (object) in objects {
-                            if let btn = object.uiElement as? UIButton {
-                                btn.addTarget(self, action: Selector(self.buttonAction), forControlEvents: UIControlEvents.TouchUpInside)
-                            }
-                            if (self.checkIds(newSandboxId, id: object.objectId)){
-                                self.uiObjects[newSandboxId][object.objectId] = (object)
-                                self.view.addSubview(object.uiElement)
-                            }
-                            else {
-                                self.containerView.debugTextView.text = self.containerView.debugTextView.text + "Error! Non unique Id in objects!" + " objectId: "
-                                    + String(object.objectId) + "\r\n";
-                                self.containerView.debugTextView.hidden = false;
-                            }
-                        }
+                        self.addSubview(newSandboxId, objects: objects)
+
                     }
                 }
             }
+        }
+    }
+    
+    private func addSubview(sandboxId : Int, objects: [UIClass]){
+        for (object) in objects {
+            if let btn = object.uiElement as? UIButton {
+                btn.addTarget(self, action: Selector(self.buttonAction), forControlEvents: UIControlEvents.TouchUpInside)
+            }
+            if (self.checkIds(sandboxId, id: object.objectId)){
+                self.uiObjects[sandboxId][object.objectId] = (object)
+                self.view.addSubview(object.uiElement)
+            }
+            else {
+                self.containerView.debugTextView.text = self.containerView.debugTextView.text + "Error! Non unique Id in objects!" + " objectId: "
+                    + String(object.objectId) + "\r\n";
+                if (self.containerView.debugTextView.hidden){
+                    let image : UIImage = (UIImage(named: "console-Importance_50") as UIImage?)!
+                    containerView.consoleButton.setBackgroundImage(image, forState: .Normal)
+                }
+            }
+        }
+    }
+    
+    private func updateSubview(){
+        
+    }
+    
+    private func hideAllSubview(hide : Bool){
+        if (hide){
+            for (i) in 0..<uiObjects.count{
+                for (key, _) in uiObjects[i]{
+                    containerView.sendSubviewToBack( uiObjects[i][key]!.uiElement );
+                }
+            }
+        }
+        else{
+            for (i) in 0..<uiObjects.count{
+                for (key, _) in uiObjects[i]{
+                    containerView.bringSubviewToFront( uiObjects[i][key]!.uiElement );
+                }
+            }
+        }
+    }
+    
+    private func removeSubview(sandboxId: Int, id : Int){
+        if let element = uiObjects[sandboxId][id] {
+            element.uiElement.removeFromSuperview();
+            uiObjects[sandboxId].removeValueForKey(id)
         }
     }
     

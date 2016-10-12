@@ -20,13 +20,21 @@ class JSView: UIView {
     
     @IBOutlet weak var debugTextView: UITextView!
     
+    @IBOutlet weak var consoleButton: UIButton!
+    
     @IBAction func userTappedBackground(sender: AnyObject) {
         self.endEditing(true)
     }
-    @IBAction func submitButton(sender: UIButton, forEvent event: UIEvent) {
+    @IBAction func submitButton(sender: UIButton, forEvent event: UIEvent){
         dataSource?.execute(0, content: textView1.text)
     }
-    @IBAction func clearButton(sender: UIButton, forEvent event: UIEvent) {
-        dataSource?.execute(1, content: "");
+    
+    @IBAction func clearButtonAction(sender: UIButton, forEvent event: UIEvent) {
+        dataSource?.execute(1, content: "")
     }
+    
+    @IBAction func consoleButtonAction(sender: UIButton, forEvent event: UIEvent) {
+        dataSource?.execute(2, content: "")
+    }
+    
 }

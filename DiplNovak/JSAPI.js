@@ -14,22 +14,10 @@ class JSAPI {
         this.deleteCode = codesString[4];
     }
     
-    evaluate(id, funcName) {
-        
-        this.callId = id;
-        
-        // convert arguments to array
-        var args = Array.prototype.slice.call(arguments);
-        // slice the first two arguments and call the method with remaining ones
-        if (arguments.length > 1){ // 2 ?
-            args.splice(0, 2);
-            funcName.apply(this, args);
-        }
-    }
-    
     evaluateClass(id, className, funcName){
         
         this.callId = id;
+        this.className = className;
 
         var args = Array.prototype.slice.call(arguments);
         if (arguments.length > 3){
@@ -46,8 +34,9 @@ class JSAPI {
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }
     
-    sendAsyncResponse(content){
-        const messageToPost = {[this.call1] : this.asyncCode, [this.call2] : this.apiId, [this.call3] : content};
+    sendAsyncResponse(){
+        var args = Array.prototype.slice.call(arguments);
+        const messageToPost = {[this.call1] : this.asyncCode, [this.call2] : this.apiId, [this.call3] :  args };
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }
     
@@ -59,21 +48,19 @@ class JSAPI {
     }
     
     addUIElement(elements){
+        elements.className = this.className;
         const messageToPost = {[this.call1] : this.addCode, [this.call2] : this.apiId, [this.call3] : elements};
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }
     
-    updateUIElement(){
-        var args = Array.prototype.slice.call(arguments);
-        
-        const messageToPost = {[this.call1] : this.updateCode, [this.call2] : this.apiId, [this.call3] : args.toString()};
+    updateUIElement(elements){
+        const messageToPost = {[this.call1] : this.updateCode, [this.call2] : this.apiId, [this.call3] : elements};
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }
     
-    deleteUIElement(){
+    deleteUIElement(elements){
         var args = Array.prototype.slice.call(arguments);
-        
-        const messageToPost = {[this.call1] : this.deleteCode, [this.call2] : this.apiId, [this.call3] : args.toString()};
+        const messageToPost = {[this.call1] : this.deleteCode, [this.call2] : this.apiId, [this.call3] : args};
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }
     

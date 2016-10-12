@@ -11,10 +11,10 @@ import WebKit
 
 protocol DiplSandboxDelegate: class {
     func executeAS(sandboxId : Int, uiElementId: Int, content : String)
-    func debugInfo(sandboxId: Int, content: String)
+    func debugInfo(sandboxId: Int, content: String, severity: Int)
     func addUIElement(sandboxId : Int, content : [UIClass])
     func updateUIElement(sandboxId : Int, uiElementId: [Int], content : NSDictionary)
-    func deleteUIElement(sandboxId : Int, uiElementId: [Int])
+    func removeUIElement(sandboxId : Int, uiElementId: [Int])
 }
 
 class SandboxManager : NSObject, WKScriptMessageHandler{
@@ -103,12 +103,6 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             completionHandler(self.sandboxId - 1);
             
         }
-        /*try _ = webView.evaluateJavaScript(jsApiInit){ (result, error) in
-         print("ok");
-         
-         }
-         */
-
     }
     
     func initFromUrl (sandboxId: Int, urlContent : String, completionHandler : ([String]) -> Void){
@@ -148,49 +142,11 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
 
     }
     
-    private func handleError(sandboxId : Int, error : NSError){
-        var errorReport = "ERROR: "
-        if let exceptionMsg = error.userInfo["NSLocalizedDescription"]! as? String{
-            errorReport += exceptionMsg + "\r\n"
-        }
-        if let exceptionMsg = error.userInfo["WKJavaScriptExceptionMessage"]! as? String{
-            errorReport += exceptionMsg + "\r\n"
-        }
-        if let exceptionMsg = error.userInfo["WKJavaScriptExceptionLineNumber"]! as? Int{
-            errorReport += "At line: " + String(exceptionMsg)
-        }
-        if let exceptionMsg = error.userInfo["WKJavaScriptExceptionColumnNumber"]! as? Int{
-            errorReport += " , Column: " + String(exceptionMsg) + "\r\n"
-        }
-        if let exceptionMsg = error.userInfo["WKJavaScriptExceptionSourceURL"]! as? NSURL{
-            if (exceptionMsg.debugDescription != "about:blank"){
-                errorReport += "At location: " + exceptionMsg.debugDescription
-            }
-        }
-        self.viewCtrl!.debugInfo(sandboxId, content: errorReport);
-    }
-    
-    private func randomStringWithLength (len : Int) -> NSString {
-        
-        let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        
-        let randomString : NSMutableString = NSMutableString(capacity: len)
-        
-        for (_) in 0 ..< len{
-            let length = UInt32 (letters.length)
-            let rand = arc4random_uniform(length)
-            randomString.appendFormat("%C", letters.characterAtIndex(Int(rand)))
-        }
-        
-        return randomString
-    }
-    
     // executes the script which is saved inside webView
     func executeScript(sandboxId : Int, scriptId: Int) {
         if (webViews.count > sandboxId && webViews[sandboxId].configuration.userContentController.userScripts.count > scriptId){
 
             execute(sandboxId, functionName: webViews[sandboxId].configuration.userContentController.userScripts[scriptId].source, functionParams: [])
-            
         }
     }
     
@@ -254,7 +210,38 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         
         var scriptQuery = jsCommunicator + "." + evaluateClassMethod + "(" + String(-1) + ", '" + className + "', '" + functionName + "'";
         for param in functionParams{
-            scriptQuery += ", " + param.description + "";
+
+            // check if object or primitive param
+            do {
+                if param is NSDictionary || param is String{
+                    if let data = param.dataUsingEncoding(NSUTF8StringEncoding) {
+                        
+                        // With value as AnyObject
+                        if (try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject]) != nil {
+                            scriptQuery += ", " + param.description + "";
+                        }
+                    }
+                }
+                else {
+                    scriptQuery += ", " + String(param);
+                }
+                // parsing error => its string, converting to string
+            } catch let error {
+
+                // compilator issue, has to be this way
+                let errors :NSError = (error as? NSError!)!
+                    
+                if let e : String = errors.userInfo["NSDebugDescription"]! as? String{
+                    if (e == "JSON text did not start with array or object and option to allow fragments not set."){
+                        
+                        scriptQuery += ", '" + String(param) + "'";
+                    }
+                    else{
+                        viewCtrl?.debugInfo(sandboxId, content: "parsing parameters failed! " + errors.userInfo.description, severity: 1)
+                    }
+                }
+                
+            }
         }
         scriptQuery += ")"
     
@@ -358,12 +345,11 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                 
                 switch(actionID){
                 case asyncCode :
-                    if let msg : String = messageBody[jsApiCallNames[2]] as? String {
-                        print(msg);
-                        viewCtrl?.executeAS(self.apiConnector[apiId]! , uiElementId: 0, content: String(msg));
+                    if let msg : [AnyObject] = messageBody[jsApiCallNames[2]] as? [AnyObject] {
+                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: msg.description, severity: 0)
                     }
                     else{
-                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "asyncCodeFailed")
+                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "asyncCodeFailed", severity: 1)
                     }
                 case initActionCode :
                     if let msg : String = messageBody[jsApiCallNames[2]] as? String {
@@ -380,27 +366,49 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                         }
                     }
                     else{
-                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "initActionCodeFailed")
+                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "initActionCodeFailed", severity: 2)
                     }
                 case addActionCode :
                     if let msg : NSDictionary = messageBody[jsApiCallNames[2]] as? NSDictionary {
                         print(msg);
-                        
-                        viewCtrl?.addUIElement(self.apiConnector[apiId]!, content: [UIClass]())
+                        //parse TODO :)
+                        let response = self.responseParser.parseRenderResponse(self.apiConnector[apiId]!, className: "", renderResult: msg)
+                        if (response.count > 0) {
+                            self.viewCtrl?.addUIElement(self.apiConnector[apiId]!, content: response)
+                        }
+                        else{
+                            self.viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "empty elements from action", severity: 1)
+                        }
                     }
                     else{
-                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "addActionCodeFailed")
+                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "add action failed!", severity: 1)
                     }
                 case updateActionCode :
                     if let msg : NSDictionary = messageBody[jsApiCallNames[2]] as? NSDictionary {
+                        
+                        // parse TODO
+                        
                         print(msg);
                         viewCtrl?.updateUIElement(self.apiConnector[apiId]!, uiElementId: [0], content: msg)
                     }
                     else{
-                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "updateActionCodeFailed")
+                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "update action failed!", severity: 1)
                     }
                 case deleteActionCode :
-                    viewCtrl?.deleteUIElement(self.apiConnector[apiId]!, uiElementId: [0])
+                    if let msg : [AnyObject] = messageBody[jsApiCallNames[2]] as? [AnyObject] {
+                        
+                        let response = self.responseParser.parseDeleteResponse(msg)
+                        
+                        if (response.count > 0){
+                            viewCtrl?.removeUIElement(self.apiConnector[apiId]!, uiElementId: response)
+                        }
+                        else{
+                            viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "nothing to delete!", severity: 1)
+                        }
+                    }
+                    else{
+                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "deleteCodeFailed", severity: 1)
+                    }
 
                 default: return
                 }
@@ -424,6 +432,43 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                 }
             }
         }
+    }
+    
+    private func handleError(sandboxId : Int, error : NSError){
+        var errorReport = "ERROR: "
+        if let exceptionMsg = error.userInfo["NSLocalizedDescription"]! as? String{
+            errorReport += exceptionMsg + "\r\n"
+        }
+        if let exceptionMsg = error.userInfo["WKJavaScriptExceptionMessage"]! as? String{
+            errorReport += exceptionMsg + "\r\n"
+        }
+        if let exceptionMsg = error.userInfo["WKJavaScriptExceptionLineNumber"]! as? Int{
+            errorReport += "At line: " + String(exceptionMsg)
+        }
+        if let exceptionMsg = error.userInfo["WKJavaScriptExceptionColumnNumber"]! as? Int{
+            errorReport += " , Column: " + String(exceptionMsg) + "\r\n"
+        }
+        if let exceptionMsg = error.userInfo["WKJavaScriptExceptionSourceURL"]! as? NSURL{
+            if (exceptionMsg.debugDescription != "about:blank"){
+                errorReport += "At location: " + exceptionMsg.debugDescription
+            }
+        }
+        self.viewCtrl!.debugInfo(sandboxId, content: errorReport, severity: 2);
+    }
+    
+    private func randomStringWithLength (len : Int) -> NSString {
+        
+        let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        
+        let randomString : NSMutableString = NSMutableString(capacity: len)
+        
+        for (_) in 0 ..< len{
+            let length = UInt32 (letters.length)
+            let rand = arc4random_uniform(length)
+            randomString.appendFormat("%C", letters.characterAtIndex(Int(rand)))
+        }
+        
+        return randomString
     }
     
     // function for thread-safe object synchronizing
