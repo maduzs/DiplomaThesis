@@ -79,8 +79,35 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         addSubview(sandboxId, objects: content);
     }
 
-    func updateUIElement(sandboxId : Int, uiElementId: [Int], content : NSDictionary){
-
+    func updateUIElement(sandboxId : Int, uiElementId: [Int], content : [[AnyObject]]){
+        for (i) in 0..<uiElementId.count {
+            
+            if let uiObject = self.uiObjects[sandboxId][uiElementId[i]]{
+                for object in content[i]{
+                    if (object is CGFloat){
+                        uiObject.uiElement.alpha = (object as! CGFloat);
+                    }
+                    if (object is String){
+                        if (uiObject.uiElement.isMemberOfClass(UIButton)){
+                            let b = uiObject.uiElement as! UIButton;
+                            b.setTitle(object.description, forState: UIControlState.Normal)
+                        }
+                        else{
+                            if (uiObject.uiElement.isMemberOfClass(UITextField)){
+                                let t = uiObject.uiElement as! UITextField;
+                                t.text = object.description
+                            }
+                        }
+                    }
+                    if (object is CGRect){
+                        uiObject.uiElement.frame = (object as! CGRect);
+                    }
+                }
+            }
+            else{
+                debugInfo(sandboxId, content: "no elements with id: " + String(uiElementId[i]) + " to change!", severity: 1)
+            }
+        }
     }
 
     func removeUIElement(sandboxId : Int, uiElementId: [Int]){

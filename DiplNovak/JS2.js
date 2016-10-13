@@ -3,6 +3,7 @@ class JS2 {
     constructor() {
         this.button2 = {
             objectId : 1,
+            objectType : "button",
             title : "button2" ,
             frame : {
                 x : 170,
@@ -16,10 +17,11 @@ class JS2 {
         
         this.textField1 = {
             objectId : 3,
+            objectType : "textField",
             text : "textField1",
             frame : {
                 x : 50,
-                y : 280,
+                y : 180,
                 width : 220,
                 height : 30
             }
@@ -41,10 +43,7 @@ class JS2 {
     render() {
         var text =
         {
-            uiElements : [
-                { button: this.button2 },
-                { textfield: this.textField1 }
-            ]
+            uiElements : [ this.button2, this.textField1 ]
         };
         
         JS_COMMUNICATOR.sendResponse(text);

@@ -26,5 +26,14 @@ class UIClass: NSObject{
         self.params = params
         self.uiElement = uiElement
     }
+    
+    init(sandboxId: Int, objectId: Int){
+        self.sandboxId = sandboxId
+        self.objectId = objectId
+        self.className = ""
+        self.functionName = ""
+        self.params = [AnyObject]()
+        self.uiElement = UIView();
+    }
      
 }

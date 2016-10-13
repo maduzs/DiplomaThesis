@@ -19,7 +19,7 @@ class JSAPI {
         this.callId = id;
         this.className = className;
 
-        var args = Array.prototype.slice.call(arguments);
+        let args = Array.prototype.slice.call(arguments);
         if (arguments.length > 3){
             args.splice(0, 3);
             window[className][funcName](...args);
@@ -35,13 +35,13 @@ class JSAPI {
     }
     
     sendAsyncResponse(){
-        var args = Array.prototype.slice.call(arguments);
+        let args = Array.prototype.slice.call(arguments);
         const messageToPost = {[this.call1] : this.asyncCode, [this.call2] : this.apiId, [this.call3] :  args };
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }
     
     registerObject() {
-        var args = Array.prototype.slice.call(arguments);
+        let args = Array.prototype.slice.call(arguments);
 
         const messageToPost = {[this.call1] : this.initCode, [this.call2] : this.apiId, [this.call3] : args.toString()};
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
@@ -53,13 +53,14 @@ class JSAPI {
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }
     
-    updateUIElement(elements){
-        const messageToPost = {[this.call1] : this.updateCode, [this.call2] : this.apiId, [this.call3] : elements};
+    updateUIElement(){
+        let args = Array.prototype.slice.call(arguments);
+        const messageToPost = {[this.call1] : this.updateCode, [this.call2] : this.apiId, [this.call3] : args};
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }
     
-    deleteUIElement(elements){
-        var args = Array.prototype.slice.call(arguments);
+    deleteUIElement(){
+        let args = Array.prototype.slice.call(arguments);
         const messageToPost = {[this.call1] : this.deleteCode, [this.call2] : this.apiId, [this.call3] : args};
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }

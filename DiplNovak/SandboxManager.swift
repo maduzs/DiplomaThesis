@@ -13,7 +13,7 @@ protocol DiplSandboxDelegate: class {
     func executeAS(sandboxId : Int, uiElementId: Int, content : String)
     func debugInfo(sandboxId: Int, content: String, severity: Int)
     func addUIElement(sandboxId : Int, content : [UIClass])
-    func updateUIElement(sandboxId : Int, uiElementId: [Int], content : NSDictionary)
+    func updateUIElement(sandboxId : Int, uiElementId: [Int], content : [[AnyObject]])
     func removeUIElement(sandboxId : Int, uiElementId: [Int])
 }
 
@@ -384,12 +384,15 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                         viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "add action failed!", severity: 1)
                     }
                 case updateActionCode :
-                    if let msg : NSDictionary = messageBody[jsApiCallNames[2]] as? NSDictionary {
+                    if let msg : [AnyObject] = messageBody[jsApiCallNames[2]] as? [AnyObject] {
                         
-                        // parse TODO
-                        
-                        print(msg);
-                        viewCtrl?.updateUIElement(self.apiConnector[apiId]!, uiElementId: [0], content: msg)
+                        let response = self.responseParser.parseUpdateResponseId(self.apiConnector[apiId]!, content: msg);
+                        if (response.0.count > 0 && response.0.count == response.1.count) {
+                            viewCtrl?.updateUIElement(self.apiConnector[apiId]!, uiElementId: response.0, content: response.1)
+                        }
+                        else{
+                            viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "nothing to parse!", severity: 0)
+                        }
                     }
                     else{
                         viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "update action failed!", severity: 1)
