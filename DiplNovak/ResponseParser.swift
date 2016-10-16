@@ -35,85 +35,93 @@ class ResponseParser: NSObject{
     }
     
     private func parseUIElements(sandboxId : Int, objClass: String, itemsArray : NSArray) -> [UIClass]{
-
-        var alpha : CGFloat = 1.0
-
         var elementsResult = [UIClass]()
         for (item) in itemsArray {
-            // TODO
-            //parseUIElement(sandboxId, objClass, item);
-            if let objectId : Int = item.objectForKey("objectId") as? Int{
-                if let parseAlpha : CGFloat = item.objectForKey("alpha") as? CGFloat{
-                    alpha = parseAlpha
-                }
-                if let objectType: String = item.objectForKey("objectType") as? String {
-                    if (objectType == "button"){
-                        if let uiClass : UIClass = parseButton(item, sandboxId: sandboxId, objectId: objectId, className: objClass, alpha: alpha){
-                            elementsResult.append(uiClass)
-                        }
-                        continue;
-                    }
-                    
-                    if (objectType == "label"){
-                        if let uiClass : UIClass = parseLabel(item, sandboxId: sandboxId, objectId: objectId, alpha: alpha){
-                            elementsResult.append(uiClass)
-                        }
-                        continue
-                    }
-                    
-                    if (objectType == "textField"){
-                        if let uiClass : UIClass = parseTextField(item, sandboxId: sandboxId, objectId: objectId, alpha: alpha){
-                            elementsResult.append(uiClass)
-                        }
-                        continue
-                    }
-                }
+            
+            if let uiClass : UIClass = parseUIElement(sandboxId, objClass: objClass, item: item){
+                elementsResult.append(uiClass)
             }
         }
         return elementsResult;
     }
     
-    // TODO refactor
-    func parseUpdateResponseId(sandboxId: Int, content: [AnyObject]) -> ([Int], [[AnyObject]]){
-        var resultIds = [Int]()
-        var objects = [AnyObject]()
-        var resultObjects = [[AnyObject]]()
+    private func parseUIElement(sandboxId : Int, objClass: String, item : AnyObject) -> UIClass?{
+        var alpha : CGFloat = 1.0
         
-        // tento element aj odosli!
-        let elements = parseUIElements(sandboxId, objClass: "", itemsArray: (content as? NSArray)!)
-        for (i) in 0..<elements.count{
-            resultIds.append(elements[i].objectId)
-            objects.append(elements[i])
-            resultObjects.append(objects)
+        if (item is NSNull){
+            return nil;
         }
-        
-        for (i) in 0..<content.count{
-            if let objId : Int = content[i].objectForKey("objectId") as? Int{
-                
-                if let alpha : CGFloat = content[i].objectForKey("alpha") as? CGFloat{
-                    objects.append(alpha)
-                }
-                if let title : String = content[i].objectForKey("title") as? String{
-                    objects.append(title)
-                }
-                else{
-                    if let text : String = content[i].objectForKey("text") as? String{
-                        objects.append(text)
+        if let objectId : Int = item.objectForKey("objectId") as? Int{
+            if let parseAlpha : CGFloat = item.objectForKey("alpha") as? CGFloat{
+                alpha = parseAlpha
+            }
+            if let objectType: String = item.objectForKey("objectType") as? String {
+                if (objectType == "button"){
+                    if let uiClass : UIClass = parseButton(item, sandboxId: sandboxId, objectId: objectId, className: objClass, alpha: alpha){
+                        return uiClass
                     }
                 }
-                // TODO frame -> any object error
-                if let frame = parseObjectFrame(content[i]){
-                    //objects.append(frame as! AnyObject)
+                
+                if (objectType == "label"){
+                    if let uiClass : UIClass = parseLabel(item, sandboxId: sandboxId, objectId: objectId, alpha: alpha){
+                        return uiClass
+                    }
                 }
                 
-                if objects.count > 0 {
-                    resultObjects.append(objects);
-                    resultIds.append(objId)
+                if (objectType == "textField"){
+                    if let uiClass : UIClass = parseTextField(item, sandboxId: sandboxId, objectId: objectId, alpha: alpha){
+                        return uiClass
+                    }
+                }
+            }
+        }
+        return nil
+    }
+    
+    // TODO refactor
+    func parseUpdateResponseId(sandboxId: Int, content: [AnyObject]) -> ([Int : [String: AnyObject]]){
+        var resultObjects = [Int : [String : AnyObject]]()
+        
+        for (i) in 0..<content.count{
+            if (content[i] is NSNull){
+                continue;
+            }
+            
+            if let objId : Int = content[i].objectForKey("objectId") as? Int{
+                
+                var object = [String: AnyObject]()
+                
+                if let uiObject = parseUIElement(sandboxId, objClass: "", item: content[i]){
+                    object["element"] = uiObject;
+                }
+                else{
+                    if let alpha : CGFloat = content[i].objectForKey("alpha") as? CGFloat{
+                        object["alpha"] = alpha
+                    }
+                    if let title : String = content[i].objectForKey("title") as? String{
+                        object["title"] = title
+                    }
+                    else{
+                        if let text : String = content[i].objectForKey("text") as? String{
+                            object["text"] = text
+                        }
+                    }
+                    // workaround with CGRect -> AnyObject 
+                    if let frame = parseObjectFrame(content[i]){
+                        let f = UIClass(sandboxId: sandboxId, objectId: objId);
+                        f.uiElement = UIView();
+                        f.uiElement.frame = frame;
+                        object["frame"] = f;
+                    }
+                }
+                
+                if (object.keys.count > 0){
+                    resultObjects[objId] = object;
                 }
             }
             
         }
-        return (resultIds, resultObjects)
+        return (resultObjects)
     }
     
     private func parseButton(content : AnyObject, sandboxId: Int, objectId: Int, className: String, alpha: CGFloat) -> UIClass?{

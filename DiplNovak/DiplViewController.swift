@@ -79,33 +79,44 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         addSubview(sandboxId, objects: content);
     }
 
-    func updateUIElement(sandboxId : Int, uiElementId: [Int], content : [[AnyObject]]){
-        for (i) in 0..<uiElementId.count {
+    func updateUIElement(sandboxId : Int, content : [Int: [String : AnyObject]]){
+        for (contentKey, contentValue) in content {
             
-            if let uiObject = self.uiObjects[sandboxId][uiElementId[i]]{
-                for object in content[i]{
-                    if (object is CGFloat){
-                        uiObject.uiElement.alpha = (object as! CGFloat);
+            if let uiObject = self.uiObjects[sandboxId][contentKey]{
+                for (objectKey, objectValue) in contentValue{
+
+                    if (objectKey == "element"){
+                        if objectValue is UIClass{
+                            self.removeSubview(sandboxId, id: contentKey);
+                            self.addSubview(sandboxId, objects: [objectValue as! UIClass]);
+                            uiObject.uiElement = objectValue.uiElement;
+                        }
                     }
-                    if (object is String){
-                        if (uiObject.uiElement.isMemberOfClass(UIButton)){
+                    else{
+                        if (objectKey == "alpha"){
+                            uiObject.uiElement.alpha = (objectValue as! CGFloat);
+                        }
+                        if (objectKey == "title"){
                             let b = uiObject.uiElement as! UIButton;
-                            b.setTitle(object.description, forState: UIControlState.Normal)
+                            b.setTitle(objectValue.description, forState: UIControlState.Normal)
                         }
                         else{
-                            if (uiObject.uiElement.isMemberOfClass(UITextField)){
+                            if (objectKey == "text"){
                                 let t = uiObject.uiElement as! UITextField;
-                                t.text = object.description
+                                t.text = objectValue.description
                             }
                         }
-                    }
-                    if (object is CGRect){
-                        uiObject.uiElement.frame = (object as! CGRect);
+                        if (objectKey == "frame"){
+                            // workaround with AnyObject -> CGRect
+                            if let objectUnwrapped = objectValue as? UIClass{
+                                uiObject.uiElement.frame = objectUnwrapped.uiElement.frame;
+                            }
+                        }
                     }
                 }
             }
             else{
-                debugInfo(sandboxId, content: "no elements with id: " + String(uiElementId[i]) + " to change!", severity: 1)
+                debugInfo(sandboxId, content: "no elements with id: " + String(contentKey) + " to change!", severity: 1)
             }
         }
     }

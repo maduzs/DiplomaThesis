@@ -26,7 +26,7 @@ class JS {
                 height : 50
             },
             onClick: "updateElement",
-            params : [ this.button3 , { objectId: 40, title: "D"}, {objectId: 0, alpha: 1.0}]
+            params : [ this.button3 , { objectId: 40, frame: { x : 150, y : 160, width : 80, height : 60 }, alpha: 0.3 }]
         };
         this.button4 = {
             objectId : 40,
@@ -78,8 +78,27 @@ class JS {
     }
     
     updateElement(param, param2, param3){
-        param.title = "T"
-        JS_COMMUNICATOR.updateUIElement( param , param2, param3);
+        param = this.label1
+        param.text = ""
+        param.frame = {
+            x : 150,
+            y : 330,
+            width : 100,
+            height : 25
+        }
+        for (var i=0; i<10; i++){
+            param.text += "T"
+            var now = new Date().getTime();
+            while(new Date().getTime() < now + 50){
+                // do nothing
+            }
+            if (param.text.length > 5){
+                param.text = "";
+            }
+            JS_COMMUNICATOR.updateUIElement( param);
+        }
+        JS_COMMUNICATOR.updateUIElement(param2, param3);
+        
     }
     
     deleteElement(arg, arg2){

@@ -13,7 +13,7 @@ protocol DiplSandboxDelegate: class {
     func executeAS(sandboxId : Int, uiElementId: Int, content : String)
     func debugInfo(sandboxId: Int, content: String, severity: Int)
     func addUIElement(sandboxId : Int, content : [UIClass])
-    func updateUIElement(sandboxId : Int, uiElementId: [Int], content : [[AnyObject]])
+    func updateUIElement(sandboxId : Int, content : [Int: [String: AnyObject]])
     func removeUIElement(sandboxId : Int, uiElementId: [Int])
 }
 
@@ -387,8 +387,8 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                     if let msg : [AnyObject] = messageBody[jsApiCallNames[2]] as? [AnyObject] {
                         
                         let response = self.responseParser.parseUpdateResponseId(self.apiConnector[apiId]!, content: msg);
-                        if (response.0.count > 0 && response.0.count == response.1.count) {
-                            viewCtrl?.updateUIElement(self.apiConnector[apiId]!, uiElementId: response.0, content: response.1)
+                        if (response.count > 0) {
+                            viewCtrl?.updateUIElement(self.apiConnector[apiId]!,content: response)
                         }
                         else{
                             viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "nothing to parse!", severity: 0)
