@@ -73,6 +73,11 @@ class ResponseParser: NSObject{
                         return uiClass
                     }
                 }
+                if (objectType == "textView"){
+                    if let uiClass : UIClass = parseTextView(item, sandboxId: sandboxId, objectId: objectId, alpha: alpha){
+                        return uiClass
+                    }
+                }
             }
         }
         return nil
@@ -127,14 +132,21 @@ class ResponseParser: NSObject{
     private func parseButton(content : AnyObject, sandboxId: Int, objectId: Int, className: String, alpha: CGFloat) -> UIClass?{
         if let title : String = content.objectForKey("title") as? String{
             if let cgRect : CGRect = parseObjectFrame(content){
+                var textColor : UIColor?;
+                if let colorArray : NSArray = content.objectForKey("textColor") as? NSArray{
+                    textColor = parseColor(colorArray);
+                }
+                var backgroundColor : UIColor?;
+                if let colorArray : NSArray = content.objectForKey("backgroundColor") as? NSArray{
+                    backgroundColor = parseColor(colorArray);
+                }
                 
-                if let uiButton :UIButton = factory.createButton(cgRect, color: UIColor.blackColor(), title : title, state: UIControlState.Normal, alpha: alpha){
+                if let uiButton :UIButton = factory.createButton(cgRect, backgroundColor: backgroundColor, textColor: textColor, title : title, state: UIControlState.Normal, alpha: alpha){
                     
                     if let uiClass : UIClass = parseButtonAction(content, sandboxId: sandboxId, objectId: objectId, className: className, uiButton: uiButton){
                         return uiClass;
                     }
                 }
-                
             }
         }
         return nil
@@ -143,7 +155,20 @@ class ResponseParser: NSObject{
     private func parseLabel(content: AnyObject, sandboxId : Int, objectId: Int, alpha: CGFloat) -> UIClass?{
         if let text : String = content.objectForKey("text") as? String{
             if let cgRect : CGRect = parseObjectFrame(content){
-                let uiLabel = factory.createLabel(cgRect, textColor : UIColor.blackColor(), backgroundColor : UIColor.whiteColor(), textAlignment: NSTextAlignment.Center, text: text, alpha: alpha)
+                var textColor : UIColor?;
+                if let colorArray : NSArray = content.objectForKey("textColor") as? NSArray{
+                    textColor = parseColor(colorArray);
+                }
+                var backgroundColor : UIColor?;
+                if let colorArray : NSArray = content.objectForKey("backgroundColor") as? NSArray{
+                    backgroundColor = parseColor(colorArray);
+                }
+                var textAlignment : NSTextAlignment?;
+                if let textAlignmentObject : String = content.objectForKey("textAlignment") as? String{
+                    textAlignment = parseTextAlignment(textAlignmentObject);
+                }
+                
+                let uiLabel = factory.createLabel(cgRect, backgroundColor : backgroundColor, textColor : textColor, textAlignment: textAlignment, text: text, alpha: alpha)
                 
                 if let uiClass : UIClass = UIClass(sandboxId: sandboxId, objectId: objectId, className: "", functionName: "", params: [], uiElement: uiLabel) {
                     return uiClass
@@ -156,9 +181,49 @@ class ResponseParser: NSObject{
     private func parseTextField(content: AnyObject, sandboxId : Int, objectId: Int, alpha: CGFloat) -> UIClass?{
         if let text : String = content.objectForKey("text") as? String{
             if let cgRect : CGRect = parseObjectFrame(content){
-                let uiTextField = factory.createTextField(cgRect, text: text, backgroundColor : UIColor.blackColor(), alpha: alpha)
+                var textColor : UIColor?;
+                if let colorArray : NSArray = content.objectForKey("textColor") as? NSArray{
+                    textColor = parseColor(colorArray);
+                }
+                var backgroundColor : UIColor?;
+                if let colorArray : NSArray = content.objectForKey("backgroundColor") as? NSArray{
+                    backgroundColor = parseColor(colorArray);
+                }
+                var textAlignment : NSTextAlignment?;
+                if let textAlignmentObject : String = content.objectForKey("textAlignment") as? String{
+                    textAlignment = parseTextAlignment(textAlignmentObject);
+                }
+                
+                let uiTextField = factory.createTextField(cgRect, text: text, backgroundColor : backgroundColor, textColor: textColor, textAlignment: textAlignment, alpha: alpha)
                 
                 if let uiClass : UIClass = UIClass(sandboxId: sandboxId, objectId: objectId, className: "", functionName: "", params: [], uiElement: uiTextField){
+                    return uiClass
+                }
+            }
+        }
+        return nil
+    }
+    
+    private func parseTextView(content: AnyObject, sandboxId : Int, objectId: Int, alpha: CGFloat) -> UIClass?{
+        if let text : String = content.objectForKey("text") as? String{
+            if let cgRect : CGRect = parseObjectFrame(content){
+                
+                var textColor : UIColor?;
+                if let colorArray : NSArray = content.objectForKey("textColor") as? NSArray{
+                    textColor = parseColor(colorArray);
+                }
+                var backgroundColor : UIColor?;
+                if let colorArray : NSArray = content.objectForKey("backgroundColor") as? NSArray{
+                    backgroundColor = parseColor(colorArray);
+                }
+                var textAlignment : NSTextAlignment?;
+                if let textAlignmentObject : String = content.objectForKey("textAlignment") as? String{
+                    textAlignment = parseTextAlignment(textAlignmentObject);
+                }
+                
+                let uiTextView = factory.createTextView(cgRect, text: text, backgroundColor : backgroundColor, textColor: textColor, textAlignment: textAlignment, alpha: alpha)
+                
+                if let uiClass : UIClass = UIClass(sandboxId: sandboxId, objectId: objectId, className: "", functionName: "", params: [], uiElement: uiTextView){
                     return uiClass
                 }
             }
@@ -178,6 +243,35 @@ class ResponseParser: NSObject{
             }
         }
         return nil
+    }
+    
+    private func parseColor(content: NSArray) -> UIColor?{
+        if (content.count == 4){
+            if let r : CGFloat = content[0] as? CGFloat{
+                if let g : CGFloat = content[1] as? CGFloat{
+                    if let b : CGFloat = content[2] as? CGFloat{
+                        if let a : CGFloat = content[3] as? CGFloat{
+                            return UIColor.init(red: r/255, green: g/255, blue: b/255, alpha: a);
+                        }
+                    }
+                }
+            }
+        }
+        return nil;
+    }
+    
+    private func parseTextAlignment(content: String) -> NSTextAlignment?{
+        var textAlignment : NSTextAlignment?;
+        switch (content){
+            case "center", "Center" : textAlignment = NSTextAlignment.Center;
+            case "left", "Left" : textAlignment = NSTextAlignment.Left;
+            case "right", "Right" : textAlignment = NSTextAlignment.Right;
+            case "natural", "Natural" : textAlignment = NSTextAlignment.Natural;
+            case "justified", "Justified" : textAlignment = NSTextAlignment.Justified;
+            
+            default : return nil;
+        }
+        return textAlignment;
     }
     
     private func parseButtonAction(content : AnyObject, sandboxId : Int, objectId:Int, className : String, uiButton : UIButton) -> UIClass?{

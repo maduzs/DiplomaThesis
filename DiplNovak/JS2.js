@@ -26,6 +26,18 @@ class JS2 {
                 height : 30
             }
         }
+        
+        this.textView1 = {
+            objectId : 4,
+            objectType : "textView",
+            text : "textView1",
+            frame : {
+                x : 50,
+                y : 80,
+                width : 320,
+                height : 90
+            }
+        }
     }
 
     eval2(param, param2) {
@@ -43,7 +55,7 @@ class JS2 {
     render() {
         var text =
         {
-            uiElements : [ this.button2, this.textField1 ]
+            uiElements : [ this.button2, this.textField1 , this.textView1 ]
         };
         
         JS_COMMUNICATOR.sendResponse(text);

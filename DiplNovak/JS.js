@@ -11,6 +11,8 @@ class JS {
                 width : 100,
                 height : 25
             },
+            textColor : [0,0,0,1],
+            backgroundColor : [255,255,255,1],
             onClick: "eval",
             params : [ 10.10 , "jsss", 10 ]
         };
@@ -25,6 +27,8 @@ class JS {
                 width : 100,
                 height : 50
             },
+            textColor : [0,0,255,1],
+            backgroundColor : [0,0,0,1],
             onClick: "updateElement",
             params : [ this.button3 , { objectId: 40, frame: { x : 150, y : 160, width : 80, height : 60 }, alpha: 0.3 }]
         };
@@ -50,7 +54,10 @@ class JS {
                 y : 160,
                 width : 220,
                 height : 21
-            }
+            },
+            textColor : [255,255,255,1],
+            backgroundColor: [0,0,0,1],
+            textAlignment: "center"
         }
         this.button2 = {
             objectId : 20,

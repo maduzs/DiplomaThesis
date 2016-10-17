@@ -39,6 +39,12 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
     
     private var consoleShow = false;
     
+    private var screenSize: CGRect?;
+    
+    private var screenWidth : CGFloat?;
+    
+    private var screenHeight : CGFloat?;
+    
     struct defaultsKeys {
         static let keyOne = "inputKey"
     }
@@ -221,6 +227,10 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        screenSize = UIScreen.mainScreen().bounds;
+        screenWidth = screenSize!.width;
+        screenHeight = screenSize!.height;
         
         sandboxManager.viewCtrl = self;
         

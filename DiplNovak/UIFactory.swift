@@ -17,10 +17,15 @@ class UIFactory : NSObject {
         
     }
     
-    func createButton(cgRect : CGRect, color : UIColor, title:String, state: UIControlState, alpha : CGFloat) ->UIButton{
+    func createButton(cgRect : CGRect, backgroundColor : UIColor?, textColor: UIColor?, title:String, state: UIControlState, alpha : CGFloat) ->UIButton{
         let button = UIButton(type: UIButtonType.Custom) as UIButton
         button.frame = cgRect
-        button.backgroundColor = color
+        if (backgroundColor != nil){
+            button.backgroundColor = backgroundColor
+        }
+        if (textColor != nil){
+            button.setTitleColor(textColor, forState: UIControlState.Normal)
+        }
         button.setTitle(title, forState: state)
         button.tag = globalTag;
         self.globalTag += 1;
@@ -28,12 +33,18 @@ class UIFactory : NSObject {
         return button
     }
     
-    func createLabel(cgRect: CGRect, textColor : UIColor, backgroundColor : UIColor, textAlignment: NSTextAlignment, text: String, alpha : CGFloat) ->UILabel{
+    func createLabel(cgRect: CGRect, backgroundColor : UIColor?, textColor: UIColor?, textAlignment: NSTextAlignment?, text: String, alpha : CGFloat) ->UILabel{
         let label: UILabel = UILabel()
         label.frame = cgRect
-        label.textColor = textColor
-        label.backgroundColor = backgroundColor
-        label.textAlignment = textAlignment
+        if (backgroundColor != nil){
+            label.backgroundColor = backgroundColor
+        }
+        if (textColor != nil){
+            label.textColor = textColor
+        }
+        if (textAlignment != nil){
+            label.textAlignment = textAlignment!
+        }
         label.text = text
         label.tag = globalTag
         self.globalTag += 1;
@@ -41,16 +52,42 @@ class UIFactory : NSObject {
         return label
     }
     
-    func createTextField(cgRect : CGRect, text: String, backgroundColor : UIColor, alpha : CGFloat) ->UITextField{
+    func createTextField(cgRect : CGRect, text: String, backgroundColor : UIColor?, textColor: UIColor?, textAlignment: NSTextAlignment?, alpha : CGFloat) ->UITextField{
         let txtField: UITextField = UITextField()
         txtField.frame = cgRect
+        if (backgroundColor != nil){
+            txtField.backgroundColor = backgroundColor
+        }
+        if (textColor != nil){
+            txtField.textColor = textColor
+        }
+        if (textAlignment != nil){
+            txtField.textAlignment = textAlignment!
+        }
         txtField.text = text;
-        txtField.textColor = UIColor.whiteColor();
-        txtField.backgroundColor = backgroundColor
         txtField.tag = globalTag
         self.globalTag += 1;
         txtField.alpha = alpha
         return txtField
+    }
+    
+    func createTextView(cgRect : CGRect, text: String, backgroundColor : UIColor?, textColor: UIColor?, textAlignment: NSTextAlignment?, alpha : CGFloat) ->UITextView{
+        let txtView: UITextView = UITextView()
+        txtView.frame = cgRect
+        if (backgroundColor != nil){
+            txtView.backgroundColor = backgroundColor
+        }
+        if (textColor != nil){
+            txtView.textColor = textColor
+        }
+        if (textAlignment != nil){
+            txtView.textAlignment = textAlignment!
+        }
+        txtView.text = text;
+        txtView.tag = globalTag
+        self.globalTag += 1;
+        txtView.alpha = alpha
+        return txtView
     }
     
 }
