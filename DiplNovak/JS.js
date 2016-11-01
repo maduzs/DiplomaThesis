@@ -6,9 +6,9 @@ class JS {
             objectType : "button",
             title : "eval",
             frame: {
-                x : 50,
+                x : 250,
                 y : 300,
-                width : 100,
+                width : 150,
                 height : 25
             },
             textColor : [0,0,0,1],
@@ -25,19 +25,28 @@ class JS {
                 x : 50,
                 y : 360,
                 width : 100,
-                height : 50
+                height : 500
             },
             constraints : [
-                           { anchor : "bottom", constant : 10, toObjectId : 30 },
-                           { anchor : "leading", constant : 200 },
-                           { anchor : "width", constant : 200, toObjectId : 30 },
-                           { anchor : "height", constant : 100 }
-                           
-            ]
+                           { anchor : "top", constant : 10, toObjectId : 20 },
+                           { anchor : "leading", constant : 10 },
+                           { anchor : "width", constant : -30, toObjectId : 20 },
+                           //{ anchor : "height", constant : 50 },
+                           //{ anchor : "top" }
+            ],
             textColor : [0,0,255,1],
             backgroundColor : [0,0,0,1],
             onClick: "updateElement",
-            params : [ this.button3 , { objectId: 40, frame: { x : 150, y : 160, width : 80, height : 60 }, alpha: 0.3 }]
+            params : [ this.button3 , { objectId: 2, frame: { x : 150, y : 160, width : 80, height : 60 }, textColor : [0,255,255,1], backgroundColor : [255,0,0,1], textAlignment: "left",
+                                    constraints : [
+                                                   { anchor : "bottom", constant : -60},
+                                                   { anchor : "top", constant : 60},
+                                                   { anchor : "centerX", constant : 0 },
+                                                   { anchor : "centerY", constant : 0 },
+                                                   { anchor : "width", constant : 130},
+                                                   { anchor : "height", constant : 130},
+                                                   ], alpha: 0.3 }]
+                      
         };
         this.button4 = {
             objectId : 40,
@@ -74,8 +83,16 @@ class JS {
                 x : 50,
                 y : 330,
                 width : 100,
-                height : 25
+                height : 125
             },
+            /*constraints : [
+                { anchor : "bottom", constant : -60},
+                { anchor : "top", constant : 60},
+                { anchor : "centerX", constant : 0 },
+                { anchor : "centerY", constant : 0 },
+                { anchor : "width", constant : 130},
+                { anchor : "height", constant : 130},
+            ],*/
             onClick: "addElement",
             params: [ this.button4, this.button3, this.label1 ]
         };
@@ -122,7 +139,8 @@ class JS {
     render(){
         var text =
         {
-            uiElements : [ this.button1/*, this.button2*/ ]
+            // beware of order if using constraints!
+            uiElements : [ this.button2, this.button1 ]
         };
 
         JS_COMMUNICATOR.sendResponse(text);

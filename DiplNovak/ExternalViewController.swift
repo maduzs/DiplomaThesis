@@ -18,7 +18,7 @@ class ExternalViewController: UIViewController, ExtViewDelegate{
     }
     
     // system buttons in view, not from JS
-    func executeJS(buttonId : Int, content : String){
+    func executeJS(_ buttonId : Int, content : String){
         
     }
     
@@ -27,7 +27,7 @@ class ExternalViewController: UIViewController, ExtViewDelegate{
         
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
     
@@ -37,17 +37,17 @@ class ExternalViewController: UIViewController, ExtViewDelegate{
     }
     
     // Helper
-    func showAlertWithMessage(message:String) {
-        let alertAction:UIAlertAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel) { (UIAlertAction) -> Void in
-            self.dismissViewControllerAnimated(true, completion: { () -> Void in
+    func showAlertWithMessage(_ message:String) {
+        let alertAction:UIAlertAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) { (UIAlertAction) -> Void in
+            self.dismiss(animated: true, completion: { () -> Void in
                 
             })
         }
         
-        let alertView:UIAlertController = UIAlertController(title: nil, message: message, preferredStyle: UIAlertControllerStyle.Alert)
+        let alertView:UIAlertController = UIAlertController(title: nil, message: message, preferredStyle: UIAlertControllerStyle.alert)
         alertView.addAction(alertAction)
         
-        self.presentViewController(alertView, animated: true, completion: { () -> Void in
+        self.present(alertView, animated: true, completion: { () -> Void in
             
         })
     }

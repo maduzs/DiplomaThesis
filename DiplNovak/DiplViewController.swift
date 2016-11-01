@@ -21,42 +21,42 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
     var webView: WKWebView!
     
     // al UI elements, 2D
-    private var uiObjects = [[Int : UIClass]()];
+    fileprivate var uiObjects = [[Int : UIClass]()];
     
-    private let scriptMessageHandler = "callbackHandler";
+    fileprivate let scriptMessageHandler = "callbackHandler";
     
-    private let jsapi = "JSAPI"
+    fileprivate let jsapi = "JSAPI"
     
-    private let jsCommunicator = "JS_COMMUNICATOR";
+    fileprivate let jsCommunicator = "JS_COMMUNICATOR";
     
-    private let buttonAction = "buttonAction:"
+    fileprivate let buttonAction = "buttonAction:"
     
-    private let dismissKeyboardMethodName = "dismissKeyboard"
+    fileprivate let dismissKeyboardMethodName = "dismissKeyboard"
     
-    private let sandboxManager: SandboxManager = SandboxManager(handlerName: "callbackHandler", apiFileName: "JSAPI", scriptCommunicatorName: "JS_COMMUNICATOR");
+    fileprivate let sandboxManager: SandboxManager = SandboxManager(handlerName: "callbackHandler", apiFileName: "JSAPI", scriptCommunicatorName: "JS_COMMUNICATOR");
     
-    private var myGroup = dispatch_group_create()
+    fileprivate var myGroup = DispatchGroup()
     
-    private var consoleShow = false;
+    fileprivate var consoleShow = false;
     
-    private var screenSize: CGRect?;
+    fileprivate var screenSize: CGRect?;
     
-    private var screenWidth : CGFloat?;
+    fileprivate var screenWidth : CGFloat?;
     
-    private var screenHeight : CGFloat?;
+    fileprivate var screenHeight : CGFloat?;
     
     struct defaultsKeys {
         static let keyOne = "inputKey"
     }
     
-    func executeAS(sandboxId: Int, uiElementId: Int, content: String) {
+    func executeAS(_ sandboxId: Int, uiElementId: Int, content: String) {
         print("ide to more " + String(sandboxId));
         print("elId: " + String(uiElementId) + "content: " + content);
-        uiObjects[sandboxId][uiElementId]!.uiElement.backgroundColor = UIColor.blueColor();
+        uiObjects[sandboxId][uiElementId]!.uiElement.backgroundColor = UIColor.blue;
     }
     
     // severity - 0 : trace, 1 : warning, 2 : error
-    func debugInfo(sandboxId: Int, content: String, severity: Int) {
+    func debugInfo(_ sandboxId: Int, content: String, severity: Int) {
         
         print("sandboxId: " + String(sandboxId) + " content: " + content);
         
@@ -67,25 +67,25 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         case 0 : break
         case 1 :
             // TODO nech sa stale nenastavuje
-            if (containerView.debugTextView.hidden) {
+            if (containerView.debugTextView.isHidden) {
                 let image : UIImage = (UIImage(named: "console-Importance_50") as UIImage?)!
-                containerView.consoleButton.setBackgroundImage(image, forState: .Normal)
+                containerView.consoleButton.setBackgroundImage(image, for: UIControlState())
             }
     
         case 2 :
             hideAllSubview(true);
             consoleShow = true;
-            containerView.debugTextView.hidden = false;
+            containerView.debugTextView.isHidden = false;
             setConsoleIcon();
         default: break;
         }
     }
     
-    func addUIElement(sandboxId : Int, content : [UIClass]){
+    func addUIElement(_ sandboxId : Int, content : [UIClass]){
         addSubview(sandboxId, objects: content);
     }
 
-    func updateUIElement(sandboxId : Int, content : [Int: [String : AnyObject]]){
+    func updateUIElement(_ sandboxId : Int, content : [Int: [String : AnyObject]]){
         for (contentKey, contentValue) in content {
             
             if let uiObject = self.uiObjects[sandboxId][contentKey]{
@@ -99,25 +99,46 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
                         }
                     }
                     else{
-                        if (objectKey == "alpha"){
-                            uiObject.uiElement.alpha = (objectValue as! CGFloat);
-                        }
-                        if (objectKey == "title"){
-                            let b = uiObject.uiElement as! UIButton;
-                            b.setTitle(objectValue.description, forState: UIControlState.Normal)
+                        if (uiObject.uiElement is UIButton){
+                            updateButton(objectKey: objectKey, objectValue: objectValue, object: uiObject.uiElement as! UIButton);
                         }
                         else{
-                            if (objectKey == "text"){
-                                let t = uiObject.uiElement as! UITextField;
-                                t.text = objectValue.description
+                            if (uiObject.uiElement is UITextView){
+                                updateTextView(objectKey: objectKey, objectValue: objectValue, object: uiObject.uiElement as! UITextView);
+                            }
+                            else{
+                                if (uiObject.uiElement is UITextField){
+                                    updateTextField(objectKey: objectKey, objectValue: objectValue, object: uiObject.uiElement as! UITextField);
+                                }
+                                else{
+                                    if (uiObject.uiElement is UILabel){
+                                        updateLabel(objectKey: objectKey, objectValue: objectValue, object: uiObject.uiElement as! UILabel);
+                                    }
+                                    else{
+                                        return;
+                                    }
+                                }
                             }
                         }
-                        if (objectKey == "frame"){
-                            // workaround with AnyObject -> CGRect
-                            if let objectUnwrapped = objectValue as? UIClass{
-                                uiObject.uiElement.frame = objectUnwrapped.uiElement.frame;
+                        if (objectKey == "alpha" && objectValue is CGFloat){
+                            uiObject.uiElement.alpha = (objectValue as! CGFloat);
+                        }
+                        
+                        if (objectKey == "backgroundColor" && objectValue is UIColor){
+                            uiObject.uiElement.backgroundColor = (objectValue as! UIColor);
+                        }
+                        if (objectKey == "constraints" && objectValue is [AnyObject]){
+                            if (objectValue.count > 0){
+                                uiObject.uiElement.translatesAutoresizingMaskIntoConstraints = false
+                                setConstraints(sandboxId, object: uiObject.uiElement, constraints: objectValue as! [AnyObject])
                             }
                         }
+                        else{
+                            if (objectKey == "frame" && objectValue is CGRect){
+                                uiObject.uiElement.frame = objectValue as! CGRect;
+                            }
+                        }
+                        
                     }
                 }
             }
@@ -126,20 +147,62 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
             }
         }
     }
+    
+    fileprivate func updateButton(objectKey: String, objectValue: AnyObject, object: UIButton){
+        if (objectKey == "title"){
+            object.setTitle(objectValue.description, for: UIControlState())
+        }
+        if (objectKey == "textColor" && objectValue is UIColor){
+            object.setTitleColor(objectValue as? UIColor, for: UIControlState())
+        }
+    }
+    fileprivate func updateTextField(objectKey: String, objectValue: AnyObject, object: UITextField){
+        if (objectKey == "text"){
+            object.text = objectValue.description
+        }
+        if (objectKey == "textColor" && objectValue is UIColor){
+            object.textColor = objectValue as? UIColor
+        }
+        if (objectKey == "textAlignment"){
+            object.textAlignment = objectValue as! NSTextAlignment
+        }
+    }
+    fileprivate func updateTextView(objectKey: String, objectValue: AnyObject, object: UITextView){
+        if (objectKey == "text"){
+            object.text = objectValue.description
+        }
+        if (objectKey == "textColor" && objectValue is UIColor){
+            object.textColor = objectValue as? UIColor
+        }
+        if (objectKey == "textAlignment"){
+            object.textAlignment = objectValue as! NSTextAlignment
+        }
+    }
+    fileprivate func updateLabel(objectKey: String, objectValue: AnyObject, object: UILabel){
+        if (objectKey == "text"){
+            object.text = objectValue.description
+        }
+        if (objectKey == "textColor" && objectValue is UIColor){
+            object.textColor = objectValue as? UIColor
+        }
+        if (objectKey == "textAlignment"){
+            object.textAlignment = objectValue as! NSTextAlignment
+        }
+    }
 
-    func removeUIElement(sandboxId : Int, uiElementId: [Int]){
+    func removeUIElement(_ sandboxId : Int, uiElementId: [Int]){
         for id in uiElementId {
             removeSubview(sandboxId, id: id);
         }
     }
     
     // system buttons in view, not from JS
-    func execute(buttonId : Int, content: String){
+    func execute(_ buttonId : Int, content: String){
         switch (buttonId){
         case 0 :
 
             containerView.debugTextView.text = "";
-            containerView.debugTextView.hidden = true;
+            containerView.debugTextView.isHidden = true;
             
             startLoadingSpinner();
 
@@ -150,53 +213,53 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
             if let multiUrl : [String] = checkInputMultiple(content){
                 for (i) in 0..<multiUrl.count{
                     
-                    dispatch_group_enter(myGroup)
+                    myGroup.enter()
                     
-                    let urlGet = NSURL(string: multiUrl[i])
+                    let urlGet = URL(string: multiUrl[i])
                     var dataString:String = ""
                     
-                    let task = NSURLSession.sharedSession().dataTaskWithURL(urlGet!) {(data, response, error) in
+                    let task = URLSession.shared.dataTask(with: urlGet!, completionHandler: {(data, response, error) in
                         // URL content response
                         if (error == nil && data != nil){
-                            dataString = String(NSString(data: data!, encoding: NSUTF8StringEncoding)!)
+                            dataString = String(NSString(data: data!, encoding: String.Encoding.utf8.rawValue)!)
                             
-                            dispatch_async(dispatch_get_main_queue()) {
+                            DispatchQueue.main.async {
                                 // Update the UI on the main thread.
                                 self.didReceiveUrlContent(dataString)
-                                dispatch_group_leave(self.myGroup)
+                                self.myGroup.leave()
                             };
                         }
                         else{
                             err = true;
                             self.showAlertWithMessage("Content of the URL is not valid!")
-                            dispatch_group_leave(self.myGroup)
+                            self.myGroup.leave()
                         }
-                    }
+                    }) 
                     
                     task.resume()
                 }
                 
-                dispatch_group_notify(myGroup, dispatch_get_main_queue(), {
+                myGroup.notify(queue: DispatchQueue.main, execute: {
                     print("Finished all requests.")
                     if !err {
-                        self.dismissViewControllerAnimated(false, completion: nil)
+                        self.dismiss(animated: false, completion: nil)
                     }
                 })
                 
             }
             // content is a script
             else{
-                dispatch_async(dispatch_get_main_queue()) {
+                DispatchQueue.main.async {
                     
                     self.didReceiveUrlContent(content)
                     
                     // TODO just after did..
-                    self.dismissViewControllerAnimated(false, completion: nil)
+                    self.dismiss(animated: false, completion: nil)
                 };
             }
             
             
-            let defaults = NSUserDefaults.standardUserDefaults()
+            let defaults = UserDefaults.standard
             
             defaults.setValue(content, forKey: defaultsKeys.keyOne)
             
@@ -215,7 +278,7 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
             
             setConsoleIcon();
             
-            containerView.debugTextView.hidden = consoleShow;
+            containerView.debugTextView.isHidden = consoleShow;
             
             consoleShow = !consoleShow;
             
@@ -228,7 +291,7 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        screenSize = UIScreen.mainScreen().bounds;
+        screenSize = UIScreen.main.bounds;
         screenWidth = screenSize!.width;
         screenHeight = screenSize!.height;
         
@@ -240,24 +303,24 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
     
-    private func startLoadingSpinner(){
-        let alert = UIAlertController(title: nil, message: "Please wait...", preferredStyle: .Alert)
+    fileprivate func startLoadingSpinner(){
+        let alert = UIAlertController(title: nil, message: "Please wait...", preferredStyle: .alert)
         
-        alert.view.tintColor = UIColor.blackColor()
-        let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(frame: CGRectMake(10, 5, 50, 50)) as UIActivityIndicatorView
+        alert.view.tintColor = UIColor.black
+        let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50)) as UIActivityIndicatorView
         loadingIndicator.hidesWhenStopped = true
-        loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
+        loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
         loadingIndicator.startAnimating();
         
         alert.view.addSubview(loadingIndicator)
-        presentViewController(alert, animated: true, completion: nil)
+        present(alert, animated: true, completion: nil)
     }
     
-    private func setConsoleIcon(){
+    fileprivate func setConsoleIcon(){
         var image : UIImage;
         if (consoleShow){
             image = (UIImage(named: "console-100") as UIImage?)!
@@ -267,15 +330,15 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
             image = (UIImage(named: "console_filled-100") as UIImage?)!
             containerView.consoleButton.alpha = 0.6
         }
-        containerView.consoleButton.setBackgroundImage(image, forState: .Normal)
+        containerView.consoleButton.setBackgroundImage(image, for: UIControlState())
     }
     
-    private func checkInputMultiple(input: String) -> [String]? {
+    fileprivate func checkInputMultiple(_ input: String) -> [String]? {
         var multiUrl = [String]();
-        if input.rangeOfString(",") != nil{
-            multiUrl = input.componentsSeparatedByString(",");
+        if input.range(of: ",") != nil{
+            multiUrl = input.components(separatedBy: ",");
             for (i) in 0..<multiUrl.count{
-                let trimmedString = multiUrl[i].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                let trimmedString = multiUrl[i].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
                 if (!verifyUrl(trimmedString)){
                     return nil;
                 }
@@ -283,10 +346,10 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
             }
         }
         else {
-            if input.rangeOfString("+") != nil{
-                multiUrl = input.componentsSeparatedByString("+");
+            if input.range(of: "+") != nil{
+                multiUrl = input.components(separatedBy: "+");
                 for (i) in 0..<multiUrl.count{
-                    let trimmedString = multiUrl[i].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                    let trimmedString = multiUrl[i].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
                     if (!verifyUrl(trimmedString)){
                         return nil;
                     }
@@ -304,17 +367,17 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
     }
     
     // load saved state
-    private func loadState(){
-        let defaults = NSUserDefaults.standardUserDefaults()
+    fileprivate func loadState(){
+        let defaults = UserDefaults.standard
         
-        if let stringOne = defaults.stringForKey(defaultsKeys.keyOne){
+        if let stringOne = defaults.string(forKey: defaultsKeys.keyOne){
             if (stringOne.characters.count > 0){
                 containerView.textView1.text = stringOne
             }
         }
     }
 
-    private func didReceiveUrlContent(urlContent: String) {
+    fileprivate func didReceiveUrlContent(_ urlContent: String) {
         
         var newSandboxId = -1;
         
@@ -324,7 +387,7 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
             
             if (newSandboxId < 0){
                 self.containerView.debugTextView.text = self.containerView.debugTextView.text + "Sandbox creation error!" + "\r\n";
-                self.containerView.debugTextView.hidden = false;
+                self.containerView.debugTextView.isHidden = false;
                 return;
             }
             self.uiObjects.append([Int : UIClass]());
@@ -333,7 +396,7 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
                 
                 if (scriptNames.count <= 0){
                     self.containerView.debugTextView.text = self.containerView.debugTextView.text + "Scripts initialization error!" + "\r\n";
-                    self.containerView.debugTextView.hidden = false;
+                    self.containerView.debugTextView.isHidden = false;
                     return;
                 }
                     
@@ -342,7 +405,7 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
                         
                         if (objects.count <= 0){
                             self.containerView.debugTextView.text = self.containerView.debugTextView.text + "Objects initialization error!" + "\r\n";
-                            self.containerView.debugTextView.hidden = false;
+                            self.containerView.debugTextView.isHidden = false;
                             return;
                         }
                         
@@ -354,80 +417,173 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         }
     }
     
-    private func addSubview(sandboxId : Int, objects: [UIClass]){
+    fileprivate func addSubview(_ sandboxId : Int, objects: [UIClass]){
         for (object) in objects {
             if let btn = object.uiElement as? UIButton {
-                btn.addTarget(self, action: Selector(self.buttonAction), forControlEvents: UIControlEvents.TouchUpInside)
+                btn.addTarget(self, action: Selector(self.buttonAction), for: UIControlEvents.touchUpInside)
             }
             if (self.checkIds(sandboxId, id: object.objectId)){
-                self.uiObjects[sandboxId][object.objectId] = (object)
-                object.uiElement.translatesAutoresizingMaskIntoConstraints = false
+                self.uiObjects[sandboxId][object.objectId] = object
+                if (object.constraints.count > 0){
+                    object.uiElement.translatesAutoresizingMaskIntoConstraints = false
+                }
                 self.view.addSubview(object.uiElement)
-                let frame = object.uiElement.frame;
-                setConstraints(object.uiElement, width: frame.width, height: frame.height, x: frame.minX, y: frame.minY)
+                if (object.constraints.count > 0){
+                    setConstraints(sandboxId, object: object.uiElement, constraints: object.constraints)
+                }
             }
             else {
                 self.containerView.debugTextView.text = self.containerView.debugTextView.text + "Error! Non unique Id in objects!" + " objectId: "
                     + String(object.objectId) + "\r\n";
-                if (self.containerView.debugTextView.hidden){
+                if (self.containerView.debugTextView.isHidden){
                     let image : UIImage = (UIImage(named: "console-Importance_50") as UIImage?)!
-                    containerView.consoleButton.setBackgroundImage(image, forState: .Normal)
+                    containerView.consoleButton.setBackgroundImage(image, for: UIControlState())
                 }
             }
         }
     }
     
-    private func setConstraints(object: UIView, width: CGFloat, height: CGFloat, x : CGFloat, y : CGFloat) {
-        print(view.topAnchor);
-        object.widthAnchor.constraintEqualToConstant(width).active = true
-        object.heightAnchor.constraintEqualToConstant(height).active = true
-        object.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor, constant: -20.0).active = true
-        /*object.trailingAnchor.constraintEqualToAnchor(containerView.consoleButton.trailingAnchor, constant: 8.0);
-        object.leadingAnchor.constraintEqualToAnchor(containerView.consoleButton.leadingAnchor, constant: 8.0);
-        object.bottomAnchor.constraintEqualToAnchor(containerView.consoleButton.bottomAnchor, constant: 8.0);*/
+    fileprivate func setConstraints(_ sandboxId: Int, object: UIView, constraints: [AnyObject]) {
+        for (i) in 0..<constraints.count {
+            var toObjectId = -1;
+            var constant : CGFloat = 0.0;
+            if let anchor : String = constraints[i].object(forKey: "anchor") as? String{
+                if let oId = constraints[i].object(forKey: "toObjectId") as? Int{
+                    toObjectId = oId;
+                }
+                if let c : CGFloat = constraints[i].object(forKey: "constant") as? CGFloat{
+                    constant = c;
+                }
+                setConstraint(sandboxId, object: object, anchor: anchor, constant: constant, toObjectId: toObjectId);
+            }
+        }
     }
     
-    private func updateSubview(){
-        
+    fileprivate func setConstraint(_ sandboxId: Int, object: UIView, anchor: String, constant: CGFloat, toObjectId: Int){
+        var toObject = UIView();
+        if (toObjectId > 0){
+            if let obj : UIView = self.uiObjects[sandboxId][toObjectId]?.uiElement{
+                toObject = obj;
+            }
+            else{
+                return;
+            }
+        }
+        switch (anchor){
+            case "bottom" :
+                if (toObjectId > 0){
+                    object.bottomAnchor.constraint(equalTo: toObject.bottomAnchor, constant: constant).isActive = true
+                }
+                else{
+                    object.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: constant).isActive = true
+                }
+            case "centerX" :
+                if (toObjectId > 0){
+                    object.centerXAnchor.constraint(equalTo: toObject.centerXAnchor, constant: constant).isActive = true
+                }
+                else{
+                    object.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: constant).isActive = true
+                }
+            case "centerY" :
+                if (toObjectId > 0){
+                    object.centerYAnchor.constraint(equalTo: toObject.centerYAnchor, constant: constant).isActive = true
+                }
+                else{
+                    object.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: constant).isActive = true
+                }
+            case "height" :
+                if (toObjectId > 0){
+                    object.heightAnchor.constraint(equalTo: toObject.heightAnchor, constant: constant).isActive = true
+                }
+                else{
+                    object.heightAnchor.constraint(equalToConstant: constant).isActive = true
+                }
+            case "leading" :
+                if (toObjectId > 0){
+                    object.leadingAnchor.constraint(equalTo: toObject.leadingAnchor, constant: constant).isActive = true
+                }
+                else{
+                    object.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: constant).isActive = true
+                }
+            case "left" :
+                if (toObjectId > 0){
+                    object.leftAnchor.constraint(equalTo: toObject.leftAnchor, constant: constant).isActive = true
+                }
+                else{
+                    object.leftAnchor.constraint(equalTo: view.leftAnchor, constant: constant).isActive = true
+                }
+            case "right" :
+                if (toObjectId > 0){
+                    object.rightAnchor.constraint(equalTo: toObject.rightAnchor, constant: constant).isActive = true
+                }
+                else{
+                    object.rightAnchor.constraint(equalTo: view.rightAnchor, constant: constant).isActive = true
+                }
+            case "top" :
+                if (toObjectId > 0){
+                    object.topAnchor.constraint(equalTo: toObject.topAnchor, constant: constant).isActive = true
+                }
+                else{
+                    object.topAnchor.constraint(equalTo: view.topAnchor, constant: constant).isActive = true
+                }
+            case "trailing" :
+                if (toObjectId > 0){
+                    object.trailingAnchor.constraint(equalTo: toObject.trailingAnchor, constant: constant).isActive = true
+                }
+                else{
+                    object.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: constant).isActive = true
+                }
+            case "width" :
+                if (toObjectId > 0){
+                    object.widthAnchor.constraint(equalTo: toObject.widthAnchor, constant: constant).isActive = true
+                }
+                else{
+                    object.widthAnchor.constraint(equalToConstant: constant).isActive = true
+                }
+            
+            default :
+                return;
+            
+        }
     }
     
-    private func hideAllSubview(hide : Bool){
+    fileprivate func hideAllSubview(_ hide : Bool){
         if (hide){
             for (i) in 0..<uiObjects.count{
                 for (key, _) in uiObjects[i]{
-                    containerView.sendSubviewToBack( uiObjects[i][key]!.uiElement );
+                    containerView.sendSubview( toBack: uiObjects[i][key]!.uiElement );
                 }
             }
         }
         else{
             for (i) in 0..<uiObjects.count{
                 for (key, _) in uiObjects[i]{
-                    containerView.bringSubviewToFront( uiObjects[i][key]!.uiElement );
+                    containerView.bringSubview( toFront: uiObjects[i][key]!.uiElement );
                 }
             }
         }
     }
     
-    private func removeSubview(sandboxId: Int, id : Int){
+    fileprivate func removeSubview(_ sandboxId: Int, id : Int){
         if let element = uiObjects[sandboxId][id] {
             element.uiElement.removeFromSuperview();
-            uiObjects[sandboxId].removeValueForKey(id)
+            uiObjects[sandboxId].removeValue(forKey: id)
         }
     }
     
-    private func verifyUrl (urlString: String?) -> Bool {
+    fileprivate func verifyUrl (_ urlString: String?) -> Bool {
         //Check for nil
         if let urlString = urlString {
             // create NSURL instance
-            if let url = NSURL(string: urlString) {
+            if let url = URL(string: urlString) {
                 // check if your application can open the NSURL instance
-                return UIApplication.sharedApplication().canOpenURL(url)
+                return UIApplication.shared.canOpenURL(url)
             }
         }
         return false
     }
     
-    private func checkIds(sandboxId: Int, id : Int) -> BooleanType{
+    fileprivate func checkIds(_ sandboxId: Int, id : Int) -> Bool{
         for (_, value) in self.uiObjects[sandboxId] {
             if (value.objectId == id){
                 return false;
@@ -439,7 +595,7 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         return true;
     }
 
-    func buttonAction(sender: UIButton!) {
+    func buttonAction(_ sender: UIButton!) {
         print("Button tapped! " + "id: " + String(sender.tag) + " title: " + sender.currentTitle! )
         
         /// iterate over sandboxes, select one with desired tag in it
@@ -448,7 +604,7 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
                 if (value.uiElement.tag == sender.tag){
                     if let object = uiObjects[i][key]{
                         
-                        let multiClassCall = object.functionName.componentsSeparatedByString(".");
+                        let multiClassCall = object.functionName.components(separatedBy: ".");
                         if (multiClassCall.count == 2){
                             sandboxManager.executeClassContent(object.sandboxId, className: multiClassCall[0], functionName: multiClassCall[1], functionParams: object.params)
                         }
@@ -479,30 +635,30 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
     }
     
     //autoclose message
-    func showMessageAutoclose(del: Double, title: String, message: String){
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-        self.presentViewController(alertController, animated: true, completion: nil)
+    func showMessageAutoclose(_ del: Double, title: String, message: String){
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        self.present(alertController, animated: true, completion: nil)
         let delay = del * Double(NSEC_PER_SEC)
-        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
-        dispatch_after(time, dispatch_get_main_queue(), {
-            alertController.dismissViewControllerAnimated(true, completion: nil)
+        let time = DispatchTime.now() + Double(Int64(delay)) / Double(NSEC_PER_SEC)
+        DispatchQueue.main.asyncAfter(deadline: time, execute: {
+            alertController.dismiss(animated: true, completion: nil)
         })
     }
     
     // Helper
-    func showAlertWithMessage(message:String) {
+    func showAlertWithMessage(_ message:String) {
         // first, dismiss any animated stuff in background
-        self.dismissViewControllerAnimated(false){ (data) in
-            let alertAction:UIAlertAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel) { (UIAlertAction) -> Void in
-                self.dismissViewControllerAnimated(true, completion: { () -> Void in
+        self.dismiss(animated: false){ (data) in
+            let alertAction:UIAlertAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) { (UIAlertAction) -> Void in
+                self.dismiss(animated: true, completion: { () -> Void in
                     
                 })
             }
             
-            let alertView:UIAlertController = UIAlertController(title: nil, message: message, preferredStyle: UIAlertControllerStyle.Alert)
+            let alertView:UIAlertController = UIAlertController(title: nil, message: message, preferredStyle: UIAlertControllerStyle.alert)
             alertView.addAction(alertAction)
             
-            self.presentViewController(alertView, animated: true, completion: { () -> Void in
+            self.present(alertView, animated: true, completion: { () -> Void in
                 
             })
         }

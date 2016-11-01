@@ -18,22 +18,22 @@ class UIFactory : NSObject {
     }
     
     func createButton(cgRect : CGRect, backgroundColor : UIColor?, textColor: UIColor?, title:String, state: UIControlState, alpha : CGFloat) ->UIButton{
-        let button = UIButton(type: UIButtonType.Custom) as UIButton
+        let button = UIButton(type: UIButtonType.custom) as UIButton
         button.frame = cgRect
         if (backgroundColor != nil){
             button.backgroundColor = backgroundColor
         }
         if (textColor != nil){
-            button.setTitleColor(textColor, forState: UIControlState.Normal)
+            button.setTitleColor(textColor, for: UIControlState())
         }
-        button.setTitle(title, forState: state)
+        button.setTitle(title, for: state)
         button.tag = globalTag;
         self.globalTag += 1;
         button.alpha = alpha
         return button
     }
     
-    func createLabel(cgRect: CGRect, backgroundColor : UIColor?, textColor: UIColor?, textAlignment: NSTextAlignment?, text: String, alpha : CGFloat) ->UILabel{
+    func createLabel(_ cgRect: CGRect, backgroundColor : UIColor?, textColor: UIColor?, textAlignment: NSTextAlignment?, text: String, alpha : CGFloat) ->UILabel{
         let label: UILabel = UILabel()
         label.frame = cgRect
         if (backgroundColor != nil){
@@ -52,7 +52,7 @@ class UIFactory : NSObject {
         return label
     }
     
-    func createTextField(cgRect : CGRect, text: String, backgroundColor : UIColor?, textColor: UIColor?, textAlignment: NSTextAlignment?, alpha : CGFloat) ->UITextField{
+    func createTextField(_ cgRect : CGRect, text: String, backgroundColor : UIColor?, textColor: UIColor?, textAlignment: NSTextAlignment?, alpha : CGFloat) ->UITextField{
         let txtField: UITextField = UITextField()
         txtField.frame = cgRect
         if (backgroundColor != nil){
@@ -71,7 +71,7 @@ class UIFactory : NSObject {
         return txtField
     }
     
-    func createTextView(cgRect : CGRect, text: String, backgroundColor : UIColor?, textColor: UIColor?, textAlignment: NSTextAlignment?, alpha : CGFloat) ->UITextView{
+    func createTextView(_ cgRect : CGRect, text: String, backgroundColor : UIColor?, textColor: UIColor?, textAlignment: NSTextAlignment?, alpha : CGFloat) ->UITextView{
         let txtView: UITextView = UITextView()
         txtView.frame = cgRect
         if (backgroundColor != nil){

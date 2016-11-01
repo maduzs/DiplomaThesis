@@ -14,12 +14,12 @@ extension WKWebView {
     // Synchronized evaluateJavaScript
     // It returns nil if script is a statement or its result is undefined.
     // So, Swift cannot map the throwing method to Objective-C method.
-    public func evaluateJavaScript(script: String) throws -> AnyObject? {
+    public func evaluateJavaScript(_ script: String) throws -> AnyObject? {
         var result: AnyObject?
         var error: NSError?
         var done = false
         let timeout = 3.0
-        if NSThread.isMainThread() {
+        if Thread.isMainThread {
             evaluateJavaScript(script) {
                 (obj: AnyObject?, err: NSError?)->Void in
                 result = obj
@@ -27,14 +27,14 @@ extension WKWebView {
                 done = true
             }
             while !done {
-                let reason = CFRunLoopRunInMode(kCFRunLoopDefaultMode, timeout, true)
-                if reason != CFRunLoopRunResult.HandledSource {
+                let reason = CFRunLoopRunInMode(CFRunLoopMode.defaultMode, timeout, true)
+                if reason != CFRunLoopRunResult.handledSource {
                     break
                 }
             }
         } else {
             let condition: NSCondition = NSCondition()
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async {
                 [weak self] in
                 self?.evaluateJavaScript(script) {
                     (obj: AnyObject?, err: NSError?)->Void in
@@ -48,7 +48,7 @@ extension WKWebView {
             }
             condition.lock()
             while !done {
-                if !condition.waitUntilDate(NSDate(timeIntervalSinceNow: timeout)) {
+                if !condition.wait(until: Date(timeIntervalSinceNow: timeout)) {
                     break
                 }
             }
@@ -62,7 +62,7 @@ extension WKWebView {
     }
     
     // Wrapper method of synchronized evaluateJavaScript for Objective-C
-    public func evaluateJavaScript(script: String, error: NSErrorPointer) -> AnyObject? {
+    public func evaluateJavaScript(_ script: String, error: NSErrorPointer?) -> AnyObject? {
         var result: AnyObject?
         var err: NSError?
         do {
@@ -70,7 +70,7 @@ extension WKWebView {
         } catch let e as NSError {
             err = e
         }
-        if error != nil { error.memory = err }
+        if error != nil { error??.pointee = err }
         return result
     }
 }

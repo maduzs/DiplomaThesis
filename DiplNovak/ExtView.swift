@@ -9,7 +9,7 @@
 import UIKit
 
 protocol ExtViewDelegate: class {
-    func executeJS(buttonId : Int, content : String)
+    func executeJS(_ buttonId : Int, content : String)
 }
 
 class ExtView: UIView {

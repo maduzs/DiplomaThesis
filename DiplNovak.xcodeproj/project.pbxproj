@@ -27,7 +27,6 @@
 		BFB568211C8368CC00136E52 /* JSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB568201C8368CC00136E52 /* JSView.swift */; };
 		BFB568231C836E2100136E52 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BFB568221C836E2100136E52 /* Main.storyboard */; };
 		BFB568251C8379DC00136E52 /* background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BFB568241C8379DC00136E52 /* background.jpg */; };
-		BFBB84301CD500FC00A31EBB /* MyWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBB842F1CD500FC00A31EBB /* MyWebView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,7 +73,6 @@
 		BFB568201C8368CC00136E52 /* JSView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSView.swift; sourceTree = "<group>"; };
 		BFB568221C836E2100136E52 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		BFB568241C8379DC00136E52 /* background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = background.jpg; sourceTree = "<group>"; };
-		BFBB842F1CD500FC00A31EBB /* MyWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyWebView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -170,7 +168,6 @@
 				BFB568201C8368CC00136E52 /* JSView.swift */,
 				BF0404A81D1EAB8C00CCDD44 /* ExtView.swift */,
 				BFB5681D1C83626600136E52 /* Supporting Files */,
-				BFBB842F1CD500FC00A31EBB /* MyWebView.swift */,
 				BF2BA7521CDF76EE00C7924F /* SandboxManager.swift */,
 				BF65A27F1D1D79A00047E481 /* Supporting Classes */,
 			);
@@ -279,16 +276,16 @@
 				TargetAttributes = {
 					BFB567EB1C83625400136E52 = {
 						CreatedOnToolsVersion = 7.2.1;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0810;
 					};
 					BFB567FF1C83625400136E52 = {
 						CreatedOnToolsVersion = 7.2.1;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0810;
 						TestTargetID = BFB567EB1C83625400136E52;
 					};
 					BFB5680A1C83625400136E52 = {
 						CreatedOnToolsVersion = 7.2.1;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0810;
 						TestTargetID = BFB567EB1C83625400136E52;
 					};
 				};
@@ -352,7 +349,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BFB567F01C83625400136E52 /* AppDelegate.swift in Sources */,
-				BFBB84301CD500FC00A31EBB /* MyWebView.swift in Sources */,
 				BF2C7BCB1D15B58D0044B6BE /* UIFactory.swift in Sources */,
 				BF0404A71D1EA9A900CCDD44 /* ExternalViewController.swift in Sources */,
 				BF65A27E1D1D65400047E481 /* ResponseParser.swift in Sources */,
@@ -434,7 +430,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -475,7 +471,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -492,7 +488,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = cz.fi.muni.diploma.DiplNovak;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -504,7 +500,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = cz.fi.muni.diploma.DiplNovak;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -516,7 +512,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = cz.fi.muni.diploma.DiplNovakTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DiplNovak.app/DiplNovak";
 			};
 			name = Debug;
@@ -529,7 +525,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = cz.fi.muni.diploma.DiplNovakTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DiplNovak.app/DiplNovak";
 			};
 			name = Release;
@@ -541,7 +537,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = cz.fi.muni.diploma.DiplNovakUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = DiplNovak;
 				USES_XCTRUNNER = YES;
 			};
@@ -554,7 +550,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = cz.fi.muni.diploma.DiplNovakUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = DiplNovak;
 				USES_XCTRUNNER = YES;
 			};

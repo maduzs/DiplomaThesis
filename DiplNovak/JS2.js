@@ -63,5 +63,5 @@ class JS2 {
 }
 
 window.js2 = new JS2();
-JS_COMMUNICATOR.registerObject("js", "js2");
+JS_COMMUNICATOR.registerObject("js");
 
