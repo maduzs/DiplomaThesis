@@ -361,7 +361,10 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
             }
             if (self.checkIds(sandboxId, id: object.objectId)){
                 self.uiObjects[sandboxId][object.objectId] = (object)
+                object.uiElement.translatesAutoresizingMaskIntoConstraints = false
                 self.view.addSubview(object.uiElement)
+                let frame = object.uiElement.frame;
+                setConstraints(object.uiElement, width: frame.width, height: frame.height, x: frame.minX, y: frame.minY)
             }
             else {
                 self.containerView.debugTextView.text = self.containerView.debugTextView.text + "Error! Non unique Id in objects!" + " objectId: "
@@ -372,6 +375,16 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
                 }
             }
         }
+    }
+    
+    private func setConstraints(object: UIView, width: CGFloat, height: CGFloat, x : CGFloat, y : CGFloat) {
+        print(view.topAnchor);
+        object.widthAnchor.constraintEqualToConstant(width).active = true
+        object.heightAnchor.constraintEqualToConstant(height).active = true
+        object.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor, constant: -20.0).active = true
+        /*object.trailingAnchor.constraintEqualToAnchor(containerView.consoleButton.trailingAnchor, constant: 8.0);
+        object.leadingAnchor.constraintEqualToAnchor(containerView.consoleButton.leadingAnchor, constant: 8.0);
+        object.bottomAnchor.constraintEqualToAnchor(containerView.consoleButton.bottomAnchor, constant: 8.0);*/
     }
     
     private func updateSubview(){

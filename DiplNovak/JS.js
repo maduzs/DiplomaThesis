@@ -27,6 +27,13 @@ class JS {
                 width : 100,
                 height : 50
             },
+            constraints : [
+                           { anchor : "bottom", constant : 10, toObjectId : 30 },
+                           { anchor : "leading", constant : 200 },
+                           { anchor : "width", constant : 200, toObjectId : 30 },
+                           { anchor : "height", constant : 100 }
+                           
+            ]
             textColor : [0,0,255,1],
             backgroundColor : [0,0,0,1],
             onClick: "updateElement",
@@ -115,7 +122,7 @@ class JS {
     render(){
         var text =
         {
-            uiElements : [ this.button1, this.button2 ]
+            uiElements : [ this.button1/*, this.button2*/ ]
         };
 
         JS_COMMUNICATOR.sendResponse(text);

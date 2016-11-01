@@ -170,7 +170,7 @@ class ResponseParser: NSObject{
                 
                 let uiLabel = factory.createLabel(cgRect, backgroundColor : backgroundColor, textColor : textColor, textAlignment: textAlignment, text: text, alpha: alpha)
                 
-                if let uiClass : UIClass = UIClass(sandboxId: sandboxId, objectId: objectId, className: "", functionName: "", params: [], uiElement: uiLabel) {
+                if let uiClass : UIClass = UIClass(sandboxId: sandboxId, objectId: objectId, className: "", functionName: "", params: [], constraints: [], uiElement: uiLabel) {
                     return uiClass
                 }
             }
@@ -196,7 +196,7 @@ class ResponseParser: NSObject{
                 
                 let uiTextField = factory.createTextField(cgRect, text: text, backgroundColor : backgroundColor, textColor: textColor, textAlignment: textAlignment, alpha: alpha)
                 
-                if let uiClass : UIClass = UIClass(sandboxId: sandboxId, objectId: objectId, className: "", functionName: "", params: [], uiElement: uiTextField){
+                if let uiClass : UIClass = UIClass(sandboxId: sandboxId, objectId: objectId, className: "", functionName: "", params: [], constraints: [], uiElement: uiTextField){
                     return uiClass
                 }
             }
@@ -221,10 +221,11 @@ class ResponseParser: NSObject{
                     textAlignment = parseTextAlignment(textAlignmentObject);
                 }
                 
-                let uiTextView = factory.createTextView(cgRect, text: text, backgroundColor : backgroundColor, textColor: textColor, textAlignment: textAlignment, alpha: alpha)
-                
-                if let uiClass : UIClass = UIClass(sandboxId: sandboxId, objectId: objectId, className: "", functionName: "", params: [], uiElement: uiTextView){
-                    return uiClass
+                if let uiTextView : UITextView = factory.createTextView(cgRect, text: text, backgroundColor : backgroundColor, textColor: textColor, textAlignment: textAlignment, alpha: alpha){
+                    
+                    if let uiClass : UIClass = UIClass(sandboxId: sandboxId, objectId: objectId, className: "", functionName: "", params: [], constraints: [], uiElement: uiTextView){
+                        return uiClass
+                    }
                 }
             }
         }
@@ -300,7 +301,7 @@ class ResponseParser: NSObject{
             }
         }
         
-        if let uiClass : UIClass = UIClass(sandboxId: sandboxId, objectId: objectId, className: className, functionName: functionName, params: params, uiElement: uiButton){
+        if let uiClass : UIClass = UIClass(sandboxId: sandboxId, objectId: objectId, className: className, functionName: functionName, params: params, constraints: [], uiElement: uiButton){
             return uiClass;
         }
         return nil
