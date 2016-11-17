@@ -627,6 +627,9 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         for case let textField as UITextField in self.view.subviews {
             textField.resignFirstResponder()
         }
+        for case let textView as UITextView in self.view.subviews {
+            textView.resignFirstResponder()
+        }
     }
 
     override func didReceiveMemoryWarning() {

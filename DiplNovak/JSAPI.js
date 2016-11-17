@@ -16,6 +16,10 @@ class JSAPI {
     
     evaluateClass(id, className, funcName){
         
+        if (id == undefined || funcName == undefined || funcName == ""){
+            return;
+        }
+        
         this.callId = id;
         this.className = className;
 
@@ -33,7 +37,6 @@ class JSAPI {
         const messageToPost = {[this.call1] : this.callId, [this.call2] : this.apiId, [this.call3] : content};
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }
-    
     sendAsyncResponse(){
         let args = Array.prototype.slice.call(arguments);
         const messageToPost = {[this.call1] : this.asyncCode, [this.call2] : this.apiId, [this.call3] :  args };
@@ -46,7 +49,6 @@ class JSAPI {
         const messageToPost = {[this.call1] : this.initCode, [this.call2] : this.apiId, [this.call3] : args.toString()};
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }
-    
     addUIElement(elements){
         elements.className = this.className;
         const messageToPost = {[this.call1] : this.addCode, [this.call2] : this.apiId, [this.call3] : elements};
@@ -58,7 +60,6 @@ class JSAPI {
         const messageToPost = {[this.call1] : this.updateCode, [this.call2] : this.apiId, [this.call3] : args};
         window.webkit.messageHandlers.callbackHandler.postMessage(messageToPost);
     }
-    
     deleteUIElement(){
         let args = Array.prototype.slice.call(arguments);
         const messageToPost = {[this.call1] : this.deleteCode, [this.call2] : this.apiId, [this.call3] : args};

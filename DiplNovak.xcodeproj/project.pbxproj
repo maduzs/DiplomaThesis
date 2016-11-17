@@ -12,8 +12,6 @@
 		BF0404A91D1EAB8C00CCDD44 /* ExtView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0404A81D1EAB8C00CCDD44 /* ExtView.swift */; };
 		BF069A7F1CA42A6300F37C18 /* JS.js in Resources */ = {isa = PBXBuildFile; fileRef = BF069A7E1CA42A6300F37C18 /* JS.js */; };
 		BF069A811CA42DB200F37C18 /* JS2.js in Resources */ = {isa = PBXBuildFile; fileRef = BF069A801CA42DB200F37C18 /* JS2.js */; };
-		BF069A831CA44F5400F37C18 /* JS3.js in Resources */ = {isa = PBXBuildFile; fileRef = BF069A821CA44F5400F37C18 /* JS3.js */; };
-		BF069A851CA4562E00F37C18 /* JS4.js in Resources */ = {isa = PBXBuildFile; fileRef = BF069A841CA4562E00F37C18 /* JS4.js */; };
 		BF2BA7531CDF76EE00C7924F /* SandboxManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2BA7521CDF76EE00C7924F /* SandboxManager.swift */; };
 		BF2C7BCB1D15B58D0044B6BE /* UIFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2C7BCA1D15B58D0044B6BE /* UIFactory.swift */; };
 		BF3A11F41CDE31C40050C80E /* JSAPI.js in Resources */ = {isa = PBXBuildFile; fileRef = BF3A11F31CDE31C40050C80E /* JSAPI.js */; };
@@ -52,8 +50,6 @@
 		BF0404A81D1EAB8C00CCDD44 /* ExtView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtView.swift; sourceTree = "<group>"; };
 		BF069A7E1CA42A6300F37C18 /* JS.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JS.js; sourceTree = "<group>"; };
 		BF069A801CA42DB200F37C18 /* JS2.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JS2.js; sourceTree = "<group>"; };
-		BF069A821CA44F5400F37C18 /* JS3.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JS3.js; sourceTree = "<group>"; };
-		BF069A841CA4562E00F37C18 /* JS4.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JS4.js; sourceTree = "<group>"; };
 		BF2BA7521CDF76EE00C7924F /* SandboxManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SandboxManager.swift; sourceTree = "<group>"; };
 		BF2C7BCA1D15B58D0044B6BE /* UIFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIFactory.swift; sourceTree = "<group>"; };
 		BF3A11F31CDE31C40050C80E /* JSAPI.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JSAPI.js; sourceTree = "<group>"; };
@@ -132,8 +128,6 @@
 			children = (
 				BF069A7E1CA42A6300F37C18 /* JS.js */,
 				BF069A801CA42DB200F37C18 /* JS2.js */,
-				BF069A821CA44F5400F37C18 /* JS3.js */,
-				BF069A841CA4562E00F37C18 /* JS4.js */,
 				24462DEE1DA1657300BD8FA8 /* JSHTTP.js */,
 			);
 			name = external;
@@ -315,13 +309,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF069A851CA4562E00F37C18 /* JS4.js in Resources */,
 				BFB568251C8379DC00136E52 /* background.jpg in Resources */,
 				24462DEF1DA1657300BD8FA8 /* JSHTTP.js in Resources */,
 				BFB567F71C83625400136E52 /* Assets.xcassets in Resources */,
 				BFB568231C836E2100136E52 /* Main.storyboard in Resources */,
 				BF3A11F41CDE31C40050C80E /* JSAPI.js in Resources */,
-				BF069A831CA44F5400F37C18 /* JS3.js in Resources */,
 				BF069A811CA42DB200F37C18 /* JS2.js in Resources */,
 				BF069A7F1CA42A6300F37C18 /* JS.js in Resources */,
 			);

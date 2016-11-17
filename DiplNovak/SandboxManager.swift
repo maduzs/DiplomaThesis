@@ -113,8 +113,14 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
         }
         
         // TODO delete
-        var contentFile = getScriptFileContent("JS");
-        contentFile += getScriptFileContent("JS2");
+        var contentFile = "";
+        
+        if (sandboxId == 0){
+            contentFile = getScriptFileContent("JS");
+        } 
+        else{
+            contentFile = getScriptFileContent("JS2");
+        }
         
         webViews[sandboxId].evaluateJavaScript(contentFile) { (result, error) in
             if error != nil {
