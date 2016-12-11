@@ -66,7 +66,7 @@ class JS {
             textColor : [255,255,255,1],
             backgroundColor : [0,0,0,1],
             onClick: "deleteElement",
-            params: [ 0, 30 ]
+            params: [ 30 ]
         };
         this.label1 = {
             objectId : 2,
@@ -81,7 +81,7 @@ class JS {
             textColor : [255,255,255,1],
             backgroundColor: [0,0,0,1],
             textAlignment: "center"
-        }
+        };
         this.button2 = {
             objectId : 20,
             objectType : "button",

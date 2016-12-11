@@ -10,7 +10,6 @@ import Foundation
 import WebKit
 
 protocol DiplSandboxDelegate: class {
-    func executeAS(_ sandboxId : Int, uiElementId: Int, content : String)
     func debugInfo(_ sandboxId: Int, content: String, severity: Int)
     func addUIElement(_ sandboxId : Int, content : [UIClass])
     func updateUIElement(_ sandboxId : Int, content : [Int: [String: AnyObject]])
@@ -38,8 +37,6 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
     let evaluateClassMethod : String
     
     let renderMethod : String
-    
-    let factory = UIFactory();
     
     let responseParser = ResponseParser();
     
@@ -112,17 +109,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
             self.results[sandboxId][self.initActionCode] = "init" as AnyObject?;
         }
         
-        // TODO delete
-        var contentFile = "";
-        
-        if (sandboxId == 0){
-            contentFile = getScriptFileContent("JS");
-        } 
-        else{
-            contentFile = getScriptFileContent("JS2");
-        }
-        
-        webViews[sandboxId].evaluateJavaScript(contentFile) { (result, error) in
+        webViews[sandboxId].evaluateJavaScript(urlContent) { (result, error) in
             if error != nil {
                 let errorMsg = error!.localizedDescription
                 if (errorMsg != "JavaScript execution returned a result of an unsupported type"){
@@ -190,8 +177,6 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                     return;
                 }
             }
-            
-            //print(self.results[sandboxId][diceRoll]!)
             
             if let _ = self.results[sandboxId][diceRoll]! as? NSDictionary{
                 renderResult = self.results[sandboxId][diceRoll]! as! NSDictionary
@@ -353,6 +338,7 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                 switch(actionID){
                 case asyncCode :
                     if let msg : [AnyObject] = messageBody[jsApiCallNames[2]] as? [AnyObject] {
+                        print(msg);
                         viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: msg.description, severity: 0)
                     }
                     else{
@@ -377,8 +363,6 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                     }
                 case addActionCode :
                     if let msg : NSDictionary = messageBody[jsApiCallNames[2]] as? NSDictionary {
-                        print(msg);
-                        //parse TODO :)
                         let response = self.responseParser.parseRenderResponse(sandboxId: self.apiConnector[apiId]!, className: "", renderResult: msg)
                         if (response.count > 0) {
                             self.viewCtrl?.addUIElement(self.apiConnector[apiId]!, content: response)

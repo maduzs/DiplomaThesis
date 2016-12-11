@@ -364,8 +364,6 @@ class ResponseParser: NSObject{
             functionName = fn;
             if let paramsArray : NSArray = content.object(forKey: "params") as? NSArray{
                 for (paramOjb) in paramsArray{
-                    print(paramOjb)
-                    print((paramOjb as AnyObject).description);
                     if (paramOjb is NSDictionary){
                         
                         // encode dictionary to JSON

@@ -7,9 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		24462DEF1DA1657300BD8FA8 /* JSHTTP.js in Resources */ = {isa = PBXBuildFile; fileRef = 24462DEE1DA1657300BD8FA8 /* JSHTTP.js */; };
-		BF0404A71D1EA9A900CCDD44 /* ExternalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0404A61D1EA9A900CCDD44 /* ExternalViewController.swift */; };
-		BF0404A91D1EAB8C00CCDD44 /* ExtView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0404A81D1EAB8C00CCDD44 /* ExtView.swift */; };
+		3891A86B1DFD457500A0EAC0 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3891A86A1DFD457500A0EAC0 /* Reachability.swift */; };
+		38E57EF81DF1D3AE00892444 /* JSTest.js in Resources */ = {isa = PBXBuildFile; fileRef = 38E57EF71DF1D3AE00892444 /* JSTest.js */; };
 		BF069A7F1CA42A6300F37C18 /* JS.js in Resources */ = {isa = PBXBuildFile; fileRef = BF069A7E1CA42A6300F37C18 /* JS.js */; };
 		BF069A811CA42DB200F37C18 /* JS2.js in Resources */ = {isa = PBXBuildFile; fileRef = BF069A801CA42DB200F37C18 /* JS2.js */; };
 		BF2BA7531CDF76EE00C7924F /* SandboxManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2BA7521CDF76EE00C7924F /* SandboxManager.swift */; };
@@ -19,35 +18,15 @@
 		BF6AC7C01D1800630038DFBF /* UIClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6AC7BF1D1800630038DFBF /* UIClass.swift */; };
 		BFB567F01C83625400136E52 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB567EF1C83625400136E52 /* AppDelegate.swift */; };
 		BFB567F71C83625400136E52 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BFB567F61C83625400136E52 /* Assets.xcassets */; };
-		BFB568051C83625400136E52 /* DiplNovakTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB568041C83625400136E52 /* DiplNovakTests.swift */; };
-		BFB568101C83625400136E52 /* DiplNovakUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB5680F1C83625400136E52 /* DiplNovakUITests.swift */; };
 		BFB5681F1C8366E400136E52 /* DiplViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB5681E1C8366E400136E52 /* DiplViewController.swift */; };
 		BFB568211C8368CC00136E52 /* JSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB568201C8368CC00136E52 /* JSView.swift */; };
 		BFB568231C836E2100136E52 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BFB568221C836E2100136E52 /* Main.storyboard */; };
 		BFB568251C8379DC00136E52 /* background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BFB568241C8379DC00136E52 /* background.jpg */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		BFB568011C83625400136E52 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BFB567E41C83625400136E52 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BFB567EB1C83625400136E52;
-			remoteInfo = DiplNovak;
-		};
-		BFB5680C1C83625400136E52 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BFB567E41C83625400136E52 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BFB567EB1C83625400136E52;
-			remoteInfo = DiplNovak;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
-		24462DEE1DA1657300BD8FA8 /* JSHTTP.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JSHTTP.js; sourceTree = "<group>"; };
-		BF0404A61D1EA9A900CCDD44 /* ExternalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExternalViewController.swift; sourceTree = "<group>"; };
-		BF0404A81D1EAB8C00CCDD44 /* ExtView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtView.swift; sourceTree = "<group>"; };
+		3891A86A1DFD457500A0EAC0 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		38E57EF71DF1D3AE00892444 /* JSTest.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JSTest.js; sourceTree = "<group>"; };
 		BF069A7E1CA42A6300F37C18 /* JS.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JS.js; sourceTree = "<group>"; };
 		BF069A801CA42DB200F37C18 /* JS2.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JS2.js; sourceTree = "<group>"; };
 		BF2BA7521CDF76EE00C7924F /* SandboxManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SandboxManager.swift; sourceTree = "<group>"; };
@@ -59,10 +38,8 @@
 		BFB567EF1C83625400136E52 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BFB567F61C83625400136E52 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BFB567FB1C83625400136E52 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BFB568001C83625400136E52 /* DiplNovakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DiplNovakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFB568041C83625400136E52 /* DiplNovakTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiplNovakTests.swift; sourceTree = "<group>"; };
 		BFB568061C83625400136E52 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BFB5680B1C83625400136E52 /* DiplNovakUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DiplNovakUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFB5680F1C83625400136E52 /* DiplNovakUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiplNovakUITests.swift; sourceTree = "<group>"; };
 		BFB568111C83625400136E52 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BFB5681E1C8366E400136E52 /* DiplViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiplViewController.swift; sourceTree = "<group>"; };
@@ -79,20 +56,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BFB567FD1C83625400136E52 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BFB568081C83625400136E52 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -102,6 +65,7 @@
 				BF2C7BCA1D15B58D0044B6BE /* UIFactory.swift */,
 				BF6AC7BF1D1800630038DFBF /* UIClass.swift */,
 				BF65A27D1D1D65400047E481 /* ResponseParser.swift */,
+				3891A86A1DFD457500A0EAC0 /* Reachability.swift */,
 			);
 			name = "Supporting Classes";
 			sourceTree = "<group>";
@@ -109,7 +73,6 @@
 		BF65A2801D1D79E10047E481 /* js */ = {
 			isa = PBXGroup;
 			children = (
-				BF65A2821D1D7A570047E481 /* external */,
 				BF3A11F31CDE31C40050C80E /* JSAPI.js */,
 			);
 			name = js;
@@ -123,19 +86,21 @@
 			name = img;
 			sourceTree = "<group>";
 		};
-		BF65A2821D1D7A570047E481 /* external */ = {
+		BF65A2821D1D7A570047E481 /* JSExamples */ = {
 			isa = PBXGroup;
 			children = (
 				BF069A7E1CA42A6300F37C18 /* JS.js */,
 				BF069A801CA42DB200F37C18 /* JS2.js */,
-				24462DEE1DA1657300BD8FA8 /* JSHTTP.js */,
+				38E57EF71DF1D3AE00892444 /* JSTest.js */,
 			);
-			name = external;
+			name = JSExamples;
+			path = DiplNovak;
 			sourceTree = "<group>";
 		};
 		BFB567E31C83625400136E52 = {
 			isa = PBXGroup;
 			children = (
+				BF65A2821D1D7A570047E481 /* JSExamples */,
 				BFB567EE1C83625400136E52 /* DiplNovak */,
 				BFB568031C83625400136E52 /* DiplNovakTests */,
 				BFB5680E1C83625400136E52 /* DiplNovakUITests */,
@@ -147,8 +112,6 @@
 			isa = PBXGroup;
 			children = (
 				BFB567EC1C83625400136E52 /* DiplNovak.app */,
-				BFB568001C83625400136E52 /* DiplNovakTests.xctest */,
-				BFB5680B1C83625400136E52 /* DiplNovakUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -158,9 +121,7 @@
 			children = (
 				BFB568221C836E2100136E52 /* Main.storyboard */,
 				BFB5681E1C8366E400136E52 /* DiplViewController.swift */,
-				BF0404A61D1EA9A900CCDD44 /* ExternalViewController.swift */,
 				BFB568201C8368CC00136E52 /* JSView.swift */,
-				BF0404A81D1EAB8C00CCDD44 /* ExtView.swift */,
 				BFB5681D1C83626600136E52 /* Supporting Files */,
 				BF2BA7521CDF76EE00C7924F /* SandboxManager.swift */,
 				BF65A27F1D1D79A00047E481 /* Supporting Classes */,
@@ -218,42 +179,6 @@
 			productReference = BFB567EC1C83625400136E52 /* DiplNovak.app */;
 			productType = "com.apple.product-type.application";
 		};
-		BFB567FF1C83625400136E52 /* DiplNovakTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = BFB568171C83625400136E52 /* Build configuration list for PBXNativeTarget "DiplNovakTests" */;
-			buildPhases = (
-				BFB567FC1C83625400136E52 /* Sources */,
-				BFB567FD1C83625400136E52 /* Frameworks */,
-				BFB567FE1C83625400136E52 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				BFB568021C83625400136E52 /* PBXTargetDependency */,
-			);
-			name = DiplNovakTests;
-			productName = DiplNovakTests;
-			productReference = BFB568001C83625400136E52 /* DiplNovakTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		BFB5680A1C83625400136E52 /* DiplNovakUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = BFB5681A1C83625400136E52 /* Build configuration list for PBXNativeTarget "DiplNovakUITests" */;
-			buildPhases = (
-				BFB568071C83625400136E52 /* Sources */,
-				BFB568081C83625400136E52 /* Frameworks */,
-				BFB568091C83625400136E52 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				BFB5680D1C83625400136E52 /* PBXTargetDependency */,
-			);
-			name = DiplNovakUITests;
-			productName = DiplNovakUITests;
-			productReference = BFB5680B1C83625400136E52 /* DiplNovakUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -272,16 +197,6 @@
 						CreatedOnToolsVersion = 7.2.1;
 						LastSwiftMigration = 0810;
 					};
-					BFB567FF1C83625400136E52 = {
-						CreatedOnToolsVersion = 7.2.1;
-						LastSwiftMigration = 0810;
-						TestTargetID = BFB567EB1C83625400136E52;
-					};
-					BFB5680A1C83625400136E52 = {
-						CreatedOnToolsVersion = 7.2.1;
-						LastSwiftMigration = 0810;
-						TestTargetID = BFB567EB1C83625400136E52;
-					};
 				};
 			};
 			buildConfigurationList = BFB567E71C83625400136E52 /* Build configuration list for PBXProject "DiplNovak" */;
@@ -298,8 +213,6 @@
 			projectRoot = "";
 			targets = (
 				BFB567EB1C83625400136E52 /* DiplNovak */,
-				BFB567FF1C83625400136E52 /* DiplNovakTests */,
-				BFB5680A1C83625400136E52 /* DiplNovakUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -310,26 +223,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				BFB568251C8379DC00136E52 /* background.jpg in Resources */,
-				24462DEF1DA1657300BD8FA8 /* JSHTTP.js in Resources */,
+				38E57EF81DF1D3AE00892444 /* JSTest.js in Resources */,
 				BFB567F71C83625400136E52 /* Assets.xcassets in Resources */,
 				BFB568231C836E2100136E52 /* Main.storyboard in Resources */,
 				BF3A11F41CDE31C40050C80E /* JSAPI.js in Resources */,
 				BF069A811CA42DB200F37C18 /* JS2.js in Resources */,
 				BF069A7F1CA42A6300F37C18 /* JS.js in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BFB567FE1C83625400136E52 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BFB568091C83625400136E52 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -342,46 +241,16 @@
 			files = (
 				BFB567F01C83625400136E52 /* AppDelegate.swift in Sources */,
 				BF2C7BCB1D15B58D0044B6BE /* UIFactory.swift in Sources */,
-				BF0404A71D1EA9A900CCDD44 /* ExternalViewController.swift in Sources */,
 				BF65A27E1D1D65400047E481 /* ResponseParser.swift in Sources */,
 				BF2BA7531CDF76EE00C7924F /* SandboxManager.swift in Sources */,
 				BF6AC7C01D1800630038DFBF /* UIClass.swift in Sources */,
 				BFB568211C8368CC00136E52 /* JSView.swift in Sources */,
-				BF0404A91D1EAB8C00CCDD44 /* ExtView.swift in Sources */,
+				3891A86B1DFD457500A0EAC0 /* Reachability.swift in Sources */,
 				BFB5681F1C8366E400136E52 /* DiplViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BFB567FC1C83625400136E52 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BFB568051C83625400136E52 /* DiplNovakTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BFB568071C83625400136E52 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BFB568101C83625400136E52 /* DiplNovakUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		BFB568021C83625400136E52 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = BFB567EB1C83625400136E52 /* DiplNovak */;
-			targetProxy = BFB568011C83625400136E52 /* PBXContainerItemProxy */;
-		};
-		BFB5680D1C83625400136E52 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = BFB567EB1C83625400136E52 /* DiplNovak */;
-			targetProxy = BFB5680C1C83625400136E52 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		BFB568121C83625400136E52 /* Debug */ = {
@@ -496,58 +365,6 @@
 			};
 			name = Release;
 		};
-		BFB568181C83625400136E52 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				INFOPLIST_FILE = DiplNovakTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cz.fi.muni.diploma.DiplNovakTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DiplNovak.app/DiplNovak";
-			};
-			name = Debug;
-		};
-		BFB568191C83625400136E52 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				INFOPLIST_FILE = DiplNovakTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cz.fi.muni.diploma.DiplNovakTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DiplNovak.app/DiplNovak";
-			};
-			name = Release;
-		};
-		BFB5681B1C83625400136E52 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				INFOPLIST_FILE = DiplNovakUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cz.fi.muni.diploma.DiplNovakUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
-				TEST_TARGET_NAME = DiplNovak;
-				USES_XCTRUNNER = YES;
-			};
-			name = Debug;
-		};
-		BFB5681C1C83625400136E52 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				INFOPLIST_FILE = DiplNovakUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cz.fi.muni.diploma.DiplNovakUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
-				TEST_TARGET_NAME = DiplNovak;
-				USES_XCTRUNNER = YES;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -565,24 +382,6 @@
 			buildConfigurations = (
 				BFB568151C83625400136E52 /* Debug */,
 				BFB568161C83625400136E52 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		BFB568171C83625400136E52 /* Build configuration list for PBXNativeTarget "DiplNovakTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				BFB568181C83625400136E52 /* Debug */,
-				BFB568191C83625400136E52 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		BFB5681A1C83625400136E52 /* Build configuration list for PBXNativeTarget "DiplNovakUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				BFB5681B1C83625400136E52 /* Debug */,
-				BFB5681C1C83625400136E52 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

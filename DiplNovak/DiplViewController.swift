@@ -18,8 +18,6 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         }
     }
     
-    var webView: WKWebView!
-    
     // al UI elements, 2D
     fileprivate var uiObjects = [[Int : UIClass]()];
     
@@ -49,34 +47,33 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         static let keyOne = "inputKey"
     }
     
-    func executeAS(_ sandboxId: Int, uiElementId: Int, content: String) {
-        print("ide to more " + String(sandboxId));
-        print("elId: " + String(uiElementId) + "content: " + content);
-        uiObjects[sandboxId][uiElementId]!.uiElement.backgroundColor = UIColor.blue;
-    }
-    
     // severity - 0 : trace, 1 : warning, 2 : error
     func debugInfo(_ sandboxId: Int, content: String, severity: Int) {
         
-        print("sandboxId: " + String(sandboxId) + " content: " + content);
-        
-        containerView.debugTextView.text = containerView.debugTextView.text + content + "\r\n";
+        let date = NSDate()
+        let calendar = NSCalendar.current
+        let hour = calendar.component(.hour, from: date as Date)
+        let minutes = calendar.component(.minute, from: date as Date)
         
         switch(severity){
             
-        case 0 : break
+        case 0 :
+            containerView.debugTextView.text = containerView.debugTextView.text + String(hour) + ":" + String(minutes) + " | Trace: " + content + "\r\n";
+            break
         case 1 :
-            // TODO nech sa stale nenastavuje
+            containerView.debugTextView.text = containerView.debugTextView.text + String(hour) + ":" +  String(minutes) + " | Warning: " + content + "\r\n";
             if (containerView.debugTextView.isHidden) {
                 let image : UIImage = (UIImage(named: "console-Importance_50") as UIImage?)!
                 containerView.consoleButton.setBackgroundImage(image, for: UIControlState())
             }
+            break
     
         case 2 :
             hideAllSubview(true);
             consoleShow = true;
             containerView.debugTextView.isHidden = false;
             setConsoleIcon();
+            containerView.debugTextView.text = containerView.debugTextView.text + String(hour) + ":" +  String(minutes) + " | Error: " + content + "\r\n";
         default: break;
         }
     }
@@ -84,6 +81,8 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
     func addUIElement(_ sandboxId : Int, content : [UIClass]){
         addSubview(sandboxId, objects: content);
     }
+    
+    var count = 0;
 
     func updateUIElement(_ sandboxId : Int, content : [Int: [String : AnyObject]]){
         for (contentKey, contentValue) in content {
@@ -138,7 +137,6 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
                                 uiObject.uiElement.frame = objectValue as! CGRect;
                             }
                         }
-                        
                     }
                 }
             }
@@ -211,65 +209,62 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
             
             // multiple URLs
             if let multiUrl : [String] = checkInputMultiple(content){
-                for (i) in 0..<multiUrl.count{
-                    
-                    myGroup.enter()
-                    
-                    let urlGet = URL(string: multiUrl[i])
-                    var dataString:String = ""
-                    
-                    let task = URLSession.shared.dataTask(with: urlGet!, completionHandler: {(data, response, error) in
-                        // URL content response
-                        if (error == nil && data != nil){
-                            dataString = String(NSString(data: data!, encoding: String.Encoding.utf8.rawValue)!)
-                            
-                            DispatchQueue.main.async {
-                                // Update the UI on the main thread.
-                                self.didReceiveUrlContent(dataString)
-                                self.myGroup.leave()
-                            };
-                        }
-                        else{
-                            err = true;
-                            self.showAlertWithMessage("Content of the URL is not valid!")
-                            self.myGroup.leave()
-                        }
-                    }) 
-                    
-                    task.resume()
-                }
+                if Reachability.isConnectedToNetwork() == true {
                 
-                myGroup.notify(queue: DispatchQueue.main, execute: {
-                    print("Finished all requests.")
-                    if !err {
-                        self.dismiss(animated: false, completion: nil)
+                    for (_) in 0..<multiUrl.count{
+                    
+                        myGroup.enter()
+                    
+                        let urlGet = URL(string: multiUrl[0])
+                        var dataString:String = ""
+                        
+                        let task = URLSession.shared.dataTask(with: urlGet!, completionHandler: {(data, response, error) in
+                        // URL content response
+                            if (error == nil && data != nil){
+                                dataString = String(NSString(data: data!, encoding: String.Encoding.utf8.rawValue)!)
+                            
+                                DispatchQueue.main.async {
+                                    // Update the UI on the main thread.
+                                    self.didReceiveUrlContent(dataString)
+                                    self.myGroup.leave()
+                                };
+                            }
+                            else{
+                                err = true;
+                                self.showAlertWithMessage("Content of the URL is not valid!")
+                                self.myGroup.leave()
+                            }
+                        })
+                    
+                        task.resume()
                     }
-                })
+                
+                    myGroup.notify(queue: DispatchQueue.main, execute: {
+                        if !err {
+                            self.dismiss(animated: false, completion: nil)
+                            self.debugInfo(-1, content: "Init request finished", severity: 0)
+                        }
+                    })
+                }
+                else{
+                    showAlertWithMessage("Internet connection not available! Please connect to the internet.")
+                }
                 
             }
             // content is a script
             else{
                 DispatchQueue.main.async {
-                    
                     self.didReceiveUrlContent(content)
-                    
-                    // TODO just after did..
+                    self.debugInfo(-1, content: "Init request finished", severity: 0)
                     self.dismiss(animated: false, completion: nil)
                 };
             }
-            
             
             let defaults = UserDefaults.standard
             
             defaults.setValue(content, forKey: defaultsKeys.keyOne)
             
             defaults.synchronize()
-
-            // TODO stuff with subviews
-            
-            //self.view.insertSubview(self.containerView.debugTextView, aboveSubview: object.uiElement)
-            //self.view.bringSubviewToFront(self.containerView.debugTextView)
-            //self.containerView.bringSubviewToFront(self.containerView.debugTextView)
 
         case 1 :
             containerView.textView1.text = "";
@@ -285,7 +280,6 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         default :
             return
         }
-        //containerView.setNeedsDisplay();
     }
     
     override func viewDidLoad() {
@@ -377,6 +371,7 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         }
     }
 
+    // process the URL content
     fileprivate func didReceiveUrlContent(_ urlContent: String) {
         
         var newSandboxId = -1;
@@ -386,8 +381,7 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
             newSandboxId = newId
             
             if (newSandboxId < 0){
-                self.containerView.debugTextView.text = self.containerView.debugTextView.text + "Sandbox creation error!" + "\r\n";
-                self.containerView.debugTextView.isHidden = false;
+                self.debugInfo(-1, content: "Sandbox creation error!", severity: 2)
                 return;
             }
             self.uiObjects.append([Int : UIClass]());
@@ -395,8 +389,7 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
             self.sandboxManager.initFromUrl(newSandboxId, urlContent: urlContent) {(scriptNames) -> Void in
                 
                 if (scriptNames.count <= 0){
-                    self.containerView.debugTextView.text = self.containerView.debugTextView.text + "Scripts initialization error!" + "\r\n";
-                    self.containerView.debugTextView.isHidden = false;
+                    self.debugInfo(-1, content: "Scripts initialization error!", severity: 2)
                     return;
                 }
                     
@@ -404,8 +397,7 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
                     self.sandboxManager.executeRender(newSandboxId, className: script) {(objects) -> Void in
                         
                         if (objects.count <= 0){
-                            self.containerView.debugTextView.text = self.containerView.debugTextView.text + "Objects initialization error!" + "\r\n";
-                            self.containerView.debugTextView.isHidden = false;
+                            self.debugInfo(-1, content: "Objects initialization warning: No objects to render!", severity: 1)
                             return;
                         }
                         
@@ -433,8 +425,8 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
                 }
             }
             else {
-                self.containerView.debugTextView.text = self.containerView.debugTextView.text + "Error! Non unique Id in objects!" + " objectId: "
-                    + String(object.objectId) + "\r\n";
+                debugInfo(sandboxId, content: "Non unique Id of object!" + " objectId: "
+                    + String(object.objectId), severity: 1);
                 if (self.containerView.debugTextView.isHidden){
                     let image : UIImage = (UIImage(named: "console-Importance_50") as UIImage?)!
                     containerView.consoleButton.setBackgroundImage(image, for: UIControlState())
@@ -569,6 +561,9 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
             element.uiElement.removeFromSuperview();
             uiObjects[sandboxId].removeValue(forKey: id)
         }
+        else{
+            self.debugInfo(sandboxId, content: "Nothing to delete!", severity: 1);
+        }
     }
     
     fileprivate func verifyUrl (_ urlString: String?) -> Bool {
@@ -583,6 +578,7 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         return false
     }
     
+    // checks if the received id is unique in UI
     fileprivate func checkIds(_ sandboxId: Int, id : Int) -> Bool{
         for (_, value) in self.uiObjects[sandboxId] {
             if (value.objectId == id){
@@ -595,14 +591,18 @@ class DiplViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, 
         return true;
     }
 
+    // every user inserted button action has this function registered. This function is called after user inserted button tap
     func buttonAction(_ sender: UIButton!) {
-        print("Button tapped! " + "id: " + String(sender.tag) + " title: " + sender.currentTitle! )
+        
+        debugInfo(-1, content: "Button tapped! ", severity: 0);
         
         /// iterate over sandboxes, select one with desired tag in it
         for (i) in 0..<uiObjects.count {
             for (key, value) in uiObjects[i]{
                 if (value.uiElement.tag == sender.tag){
                     if let object = uiObjects[i][key]{
+                        
+                        debugInfo(-1, content: "Button tapped! " + " objId: " + String(object.objectId) + " title: " + sender.currentTitle! , severity: 0);
                         
                         let multiClassCall = object.functionName.components(separatedBy: ".");
                         if (multiClassCall.count == 2){

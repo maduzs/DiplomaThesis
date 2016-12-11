@@ -47,7 +47,7 @@ class JS2 {
     }
     
     updateElement(param){
-        /*param.text = ""
+        param.text = ""
         var fx = 150;
         var addition = 2;
         param.frame = {
@@ -82,7 +82,7 @@ class JS2 {
                 param.text = "";
             }
             JS_COMMUNICATOR.updateUIElement(param);
-        }*/
+        }
         JS_COMMUNICATOR.deleteUIElement(4);
     }
 

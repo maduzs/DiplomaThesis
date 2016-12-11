@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="15G1108" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="MTt-Qv-rr5">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="15G1108" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="LCH-qF-hqS">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -119,49 +119,11 @@
             </objects>
             <point key="canvasLocation" x="778.125" y="-596.83098591549299"/>
         </scene>
-        <!--External-->
-        <scene sceneID="Wj8-cC-sxa">
-            <objects>
-                <viewController id="hpv-Bu-oju" customClass="ExternalViewController" customModule="DiplNovak" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="AFe-6C-BEp"/>
-                        <viewControllerLayoutGuide type="bottom" id="LAe-ao-lJn"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="FL4-PK-tTa">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    </view>
-                    <tabBarItem key="tabBarItem" title="External" image="second" id="vnG-pd-C9P"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="6eG-wU-hZd" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="779.25" y="537.75"/>
-        </scene>
-        <!--Tab Bar Controller-->
-        <scene sceneID="BMD-oK-nie">
-            <objects>
-                <tabBarController id="MTt-Qv-rr5" sceneMemberID="viewController">
-                    <tabBar key="tabBar" contentMode="scaleToFill" id="GtL-wD-mJW">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
-                    </tabBar>
-                    <connections>
-                        <segue destination="LCH-qF-hqS" kind="relationship" relationship="viewControllers" id="e1I-UA-na4"/>
-                        <segue destination="hpv-Bu-oju" kind="relationship" relationship="viewControllers" id="o7O-K3-W5G"/>
-                    </connections>
-                </tabBarController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Wsg-xK-UM4" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-44.25" y="-212.5"/>
-        </scene>
     </scenes>
     <resources>
         <image name="background.jpg" width="2048" height="2048"/>
         <image name="console-100" width="123" height="115"/>
         <image name="first" width="30" height="30"/>
-        <image name="second" width="30" height="30"/>
         <image name="trash-101" width="100" height="100"/>
     </resources>
 </document>
