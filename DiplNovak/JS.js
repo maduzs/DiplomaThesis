@@ -161,7 +161,7 @@ class JS {
         var text =
         {
             // beware of order if using constraints!
-            uiElements : [ this.button2, this.button1 ]
+            uiElements : [ this.button2, this.button1, this.button3 ]
         };
 
         JS_COMMUNICATOR.sendResponse(text);

@@ -325,105 +325,111 @@ class SandboxManager : NSObject, WKScriptMessageHandler{
                 return;
             }
             
-            // TODO error handle
-            let actionID:Int = messageBody[jsApiCallNames[0]] as! Int
-            
-            let apiId:String = messageBody[jsApiCallNames[1]] as! String
-            
-            let msg:AnyObject;
-            
-            //async call
-            if (actionID < 0){
-                
-                switch(actionID){
-                case asyncCode :
-                    if let msg : [AnyObject] = messageBody[jsApiCallNames[2]] as? [AnyObject] {
-                        print(msg);
-                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: msg.description, severity: 0)
-                    }
-                    else{
-                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "asyncCodeFailed", severity: 1)
-                    }
-                case initActionCode :
-                    if let msg : String = messageBody[jsApiCallNames[2]] as? String {
+            if let actionID:Int = messageBody[jsApiCallNames[0]] as? Int {
+                if let apiId:String = messageBody[jsApiCallNames[1]] as? String{
+                    let msg:AnyObject;
+                    
+                    //async call
+                    if (actionID < 0){
                         
-                        let fullNameArr = msg.components(separatedBy: ",")
-                        
-                        var nameResult = [String]();
-                        for (name) in fullNameArr {
-                            nameResult.append(name);
+                        switch(actionID){
+                        case asyncCode :
+                            if let msg : [AnyObject] = messageBody[jsApiCallNames[2]] as? [AnyObject] {
+                                print(msg);
+                                viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: msg.description, severity: 0)
+                            }
+                            else{
+                                viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "asyncCodeFailed", severity: 1)
+                            }
+                        case initActionCode :
+                            if let msg : String = messageBody[jsApiCallNames[2]] as? String {
+                                
+                                let fullNameArr = msg.components(separatedBy: ",")
+                                
+                                var nameResult = [String]();
+                                for (name) in fullNameArr {
+                                    nameResult.append(name);
+                                }
+                                
+                                sync(results as AnyObject){
+                                    self.results[self.apiConnector[apiId]!][self.initActionCode] = nameResult as AnyObject?;
+                                }
+                            }
+                            else{
+                                viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "initActionCodeFailed", severity: 2)
+                            }
+                        case addActionCode :
+                            if let msg : NSDictionary = messageBody[jsApiCallNames[2]] as? NSDictionary {
+                                let response = self.responseParser.parseRenderResponse(sandboxId: self.apiConnector[apiId]!, className: "", renderResult: msg)
+                                if (response.count > 0) {
+                                    self.viewCtrl?.addUIElement(self.apiConnector[apiId]!, content: response)
+                                }
+                                else{
+                                    self.viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "empty elements from action", severity: 1)
+                                }
+                            }
+                            else{
+                                viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "add action failed!", severity: 1)
+                            }
+                        case updateActionCode :
+                            if let msg : [AnyObject] = messageBody[jsApiCallNames[2]] as? [AnyObject] {
+                                
+                                let response = self.responseParser.parseUpdateResponseId(self.apiConnector[apiId]!, content: msg);
+                                if (response.count > 0) {
+                                    viewCtrl?.updateUIElement(self.apiConnector[apiId]!,content: response)
+                                }
+                                else{
+                                    viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "nothing to parse!", severity: 0)
+                                }
+                            }
+                            else{
+                                viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "update action failed!", severity: 1)
+                            }
+                        case deleteActionCode :
+                            if let msg : [AnyObject] = messageBody[jsApiCallNames[2]] as? [AnyObject] {
+                                
+                                let response = self.responseParser.parseDeleteResponse(msg)
+                                
+                                if (response.count > 0){
+                                    viewCtrl?.removeUIElement(self.apiConnector[apiId]!, uiElementId: response)
+                                }
+                                else{
+                                    viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "nothing to delete!", severity: 1)
+                                }
+                            }
+                            else{
+                                viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "deleteCodeFailed", severity: 1)
+                            }
+                            
+                        default: return
                         }
                         
+                    }
+                        // normal call
+                    else{
+                        if let _ = messageBody[jsApiCallNames[2]] as? String {
+                            msg = messageBody[jsApiCallNames[2]] as! String as AnyObject
+                        }
+                        else {
+                            if let _ = messageBody[jsApiCallNames[2]] as? NSDictionary {
+                                msg = messageBody[jsApiCallNames[2]] as! NSDictionary
+                            }
+                            else{
+                                return
+                            }
+                        }
                         sync(results as AnyObject){
-                            self.results[self.apiConnector[apiId]!][self.initActionCode] = nameResult as AnyObject?;
+                            self.results[self.apiConnector[apiId]!][actionID] = msg;
                         }
                     }
-                    else{
-                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "initActionCodeFailed", severity: 2)
-                    }
-                case addActionCode :
-                    if let msg : NSDictionary = messageBody[jsApiCallNames[2]] as? NSDictionary {
-                        let response = self.responseParser.parseRenderResponse(sandboxId: self.apiConnector[apiId]!, className: "", renderResult: msg)
-                        if (response.count > 0) {
-                            self.viewCtrl?.addUIElement(self.apiConnector[apiId]!, content: response)
-                        }
-                        else{
-                            self.viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "empty elements from action", severity: 1)
-                        }
-                    }
-                    else{
-                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "add action failed!", severity: 1)
-                    }
-                case updateActionCode :
-                    if let msg : [AnyObject] = messageBody[jsApiCallNames[2]] as? [AnyObject] {
-                        
-                        let response = self.responseParser.parseUpdateResponseId(self.apiConnector[apiId]!, content: msg);
-                        if (response.count > 0) {
-                            viewCtrl?.updateUIElement(self.apiConnector[apiId]!,content: response)
-                        }
-                        else{
-                            viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "nothing to parse!", severity: 0)
-                        }
-                    }
-                    else{
-                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "update action failed!", severity: 1)
-                    }
-                case deleteActionCode :
-                    if let msg : [AnyObject] = messageBody[jsApiCallNames[2]] as? [AnyObject] {
-                        
-                        let response = self.responseParser.parseDeleteResponse(msg)
-                        
-                        if (response.count > 0){
-                            viewCtrl?.removeUIElement(self.apiConnector[apiId]!, uiElementId: response)
-                        }
-                        else{
-                            viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "nothing to delete!", severity: 1)
-                        }
-                    }
-                    else{
-                        viewCtrl?.debugInfo(self.apiConnector[apiId]!, content: "deleteCodeFailed", severity: 1)
-                    }
-
-                default: return
                 }
-
+                else{
+                    viewCtrl?.debugInfo(-1, content: "Failure! Wrong apiId.", severity: 2)
+                }
             }
-            // normal call
             else{
-                if let _ = messageBody[jsApiCallNames[2]] as? String {
-                    msg = messageBody[jsApiCallNames[2]] as! String as AnyObject
-                }
-                else {
-                    if let _ = messageBody[jsApiCallNames[2]] as? NSDictionary {
-                        msg = messageBody[jsApiCallNames[2]] as! NSDictionary
-                    }
-                    else{
-                        return
-                    }
-                }
-                sync(results as AnyObject){
-                    self.results[self.apiConnector[apiId]!][actionID] = msg;
-                }
+                viewCtrl?.debugInfo(-1, content: "Failure! Wrong actionId.", severity: 2)
+                
             }
         }
     }

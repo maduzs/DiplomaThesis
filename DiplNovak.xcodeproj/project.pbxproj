@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		382927791DFD667A009C69F2 /* URLExample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 382927781DFD667A009C69F2 /* URLExample.txt */; };
 		3891A86B1DFD457500A0EAC0 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3891A86A1DFD457500A0EAC0 /* Reachability.swift */; };
 		38E57EF81DF1D3AE00892444 /* JSTest.js in Resources */ = {isa = PBXBuildFile; fileRef = 38E57EF71DF1D3AE00892444 /* JSTest.js */; };
 		BF069A7F1CA42A6300F37C18 /* JS.js in Resources */ = {isa = PBXBuildFile; fileRef = BF069A7E1CA42A6300F37C18 /* JS.js */; };
@@ -25,6 +26,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		382927781DFD667A009C69F2 /* URLExample.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = URLExample.txt; sourceTree = "<group>"; };
 		3891A86A1DFD457500A0EAC0 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		38E57EF71DF1D3AE00892444 /* JSTest.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JSTest.js; sourceTree = "<group>"; };
 		BF069A7E1CA42A6300F37C18 /* JS.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JS.js; sourceTree = "<group>"; };
@@ -92,6 +94,7 @@
 				BF069A7E1CA42A6300F37C18 /* JS.js */,
 				BF069A801CA42DB200F37C18 /* JS2.js */,
 				38E57EF71DF1D3AE00892444 /* JSTest.js */,
+				382927781DFD667A009C69F2 /* URLExample.txt */,
 			);
 			name = JSExamples;
 			path = DiplNovak;
@@ -225,6 +228,7 @@
 				BFB568251C8379DC00136E52 /* background.jpg in Resources */,
 				38E57EF81DF1D3AE00892444 /* JSTest.js in Resources */,
 				BFB567F71C83625400136E52 /* Assets.xcassets in Resources */,
+				382927791DFD667A009C69F2 /* URLExample.txt in Resources */,
 				BFB568231C836E2100136E52 /* Main.storyboard in Resources */,
 				BF3A11F41CDE31C40050C80E /* JSAPI.js in Resources */,
 				BF069A811CA42DB200F37C18 /* JS2.js in Resources */,
