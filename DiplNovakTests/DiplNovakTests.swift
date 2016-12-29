@@ -2,8 +2,7 @@
 //  DiplNovakTests.swift
 //  DiplNovakTests
 //
-//  Created by Novak Second on 28/02/2016.
-//  Copyright © 2016 Novak Second. All rights reserved.
+//  Created by Novak Matus on 28/02/2016.
 //
 
 import XCTest

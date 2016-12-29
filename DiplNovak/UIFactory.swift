@@ -2,8 +2,7 @@
 //  UIFactory.swift
 //  DiplNovak
 //
-//  Created by Novak Second on 18/06/2016.
-//  Copyright © 2016 Novak Second. All rights reserved.
+//  Created by Novak Matus on 18/06/2016.
 //
 
 import Foundation

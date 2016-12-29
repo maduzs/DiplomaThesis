@@ -2,8 +2,7 @@
 //  Reachability.swift
 //  DiplNovak
 //
-//  Created by Matus Novak on 11/12/16.
-//  Copyright © 2016 Novak Second. All rights reserved.
+//  Created by Novak Matus on 11/12/16.
 //
 
 import SystemConfiguration

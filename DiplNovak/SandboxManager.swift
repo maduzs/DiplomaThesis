@@ -2,8 +2,7 @@
 //  SandboxManager.swift
 //  DiplNovak
 //
-//  Created by Novak Second on 08/05/2016.
-//  Copyright © 2016 Novak Second. All rights reserved.
+//  Created by Novak Matus on 08/05/2016.
 //
 
 import Foundation
